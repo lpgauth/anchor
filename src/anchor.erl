@@ -44,7 +44,7 @@ get(Key, Timeout) ->
                 0 ->
                     {ok, Response#response.value};
                 _ ->
-                    {ok, undefined}
+                    {error, not_found}
             end;
         {error, Reason} ->
             {error, Reason}
