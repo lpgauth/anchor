@@ -104,7 +104,9 @@ handle_call(Request, From, #state {
             {reply, {error, Reason}, State#state{
                 queue = queue:new(),
                 socket = undefined,
-                req_counter = 0
+                buffer = <<>>,
+                from = undefined,
+                response = undefined
             }};
         ok ->
             {noreply, State#state {
@@ -207,8 +209,9 @@ handle_info({tcp_closed, Socket}, #state {
     {noreply, State#state {
         socket = undefined,
         queue = queue:new(),
+        buffer = <<>>,
         from = undefined,
-        buffer = <<>>
+        response = undefined
     }};
 handle_info({tcp_error, Socket, Reason}, #state {
         socket = Socket
@@ -232,8 +235,6 @@ call(Msg, Timeout) ->
         Reply ->
             Reply
     catch
-        exit:{noproc, _} ->
-            {error, not_started};
         exit:{timeout, _} ->
             {error, timeout}
     end.
