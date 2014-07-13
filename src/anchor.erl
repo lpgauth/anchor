@@ -232,6 +232,8 @@ call(Msg, Timeout) ->
         Reply ->
             Reply
     catch
+        exit:{noproc, _} ->
+            {error, not_started};
         exit:{timeout, _} ->
             {error, timeout}
     end.
