@@ -1,7 +1,9 @@
 PROJECT=anchor
 REBAR=./rebar
 
-all: compile
+.phony: deps
+
+all: deps compile
 
 build-plt: all
 	@dialyzer --build_plt --output_plt ~/.$(PROJECT).plt \
@@ -12,10 +14,15 @@ check-plt:
 
 clean:
 	@$(REBAR) clean
+	@rm -rf deps ebin
 
 compile:
 	@echo "Running rebar compile..."
 	@$(REBAR) compile
+
+deps:
+	@echo "Running rebar get-deps..."
+	@$(REBAR) update-deps
 
 dialyze:
 	@dialyzer ebin/*.beam --plt ~/.$(PROJECT).plt -I include

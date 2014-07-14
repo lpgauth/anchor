@@ -39,10 +39,10 @@ get(Key) ->
 -spec get(binary(), pos_integer()) -> {ok, binary()} | {error, atom()}.
 get(Key, Timeout) ->
     case call({get, Key}, Timeout) of
-        {ok, Response} ->
-            case Response#response.status of
+        {ok, Resp} ->
+            case Resp#response.status of
                 0 ->
-                    {ok, Response#response.value};
+                    {ok, Resp#response.value};
                 _ ->
                     {error, not_found}
             end;
@@ -61,7 +61,7 @@ set(Key, Value, TTL) ->
 -spec set(binary(), binary(), non_neg_integer(), pos_integer()) -> ok | {error, atom()}.
 set(Key, Value, TTL, Timeout) ->
     case call({set, Key, Value, TTL}, Timeout) of
-        {ok, _Response} ->
+        {ok, _Resp} ->
             ok;
         {error, Reason} ->
             {error, Reason}
@@ -101,9 +101,9 @@ handle_call(Request, From, #state {
             error_msg("tcp send error: ~p", [Reason]),
             gen_tcp:close(Socket),
             reply_all(Queue, {error, tcp_closed}),
-            {reply, {error, Reason}, State#state{
-                queue = queue:new(),
+            {reply, {error, Reason}, State#state {
                 socket = undefined,
+                queue = queue:new(),
                 buffer = <<>>,
                 from = undefined,
                 response = undefined
@@ -122,6 +122,60 @@ handle_cast(Cast, State) ->
     warning_msg("unexpected cast: ~p~n", [Cast]),
     {noreply, State}.
 
+loop_data(<<>>, State) ->
+    {noreply, State};
+loop_data(Data, #state {
+        queue = Queue,
+        from = undefined
+    } = State) ->
+
+    case queue:out(Queue) of
+        {{value, {ReqId, From}}, Queue2} ->
+            {ok, Rest, Resp} = anchor_protocol:parse(ReqId, Data, #response {}),
+            case Resp#response.extras of
+                undefined ->
+                    {noreply, State#state {
+                        queue = Queue2,
+                        buffer = Rest,
+                        from = From,
+                        response = Resp#response {
+                            opaque = ReqId
+                        }
+                    }};
+                _Extras ->
+                    reply(From, {ok, Resp}),
+                    loop_data(Rest, State#state {
+                        queue = Queue2,
+                        buffer = <<>>
+                    })
+            end;
+        {empty, Queue} ->
+            warning_msg("empty queue", []),
+            {noreply, State}
+    end;
+loop_data(Data, #state {
+        from = From,
+        response = #response {
+            opaque = ReqId
+        } = Resp
+    } = State) ->
+
+    {ok, Rest, Resp2} = anchor_protocol:parse(ReqId, Data, Resp),
+    case Resp2#response.extras of
+        undefined ->
+            {noreply, State#state {
+                buffer = Rest,
+                response = Resp2
+            }};
+        _Extras ->
+            reply(From, {ok, Resp2}),
+            loop_data(Rest, State#state {
+                from = undefined,
+                buffer = <<>>,
+                response = undefined
+            })
+    end.
+
 handle_info(newsocket, #state {
         ip = Ip,
         port = Port
@@ -139,67 +193,12 @@ handle_info(newsocket, #state {
             {noreply, State}
     end;
 handle_info({tcp, Socket, Data}, #state {
-        queue = Queue,
         socket = Socket,
-        buffer = Buffer,
-        from = undefined
+        buffer = Buffer
     } = State) ->
 
     inet:setopts(Socket, [{active, once}]),
-    case queue:out(Queue) of
-        {{value, {ReqId, From}}, Queue2} ->
-            Data2 = <<Buffer/binary, Data/binary>>,
-            {ok, Rest, Response} =
-                anchor_protocol:parse_response_data(ReqId, Data2, #response {}),
-
-            case Response#response.extras of
-                undefined ->
-                    {noreply, State#state {
-                        queue = Queue2,
-                        buffer = Rest,
-                        from = From,
-                        response = Response
-                    }};
-                _Extras ->
-                    reply(From, {ok, Response}),
-                    {noreply, State#state {
-                        queue = Queue2,
-                        buffer = Rest
-                    }}
-            end;
-        {empty, Queue} ->
-            warning_msg("empty queue", []),
-            {noreply, State}
-    end;
-handle_info({tcp, Socket, Data}, #state {
-        socket = Socket,
-        buffer = Buffer,
-        from = From,
-        response = #response {
-            opaque = ReqId
-        } = Response
-    } = State) ->
-
-    inet:setopts(Socket, [{active, once}]),
-    Data2 = <<Buffer/binary, Data/binary>>,
-    {ok, Rest, Response2} =
-        anchor_protocol:parse_response_data(ReqId, Data2, Response),
-
-    case Response2#response.extras of
-        undefined ->
-            {noreply, State#state {
-                buffer = Rest,
-                from = From,
-                response = Response2
-            }};
-        _Extras ->
-            reply(From, {ok, Response2}),
-            {noreply, State#state {
-                buffer = Rest,
-                from = undefined,
-                response = undefined
-            }}
-    end;
+    loop_data(<<Buffer/binary, Data/binary>>, State);
 handle_info({tcp_closed, Socket}, #state {
         socket = Socket,
         queue = Queue
@@ -235,6 +234,8 @@ call(Msg, Timeout) ->
         Reply ->
             Reply
     catch
+        exit:{noproc, _} ->
+            {error, not_started};
         exit:{timeout, _} ->
             {error, timeout}
     end.
