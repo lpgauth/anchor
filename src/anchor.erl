@@ -101,6 +101,7 @@ handle_call(Request, From, #state {
             error_msg("tcp send error: ~p", [Reason]),
             gen_tcp:close(Socket),
             reply_all(Queue, {error, tcp_closed}),
+            erlang:send_after(?RECONNECT, self(), connect),
             {reply, {error, Reason}, State#state {
                 socket = undefined,
                 queue = queue:new(),
@@ -151,6 +152,7 @@ handle_info({tcp_closed, Socket}, #state {
     } = State) ->
 
     reply_all(Queue, {error, tcp_closed}),
+    erlang:send_after(?RECONNECT, self(), connect),
     {noreply, State#state {
         socket = undefined,
         queue = queue:new(),
