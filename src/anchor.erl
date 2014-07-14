@@ -4,6 +4,7 @@
 -export([
     get/1,
     get/2,
+    req_count/0,
     set/2,
     set/3,
     set/4,
@@ -54,6 +55,10 @@ get(Key, Timeout) ->
 set(Key, Value) ->
     set(Key, Value, ?TTL).
 
+-spec req_count() -> {ok, non_neg_integer()}.
+req_count() ->
+    call(req_count, ?TIMEOUT).
+
 -spec set(binary(), binary(), non_neg_integer()) -> ok | {error, atom()}.
 set(Key, Value, TTL) ->
     set(Key, Value, TTL, ?TIMEOUT).
@@ -88,6 +93,12 @@ handle_call(_Request, _From, #state{
     } = State) ->
 
     {reply, {error, no_socket}, State};
+
+handle_call(req_count, _From, #state {
+        req_counter = ReqCounter
+    } = State) ->
+
+    {reply, {ok, ReqCounter}, State};
 handle_call(Request, From, #state {
         socket = Socket,
         queue = Queue,
