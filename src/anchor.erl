@@ -122,60 +122,6 @@ handle_cast(Cast, State) ->
     warning_msg("unexpected cast: ~p~n", [Cast]),
     {noreply, State}.
 
-loop_data(<<>>, State) ->
-    {noreply, State};
-loop_data(Data, #state {
-        queue = Queue,
-        from = undefined
-    } = State) ->
-
-    case queue:out(Queue) of
-        {{value, {ReqId, From}}, Queue2} ->
-            {ok, Rest, Resp} = anchor_protocol:parse(ReqId, Data, #response {}),
-            case Resp#response.extras of
-                undefined ->
-                    {noreply, State#state {
-                        queue = Queue2,
-                        buffer = Rest,
-                        from = From,
-                        response = Resp#response {
-                            opaque = ReqId
-                        }
-                    }};
-                _Extras ->
-                    reply(From, {ok, Resp}),
-                    loop_data(Rest, State#state {
-                        queue = Queue2,
-                        buffer = <<>>
-                    })
-            end;
-        {empty, Queue} ->
-            warning_msg("empty queue", []),
-            {noreply, State}
-    end;
-loop_data(Data, #state {
-        from = From,
-        response = #response {
-            opaque = ReqId
-        } = Resp
-    } = State) ->
-
-    {ok, Rest, Resp2} = anchor_protocol:parse(ReqId, Data, Resp),
-    case Resp2#response.extras of
-        undefined ->
-            {noreply, State#state {
-                buffer = Rest,
-                response = Resp2
-            }};
-        _Extras ->
-            reply(From, {ok, Resp2}),
-            loop_data(Rest, State#state {
-                from = undefined,
-                buffer = <<>>,
-                response = undefined
-            })
-    end.
-
 handle_info(newsocket, #state {
         ip = Ip,
         port = Port
@@ -238,6 +184,60 @@ call(Msg, Timeout) ->
             {error, not_started};
         exit:{timeout, _} ->
             {error, timeout}
+    end.
+
+loop_data(<<>>, State) ->
+    {noreply, State};
+loop_data(Data, #state {
+        queue = Queue,
+        from = undefined
+    } = State) ->
+
+    case queue:out(Queue) of
+        {{value, {ReqId, From}}, Queue2} ->
+            {ok, Rest, Resp} = anchor_protocol:parse(ReqId, Data, #response {}),
+            case Resp#response.extras of
+                undefined ->
+                    {noreply, State#state {
+                        queue = Queue2,
+                        buffer = Rest,
+                        from = From,
+                        response = Resp#response {
+                            opaque = ReqId
+                        }
+                    }};
+                _Extras ->
+                    reply(From, {ok, Resp}),
+                    loop_data(Rest, State#state {
+                        queue = Queue2,
+                        buffer = <<>>
+                    })
+            end;
+        {empty, Queue} ->
+            warning_msg("empty queue", []),
+            {noreply, State}
+    end;
+loop_data(Data, #state {
+        from = From,
+        response = #response {
+            opaque = ReqId
+        } = Resp
+    } = State) ->
+
+    {ok, Rest, Resp2} = anchor_protocol:parse(ReqId, Data, Resp),
+    case Resp2#response.extras of
+        undefined ->
+            {noreply, State#state {
+                buffer = Rest,
+                response = Resp2
+            }};
+        _Extras ->
+            reply(From, {ok, Resp2}),
+            loop_data(Rest, State#state {
+                from = undefined,
+                buffer = <<>>,
+                response = undefined
+            })
     end.
 
 reply(From, Msg) ->
