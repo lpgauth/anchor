@@ -60,12 +60,12 @@ req_count() ->
     call(req_count, ?DEFAULT_TIMEOUT).
 
 -spec set(binary(), binary(), non_neg_integer()) -> ok | {error, atom()}.
-set(Key, Value, DEFAULT_TTL) ->
-    set(Key, Value, DEFAULT_TTL, ?DEFAULT_TIMEOUT).
+set(Key, Value, TTL) ->
+    set(Key, Value, TTL, ?DEFAULT_TIMEOUT).
 
 -spec set(binary(), binary(), non_neg_integer(), pos_integer()) -> ok | {error, atom()}.
-set(Key, Value, DEFAULT_TTL, Timeout) ->
-    case call({set, Key, Value, DEFAULT_TTL}, Timeout) of
+set(Key, Value, TTL, Timeout) ->
+    case call({set, Key, Value, TTL}, Timeout) of
         {ok, _Resp} ->
             ok;
         {error, Reason} ->
