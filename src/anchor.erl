@@ -156,7 +156,7 @@ handle_info({tcp, Socket, Data}, #state {
     } = State) ->
 
     inet:setopts(Socket, [{active, once}]),
-    loop_data(<<Buffer/binary, Data/binary>>, State);
+    parse_data(<<Buffer/binary, Data/binary>>, State);
 handle_info({tcp_closed, Socket}, #state {
         socket = Socket,
         queue = Queue
@@ -199,9 +199,9 @@ call(Msg, Timeout) ->
             {error, timeout}
     end.
 
-loop_data(<<>>, State) ->
+parse_data(<<>>, State) ->
     {noreply, State};
-loop_data(Data, #state {
+parse_data(Data, #state {
         queue = Queue,
         from = undefined
     } = State) ->
@@ -215,7 +215,7 @@ loop_data(Data, #state {
             case Parsing of
                 complete ->
                     reply(From, {ok, Resp}),
-                    loop_data(Rest, State#state {
+                    parse_data(Rest, State#state {
                         queue = Queue2,
                         buffer = <<>>
                     });
@@ -233,7 +233,7 @@ loop_data(Data, #state {
             warning_msg("empty queue", []),
             {noreply, State}
     end;
-loop_data(Data, #state {
+parse_data(Data, #state {
         from = From,
         response = #response {
             opaque = ReqId
@@ -247,7 +247,7 @@ loop_data(Data, #state {
     case Parsing of
         complete ->
             reply(From, {ok, Resp2}),
-            loop_data(Rest, State#state {
+            parse_data(Rest, State#state {
                 from = undefined,
                 buffer = <<>>,
                 response = undefined
