@@ -13,13 +13,13 @@
 % server
 -define(DEFAULT_IP, "127.0.0.1").
 -define(DEFAULT_PORT, 11211).
--define(MAX_32_BIT_INT, 4294967296).
+-define(DEFAULT_TIMEOUT, 10000).
+-define(DEFAULT_TTL, 0).
 -define(RECONNECT_AFTER, 5000).
--define(TIMEOUT, 10000).
--define(TTL, 0).
 
 % utils
 -define(CHILD(Mod), {Mod, {Mod, start_link, []}, permanent, 5000, worker, [Mod]}).
+-define(MAX_32_BIT_INT, 4294967296).
 
 % records
 -record(request, {
@@ -33,6 +33,7 @@
 }).
 
 -record(response, {
+    parsing       = header,
     op_code,
     key_length,
     extras_length,

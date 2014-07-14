@@ -35,7 +35,7 @@
 %% public
 -spec get(binary()) -> {ok, binary()} | {error, atom()}.
 get(Key) ->
-    get(Key, ?TIMEOUT).
+    get(Key, ?DEFAULT_TIMEOUT).
 
 -spec get(binary(), pos_integer()) -> {ok, binary()} | {error, atom()}.
 get(Key, Timeout) ->
@@ -53,19 +53,19 @@ get(Key, Timeout) ->
 
 -spec set(binary(), binary()) -> ok | {error, atom()}.
 set(Key, Value) ->
-    set(Key, Value, ?TTL).
+    set(Key, Value, ?DEFAULT_TTL).
 
 -spec req_count() -> {ok, non_neg_integer()}.
 req_count() ->
-    call(req_count, ?TIMEOUT).
+    call(req_count, ?DEFAULT_TIMEOUT).
 
 -spec set(binary(), binary(), non_neg_integer()) -> ok | {error, atom()}.
-set(Key, Value, TTL) ->
-    set(Key, Value, TTL, ?TIMEOUT).
+set(Key, Value, DEFAULT_TTL) ->
+    set(Key, Value, DEFAULT_TTL, ?DEFAULT_TIMEOUT).
 
 -spec set(binary(), binary(), non_neg_integer(), pos_integer()) -> ok | {error, atom()}.
-set(Key, Value, TTL, Timeout) ->
-    case call({set, Key, Value, TTL}, Timeout) of
+set(Key, Value, DEFAULT_TTL, Timeout) ->
+    case call({set, Key, Value, DEFAULT_TTL}, Timeout) of
         {ok, _Resp} ->
             ok;
         {error, Reason} ->
@@ -208,9 +208,18 @@ loop_data(Data, #state {
 
     case queue:out(Queue) of
         {{value, {ReqId, From}}, Queue2} ->
-            {ok, Rest, Resp} = anchor_protocol:parse(ReqId, Data, #response {}),
-            case Resp#response.extras of
-                undefined ->
+            {ok, Rest, #response {
+                parsing = Parsing
+            } = Resp} = anchor_protocol:parse(ReqId, Data, #response {}),
+
+            case Parsing of
+                complete ->
+                    reply(From, {ok, Resp}),
+                    loop_data(Rest, State#state {
+                        queue = Queue2,
+                        buffer = <<>>
+                    });
+                _ ->
                     {noreply, State#state {
                         queue = Queue2,
                         buffer = Rest,
@@ -218,13 +227,7 @@ loop_data(Data, #state {
                         response = Resp#response {
                             opaque = ReqId
                         }
-                    }};
-                _Extras ->
-                    reply(From, {ok, Resp}),
-                    loop_data(Rest, State#state {
-                        queue = Queue2,
-                        buffer = <<>>
-                    })
+                    }}
             end;
         {empty, Queue} ->
             warning_msg("empty queue", []),
@@ -237,20 +240,23 @@ loop_data(Data, #state {
         } = Resp
     } = State) ->
 
-    {ok, Rest, Resp2} = anchor_protocol:parse(ReqId, Data, Resp),
-    case Resp2#response.extras of
-        undefined ->
-            {noreply, State#state {
-                buffer = Rest,
-                response = Resp2
-            }};
-        _Extras ->
+    {ok, Rest, #response {
+        parsing = Parsing
+    } = Resp2} = anchor_protocol:parse(ReqId, Data, Resp),
+
+    case Parsing of
+        complete ->
             reply(From, {ok, Resp2}),
             loop_data(Rest, State#state {
                 from = undefined,
                 buffer = <<>>,
                 response = undefined
-            })
+            });
+        _ ->
+            {noreply, State#state {
+                buffer = Rest,
+                response = Resp2
+            }}
     end.
 
 reply(From, Msg) ->

@@ -25,22 +25,13 @@ generate(ReqId, {set, Key, Value, TTL}) ->
     })}.
 
 parse(ReqId, Data, #response {
-        op_code = undefined
+        parsing = header
     } = Resp) when size(Data) >= ?HEADER_LENGTH ->
 
-    <<Header:?HEADER_LENGTH/binary, Rest/binary>> = Data,
-
-    {ok, #response {
-        body_length = BodyLength
-    } = Resp2} = parse_header(ReqId, Header, Resp),
-
-    case size(Rest) of
-        RestLength when RestLength >= BodyLength ->
-            parse_body(Rest, Resp2);
-        _RestLength ->
-            {ok, Rest, Resp2}
-    end;
+    {ok, Rest, Resp2} = parse_header(ReqId, Data, Resp),
+    parse(ReqId, Rest, Resp2);
 parse(_ReqId, Data, #response {
+        parsing = body,
         body_length = BodyLength
     } = Resp) when size(Data) >= BodyLength ->
 
@@ -68,10 +59,13 @@ encode_request(#request {
         ?RESERVED:16, BodyLength:32, Opaque:32, CAS:64, Body/binary>>.
 
 parse_header(ReqId, Data, Resp) ->
-    <<?MAGIC_RESPONSE:8, OpCode:8, KeyLength:16, ExtrasLength:8,
-        DataType:8, Status:16, BodyLength:32, ReqId:32, CAS:64>> = Data,
+    <<Header:?HEADER_LENGTH/binary, Rest/binary>> = Data,
 
-    {ok, Resp#response {
+    <<?MAGIC_RESPONSE:8, OpCode:8, KeyLength:16, ExtrasLength:8,
+        DataType:8, Status:16, BodyLength:32, ReqId:32, CAS:64>> = Header,
+
+    {ok, Rest, Resp#response {
+        parsing = body,
         op_code = OpCode,
         key_length = KeyLength,
         extras_length = ExtrasLength,
@@ -92,6 +86,7 @@ parse_body(Data, #response {
     <<Extras:ExtraLength/binary, Key:KeyLength/binary, Value/binary>> = Body,
 
     {ok, Rest, Resp#response {
+        parsing = complete,
         extras = Extras,
         key = Key,
         value = Value
