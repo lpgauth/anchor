@@ -95,7 +95,7 @@ handle_call(Request, From, #state {
     } = State) ->
 
     ReqId = (ReqCounter + 1) rem ?MAX_32_BIT_INT,
-    {ok, Packet} = anchor_protocol:generate_request(ReqId, Request),
+    {ok, Packet} = anchor_protocol:generate(ReqId, Request),
     case gen_tcp:send(Socket, Packet) of
         {error, Reason} ->
             error_msg("tcp send error: ~p", [Reason]),
