@@ -60,7 +60,6 @@ encode_request(#request {
 
 parse_header(ReqId, Data, Resp) ->
     <<Header:?HEADER_LENGTH/binary, Rest/binary>> = Data,
-
     <<?MAGIC_RESPONSE:8, OpCode:8, KeyLength:16, ExtrasLength:8,
         DataType:8, Status:16, BodyLength:32, ReqId:32, CAS:64>> = Header,
 

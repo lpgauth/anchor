@@ -1,13 +1,18 @@
 -module(anchor).
 -include("anchor.hrl").
 
+% memcached
 -export([
     get/1,
     get/2,
-    req_count/0,
     set/2,
     set/3,
-    set/4,
+    set/4
+]).
+
+% server
+-export([
+    req_count/0,
     start_link/0
 ]).
 
@@ -32,7 +37,7 @@
     response    = undefined
 }).
 
-%% public
+%% memcached
 -spec get(binary()) -> {ok, binary()} | {error, atom()}.
 get(Key) ->
     get(Key, ?DEFAULT_TIMEOUT).
@@ -40,10 +45,10 @@ get(Key) ->
 -spec get(binary(), pos_integer()) -> {ok, binary()} | {error, atom()}.
 get(Key, Timeout) ->
     case call({get, Key}, Timeout) of
-        {ok, Resp} ->
-            case Resp#response.status of
+        {ok, #response {status = Status, value = Value }} ->
+            case Status of
                 0 ->
-                    {ok, Resp#response.value};
+                    {ok, Value};
                 _ ->
                     {error, not_found}
             end;
@@ -54,10 +59,6 @@ get(Key, Timeout) ->
 -spec set(binary(), binary()) -> ok | {error, atom()}.
 set(Key, Value) ->
     set(Key, Value, ?DEFAULT_TTL).
-
--spec req_count() -> {ok, non_neg_integer()}.
-req_count() ->
-    call(req_count, ?DEFAULT_TIMEOUT).
 
 -spec set(binary(), binary(), non_neg_integer()) -> ok | {error, atom()}.
 set(Key, Value, TTL) ->
@@ -71,6 +72,11 @@ set(Key, Value, TTL, Timeout) ->
         {error, Reason} ->
             {error, Reason}
     end.
+
+%% server
+-spec req_count() -> {ok, non_neg_integer()}.
+req_count() ->
+    call(req_count, ?DEFAULT_TIMEOUT).
 
 -spec start_link() -> {ok, pid()}.
 start_link() ->
@@ -93,7 +99,6 @@ handle_call(_Request, _From, #state{
     } = State) ->
 
     {reply, {error, no_socket}, State};
-
 handle_call(req_count, _From, #state {
         req_counter = ReqCounter
     } = State) ->
@@ -111,8 +116,7 @@ handle_call(Request, From, #state {
         {error, Reason} ->
             error_msg("tcp send error: ~p", [Reason]),
             gen_tcp:close(Socket),
-            reply_all(Queue, {error, tcp_closed}),
-            erlang:send_after(?RECONNECT_AFTER, self(), newsocket),
+            tcp_close(Queue),
             {reply, {error, Reason}, State#state {
                 socket = undefined,
                 queue = queue:new(),
@@ -162,8 +166,8 @@ handle_info({tcp_closed, Socket}, #state {
         queue = Queue
     } = State) ->
 
-    reply_all(Queue, {error, tcp_closed}),
-    erlang:send_after(?RECONNECT_AFTER, self(), newsocket),
+    tcp_close(Queue),
+
     {noreply, State#state {
         socket = undefined,
         queue = queue:new(),
@@ -264,6 +268,10 @@ reply(From, Msg) ->
 
 reply_all(Queue, Msg) ->
     [gen_server:reply(From, Msg) || From <- queue:to_list(Queue)].
+
+tcp_close(Queue) ->
+    reply_all(Queue, {error, tcp_closed}),
+    erlang:send_after(?RECONNECT_AFTER, self(), newsocket).
 
 %% logging
 error_msg(Format, Data) ->
