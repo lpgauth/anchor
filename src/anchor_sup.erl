@@ -17,5 +17,5 @@ start_link() ->
 %% supervisor callbacks
 init([]) ->
     {ok, {{one_for_one, 5, 10}, [
-        ?CHILD(anchor)
+        ?CHILD(anchor_server)
     ]}}.

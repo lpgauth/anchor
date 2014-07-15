@@ -16,6 +16,7 @@
 -define(DEFAULT_TIMEOUT, 10000).
 -define(DEFAULT_TTL, 0).
 -define(RECONNECT_AFTER, 5000).
+-define(SERVER, anchor_server).
 
 % utils
 -define(CHILD(Mod), {Mod, {Mod, start_link, []}, permanent, 5000, worker, [Mod]}).
