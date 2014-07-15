@@ -13,6 +13,7 @@ check-plt:
 	@dialyzer --check_plt --plt ~/.$(PROJECT).plt
 
 clean:
+	@echo "Running rebar clean..."
 	@$(REBAR) clean
 	@rm -rf deps ebin
 
@@ -21,7 +22,7 @@ compile:
 	@$(REBAR) compile
 
 deps:
-	@echo "Running rebar get-deps..."
+	@echo "Running rebar update-deps..."
 	@$(REBAR) update-deps
 
 dialyze:

@@ -51,11 +51,11 @@ encode_request(#request {
     })->
 
     KeyLength = size(Key),
-    ExtraLength = size(Extras),
+    ExtrasLength = size(Extras),
     Body = <<Extras/binary, Key/binary, Value/binary>>,
     BodyLength = size(Body),
 
-    <<?MAGIC_REQUEST:8, OpCode:8, KeyLength:16, ExtraLength:8, DataType:8,
+    <<?MAGIC_REQUEST:8, OpCode:8, KeyLength:16, ExtrasLength:8, DataType:8,
         ?RESERVED:16, BodyLength:32, Opaque:32, CAS:64, Body/binary>>.
 
 parse_header(ReqId, Data, Resp) ->
@@ -76,13 +76,13 @@ parse_header(ReqId, Data, Resp) ->
     }}.
 
 parse_body(Data, #response {
-        extras_length = ExtraLength,
+        extras_length = ExtrasLength,
         key_length = KeyLength,
         body_length = BodyLength
     } = Resp) ->
 
     <<Body:BodyLength/binary, Rest/binary>> = Data,
-    <<Extras:ExtraLength/binary, Key:KeyLength/binary, Value/binary>> = Body,
+    <<Extras:ExtrasLength/binary, Key:KeyLength/binary, Value/binary>> = Body,
 
     {ok, Rest, Resp#response {
         parsing = complete,

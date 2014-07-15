@@ -98,12 +98,14 @@ handle_call(_Request, _From, #state{
         socket = undefined
     } = State) ->
 
-    {reply, {error, no_socket}, State};
+    Reply = {error, no_socket},
+    {reply, Reply, State};
 handle_call(req_count, _From, #state {
         req_counter = ReqCounter
     } = State) ->
 
-    {reply, {ok, ReqCounter}, State};
+    Reply = {ok, ReqCounter},
+    {reply, Reply, State};
 handle_call(Request, From, #state {
         socket = Socket,
         queue = Queue,
@@ -117,7 +119,8 @@ handle_call(Request, From, #state {
             error_msg("tcp send error: ~p", [Reason]),
             gen_tcp:close(Socket),
             tcp_close(Queue),
-            {reply, {error, Reason}, State#state {
+            Reply = {error, Reason},
+            {reply, Reply, State#state {
                 socket = undefined,
                 queue = queue:new(),
                 buffer = <<>>,
@@ -167,7 +170,6 @@ handle_info({tcp_closed, Socket}, #state {
     } = State) ->
 
     tcp_close(Queue),
-
     {noreply, State#state {
         socket = undefined,
         queue = queue:new(),
