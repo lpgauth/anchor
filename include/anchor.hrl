@@ -8,7 +8,7 @@
 -define(HEADER_LENGTH, 24).
 -define(MAGIC_REQUEST, 16#80).
 -define(MAGIC_RESPONSE, 16#81).
--define(RESERVED, 16#00).
+-define(VBUCKET, 16#00).
 
 % server
 -define(DEFAULT_IP, "127.0.0.1").
@@ -25,6 +25,7 @@
 -record(request, {
     op_code   = undefined,
     data_type = ?DATA_TYPE,
+    vbucket   = ?VBUCKET,
     opaque    = <<>>,
     cas       = ?CAS,
     extras    = <<>>,
@@ -33,7 +34,7 @@
 }).
 
 -record(response, {
-    parsing       = header,
+    parsing = header,
     op_code,
     key_length,
     extras_length,

@@ -1,4 +1,4 @@
-% https://code.google.com/p/memcached/wiki/MemcacheBinaryProtocol
+% https://code.google.com/p/memcached/wiki/BinaryProtocolRevamped
 
 -module(anchor_protocol).
 -include("anchor.hrl").
@@ -10,19 +10,19 @@
 
 %% public
 generate(ReqId, {get, Key}) ->
-    {ok, encode_request(#request {
+    encode_request(#request {
         op_code = ?OP_GET,
-        opaque = ReqId,
-        key = Key
-    })};
+        opaque  = ReqId,
+        key     = Key
+    });
 generate(ReqId, {set, Key, Value, TTL}) ->
-    {ok, encode_request(#request {
+    encode_request(#request {
         op_code = ?OP_SET,
-        opaque = ReqId,
-        extras = <<16#deadbeef:32, TTL:32>>,
-        key = Key,
-        value = Value
-    })}.
+        opaque  = ReqId,
+        extras  = <<16#deadbeef:32, TTL:32>>,
+        key     = Key,
+        value   = Value
+    }).
 
 parse(ReqId, Data, #response {
         parsing = header
@@ -43,6 +43,7 @@ parse(_ReqId, Data, Resp) ->
 encode_request(#request {
         op_code = OpCode,
         data_type = DataType,
+        vbucket = VBucket,
         opaque = Opaque,
         cas = CAS,
         extras = Extras,
@@ -55,8 +56,8 @@ encode_request(#request {
     Body = <<Extras/binary, Key/binary, Value/binary>>,
     BodyLength = size(Body),
 
-    <<?MAGIC_REQUEST:8, OpCode:8, KeyLength:16, ExtrasLength:8, DataType:8,
-        ?RESERVED:16, BodyLength:32, Opaque:32, CAS:64, Body/binary>>.
+    {ok, <<?MAGIC_REQUEST:8, OpCode:8, KeyLength:16, ExtrasLength:8, DataType:8,
+        VBucket:16, BodyLength:32, Opaque:32, CAS:64, Body/binary>>}.
 
 parse_header(ReqId, Data, Resp) ->
     <<Header:?HEADER_LENGTH/binary, Rest/binary>> = Data,
