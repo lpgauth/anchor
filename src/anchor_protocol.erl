@@ -9,11 +9,33 @@
 ]).
 
 %% public
+generate(ReqId, {add, Key, Value, TTL}) ->
+    encode_request(#request {
+        op_code = ?OP_ADD,
+        opaque  = ReqId,
+        extras  = <<16#deadbeef:32, TTL:32>>,
+        key     = Key,
+        value   = Value
+    });
+generate(ReqId, {delete, Key}) ->
+    encode_request(#request {
+        op_code = ?OP_DELETE,
+        opaque  = ReqId,
+        key     = Key
+    });
 generate(ReqId, {get, Key}) ->
     encode_request(#request {
         op_code = ?OP_GET,
         opaque  = ReqId,
         key     = Key
+    });
+generate(ReqId, {replace, Key, Value, TTL}) ->
+    encode_request(#request {
+        op_code = ?OP_REPLACE,
+        opaque  = ReqId,
+        extras  = <<16#deadbeef:32, TTL:32>>,
+        key     = Key,
+        value   = Value
     });
 generate(ReqId, {set, Key, Value, TTL}) ->
     encode_request(#request {

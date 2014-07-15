@@ -92,7 +92,7 @@ handle_info(newsocket, #state {
         port = Port
     } = State) ->
 
-    Opts = [binary, {active, once}, {packet, raw}],
+    Opts = [binary, {active, once}, {nodelay, true}, {packet, raw}],
     case gen_tcp:connect(Ip, Port, Opts) of
         {ok, Socket} ->
             {noreply, State#state {
@@ -100,7 +100,7 @@ handle_info(newsocket, #state {
             }};
         {error, Reason} ->
             error_msg("tcp connect error: ~p", [Reason]),
-            erlang:send_after(?RECONNECT_AFTER, self(), newsocket),
+            erlang:send_after(?DEFAULT_RECONNECT, self(), newsocket),
             {noreply, State}
     end;
 handle_info({tcp, Socket, Data}, #state {
@@ -211,7 +211,7 @@ request_id(N) ->
 
 tcp_close(Queue) ->
     reply_all(Queue, {error, tcp_closed}),
-    erlang:send_after(?RECONNECT_AFTER, self(), newsocket).
+    erlang:send_after(?DEFAULT_RECONNECT, self(), newsocket).
 
 %% logging
 error_msg(Format, Data) ->
