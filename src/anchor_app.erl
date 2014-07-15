@@ -11,8 +11,10 @@
 ]).
 
 %% public
+
 start() ->
-    ensure:all_started(anchor).
+    {ok, _} = application:ensure_all_started(anchor),
+    ok.
 
 %% application callbacks
 start(_StartType, _StartArgs) ->
