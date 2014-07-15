@@ -33,14 +33,11 @@ start_link() ->
 
 %% gen_server callbacks
 init([]) ->
-    Ip = application:get_env(?MODULE, ip, ?DEFAULT_IP),
-    Port = application:get_env(?MODULE, port, ?DEFAULT_PORT),
-
     self() ! newsocket,
 
     {ok, #state {
-        ip = Ip,
-        port = Port
+        ip = application:get_env(?APP, ip, ?DEFAULT_IP),
+        port = application:get_env(?APP, port, ?DEFAULT_PORT)
     }}.
 
 handle_call(_Request, _From, #state{
@@ -61,7 +58,7 @@ handle_call(Request, From, #state {
         req_counter = ReqCounter
     } = State) ->
 
-    ReqId = (ReqCounter + 1) rem ?MAX_32_BIT_INT,
+    ReqId = request_id(ReqCounter),
     {ok, Packet} = anchor_protocol:generate(ReqId, Request),
     case gen_tcp:send(Socket, Packet) of
         {error, Reason} ->
@@ -208,6 +205,9 @@ reply(From, Msg) ->
 
 reply_all(Queue, Msg) ->
     [gen_server:reply(From, Msg) || From <- queue:to_list(Queue)].
+
+request_id(N) ->
+    (N + 1) rem ?MAX_32_BIT_INT.
 
 tcp_close(Queue) ->
     reply_all(Queue, {error, tcp_closed}),

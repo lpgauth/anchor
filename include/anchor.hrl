@@ -11,6 +11,7 @@
 -define(VBUCKET, 16#00).
 
 % server
+-define(APP, anchor).
 -define(DEFAULT_IP, "127.0.0.1").
 -define(DEFAULT_PORT, 11211).
 -define(DEFAULT_TIMEOUT, 10000).
