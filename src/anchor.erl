@@ -84,17 +84,6 @@ add_(Key, Value, TTL, Timeout) ->
             {error, Reason}
     end.
 
-call(Msg, Timeout) ->
-    try gen_server:call(?SERVER, Msg, Timeout) of
-        Reply ->
-            Reply
-    catch
-        exit:{noproc, _} ->
-            {error, not_started};
-        exit:{timeout, _} ->
-            {error, timeout}
-    end.
-
 delete_(Key, Timeout) ->
     case call({delete, Key}, Timeout) of
         {ok, _Resp} ->
@@ -135,4 +124,15 @@ set_(Key, Value, TTL, Timeout) ->
             ok;
         {error, Reason} ->
             {error, Reason}
+    end.
+
+call(Msg, Timeout) ->
+    try gen_server:call(?SERVER, Msg, Timeout) of
+        Reply ->
+            Reply
+    catch
+        exit:{noproc, _} ->
+            {error, not_started};
+        exit:{timeout, _} ->
+            {error, timeout}
     end.

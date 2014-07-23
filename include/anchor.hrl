@@ -39,7 +39,6 @@
 }).
 
 -record(response, {
-    parsing = header,
     op_code,
     key_length,
     extras_length,
@@ -50,5 +49,6 @@
     cas,
     extras,
     key,
-    value
+    value,
+    parsing
 }).

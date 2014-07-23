@@ -46,12 +46,6 @@ handle_call(_Request, _From, #state{
 
     Reply = {error, no_socket},
     {reply, Reply, State};
-handle_call(req_count, _From, #state {
-        req_counter = ReqCounter
-    } = State) ->
-
-    Reply = {ok, ReqCounter},
-    {reply, Reply, State};
 handle_call(Request, From, #state {
         socket = Socket,
         queue = Queue,
@@ -59,7 +53,7 @@ handle_call(Request, From, #state {
     } = State) ->
 
     ReqId = request_id(ReqCounter),
-    {ok, Packet} = anchor_protocol:generate(ReqId, Request),
+    {ok, Packet} = anchor_protocol:encode(ReqId, Request),
     case gen_tcp:send(Socket, Packet) of
         {error, Reason} ->
             error_msg("tcp send error: ~p", [Reason]),
@@ -109,7 +103,7 @@ handle_info({tcp, Socket, Data}, #state {
     } = State) ->
 
     inet:setopts(Socket, [{active, once}]),
-    parse_data(<<Buffer/binary, Data/binary>>, State);
+    decode_data(<<Buffer/binary, Data/binary>>, State);
 handle_info({tcp_closed, Socket}, #state {
         socket = Socket,
         queue = Queue
@@ -140,9 +134,9 @@ terminate(_Reason, _State) ->
     ok.
 
 %% private
-parse_data(<<>>, State) ->
+decode_data(<<>>, State) ->
     {noreply, State};
-parse_data(Data, #state {
+decode_data(Data, #state {
         queue = Queue,
         from = undefined
     } = State) ->
@@ -151,12 +145,12 @@ parse_data(Data, #state {
         {{value, {ReqId, From}}, Queue2} ->
             {ok, Rest, #response {
                 parsing = Parsing
-            } = Resp} = anchor_protocol:parse(ReqId, Data, #response {}),
+            } = Resp} = anchor_protocol:decode(ReqId, Data),
 
             case Parsing of
                 complete ->
                     reply(From, {ok, Resp}),
-                    parse_data(Rest, State#state {
+                    decode_data(Rest, State#state {
                         queue = Queue2,
                         buffer = <<>>
                     });
@@ -174,7 +168,7 @@ parse_data(Data, #state {
             warning_msg("empty queue", []),
             {noreply, State}
     end;
-parse_data(Data, #state {
+decode_data(Data, #state {
         from = From,
         response = #response {
             opaque = ReqId
@@ -183,12 +177,12 @@ parse_data(Data, #state {
 
     {ok, Rest, #response {
         parsing = Parsing
-    } = Resp2} = anchor_protocol:parse(ReqId, Data, Resp),
+    } = Resp2} = anchor_protocol:decode(ReqId, Data, Resp),
 
     case Parsing of
         complete ->
             reply(From, {ok, Resp2}),
-            parse_data(Rest, State#state {
+            decode_data(Rest, State#state {
                 from = undefined,
                 buffer = <<>>,
                 response = undefined
