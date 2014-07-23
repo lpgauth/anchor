@@ -1,4 +1,4 @@
-# anchor
+# anchor [![Build Status](https://travis-ci.org/lpgauth/anchor.svg?branch=master)](https://travis-ci.org/lpgauth/anchor)
 
 Non-blocking Erlang Memcached client.
 
