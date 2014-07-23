@@ -7,6 +7,19 @@ Features:
  * Binary protocol
  * Pipelining
 
+Examples:
+
+    1> application:start(anchor).
+    ok
+    2> anchor:get(<<"foo">>).
+    {error,key_not_found}
+    3> anchor:set(<<"foo">>, <<"bar">>, 3600).
+    ok
+    4> anchor:get(<<"foo">>).
+    {ok,<<"bar">>}
+    5> anchor:delete(<<"foo">>).
+    ok
+    
 Commands:
 
  * add(Key::binary(), Value::binary()) -> ok | {error, Reason::atom()}.
