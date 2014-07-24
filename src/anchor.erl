@@ -74,7 +74,7 @@ set(Key, Value, TTL, Timeout) ->
 call(Msg, Timeout) ->
     try gen_server:call(?SERVER, Msg, Timeout) of
         {ok, Response} ->
-            reply(Response);
+            response(Response);
         {error, Reason} ->
             {error, Reason}
     catch
@@ -90,7 +90,7 @@ ok(?OP_GET, #response {value = Value}) -> {ok, Value};
 ok(?OP_REPLACE, _Response) -> ok;
 ok(?OP_SET, _Response) -> ok.
 
-reply(#response {
+response(#response {
         op_code = OpCode,
         status = Status
     } = Response) ->
