@@ -28,7 +28,7 @@ add(Key, Value, TTL) ->
 
 -spec add(binary(), binary(), non_neg_integer(), pos_integer()) -> ok | {error, atom()}.
 add(Key, Value, TTL, Timeout) ->
-    add_(Key, Value, TTL, Timeout).
+    call({add, Key, Value, TTL}, Timeout).
 
 -spec delete(binary()) -> ok | {error, atom()}.
 delete(Key) ->
@@ -36,7 +36,7 @@ delete(Key) ->
 
 -spec delete(binary(), pos_integer()) -> ok | {error, atom()}.
 delete(Key, Timeout) ->
-    delete_(Key, Timeout).
+    call({delete, Key}, Timeout).
 
 -spec get(binary()) -> {ok, binary()} | {error, atom()}.
 get(Key) ->
@@ -44,7 +44,7 @@ get(Key) ->
 
 -spec get(binary(), pos_integer()) -> {ok, binary()} | {error, atom()}.
 get(Key, Timeout) ->
-    get_(Key, Timeout).
+    call({get, Key}, Timeout).
 
 -spec replace(binary(), binary()) -> ok | {error, atom()}.
 replace(Key, Value) ->
@@ -56,7 +56,7 @@ replace(Key, Value, TTL) ->
 
 -spec replace(binary(), binary(), non_neg_integer(), pos_integer()) -> ok | {error, atom()}.
 replace(Key, Value, TTL, Timeout) ->
-    replace_(Key, Value, TTL, Timeout).
+    call({replace, Key, Value, TTL}, Timeout).
 
 -spec set(binary(), binary()) -> ok | {error, atom()}.
 set(Key, Value) ->
@@ -68,71 +68,53 @@ set(Key, Value, TTL) ->
 
 -spec set(binary(), binary(), non_neg_integer(), pos_integer()) -> ok | {error, atom()}.
 set(Key, Value, TTL, Timeout) ->
-    set_(Key, Value, TTL, Timeout).
+    call({set, Key, Value, TTL}, Timeout).
 
 %% private
-add_(Key, Value, TTL, Timeout) ->
-    case call({add, Key, Value, TTL}, Timeout) of
-        {ok, #response {status = Status}} ->
-            case Status of
-                0 ->
-                    ok;
-                _ ->
-                    {error, key_exists}
-            end;
-        {error, Reason} ->
-            {error, Reason}
-    end.
-
-delete_(Key, Timeout) ->
-    case call({delete, Key}, Timeout) of
-        {ok, _Resp} ->
-            ok;
-        {error, Reason} ->
-            {error, Reason}
-    end.
-
-get_(Key, Timeout) ->
-    case call({get, Key}, Timeout) of
-        {ok, #response {status = Status, value = Value}} ->
-            case Status of
-                0 ->
-                    {ok, Value};
-                _ ->
-                    {error, key_not_found}
-            end;
-        {error, Reason} ->
-            {error, Reason}
-    end.
-
-replace_(Key, Value, TTL, Timeout) ->
-    case call({replace, Key, Value, TTL}, Timeout) of
-        {ok, #response {status = Status}} ->
-            case Status of
-                0 ->
-                    ok;
-                _ ->
-                    {error, key_not_found}
-            end;
-        {error, Reason} ->
-            {error, Reason}
-    end.
-
-set_(Key, Value, TTL, Timeout) ->
-    case call({set, Key, Value, TTL}, Timeout) of
-        {ok, _Resp} ->
-            ok;
-        {error, Reason} ->
-            {error, Reason}
-    end.
-
 call(Msg, Timeout) ->
     try gen_server:call(?SERVER, Msg, Timeout) of
-        Reply ->
-            Reply
+        {ok, Response} ->
+            reply(Response);
+        {error, Reason} ->
+            {error, Reason}
     catch
         exit:{noproc, _} ->
             {error, not_started};
         exit:{timeout, _} ->
             {error, timeout}
     end.
+
+ok(?OP_ADD, _Response) -> ok;
+ok(?OP_DELETE, _Response) -> ok;
+ok(?OP_GET, #response {value = Value}) -> {ok, Value};
+ok(?OP_REPLACE, _Response) -> ok;
+ok(?OP_SET, _Response) -> ok.
+
+reply(#response {
+        op_code = OpCode,
+        status = Status
+    } = Response) ->
+
+    case status(Status) of
+        ok ->
+            ok(OpCode, Response);
+        Reason ->
+            {error, Reason}
+    end.
+
+status(?STAT_AUTH_CONTINUE) -> auth_continue;
+status(?STAT_AUTH_ERROR) -> auth_error;
+status(?STAT_BUSY) -> busy;
+status(?STAT_INCR_NON_NUMERIC) -> incr_non_numeric;
+status(?STAT_INTERNAL_ERROR) -> internal_error;
+status(?STAT_INVALID_ARGS) -> invalid_args;
+status(?STAT_ITEM_NOT_STORED) -> item_not_stored;
+status(?STAT_KEY_EXISTS) -> key_exists;
+status(?STAT_KEY_NOT_FOUND) -> key_not_found;
+status(?STAT_NOT_SUPPORTED) -> not_supported;
+status(?STAT_OK) -> ok;
+status(?STAT_OUT_OF_MEMORY) -> out_of_memory;
+status(?STAT_TEMP_FAILURE) -> temp_failure;
+status(?STAT_UNKNOWN_COMMAND) -> unknown_command;
+status(?STAT_VALUE_TOO_LARGE) -> value_too_large;
+status(?STAT_VBUCKET_ERROR) -> vbucket_error.
