@@ -2,12 +2,12 @@
 
 Non-blocking Erlang Memcached client.
 
-## Features ##
+### Features ###
  * Performance optimized
  * Binary protocol
  * Pipelining
 
-##Examples ##
+###Examples ###
 
     1> application:start(anchor).
     ok
@@ -20,7 +20,7 @@ Non-blocking Erlang Memcached client.
     5> anchor:delete(<<"foo">>).
     ok
 
-## Modules ##
+### Modules ###
 
 <table width="100%" border="0" summary="list of modules">
 <tr><td><a href="http://github.com/lpgauth/anchor/blob/master/doc/anchor.md" class="module">anchor</a></td></tr>
