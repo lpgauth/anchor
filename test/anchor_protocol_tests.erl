@@ -81,7 +81,6 @@ decode_test_() ->
         value = <<"bar">>
     }),
     % increment
-    % {response,complete,5,0,0,0,0,8,123,16,<<>>,<<>>,<<0,0,0,0,0,0,0,1>>}
     ?_assertEqual(decode(<<129,5,0,0,0,0,0,0,0,0,0,8,0,0,0,123,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,1>>),  #response {
         state = complete,
         op_code = ?OP_INCREMENT,
@@ -97,7 +96,6 @@ decode_test_() ->
         value = <<0,0,0,0,0,0,0,1>>
     }),
     % noop
-    % {response,complete,10,0,0,0,0,0,123,0,<<>>,<<>>,<<>>}
     ?_assertEqual(decode(<<129,10,0,0,0,0,0,0,0,0,0,0,0,0,0,123,0,0,0,0,0,0,0,0>>),  #response {
         state = complete,
         op_code = ?OP_NOOP,
@@ -113,7 +111,6 @@ decode_test_() ->
         value = <<>>
     }),
     % quit
-    % {response,complete,7,0,0,0,0,0,123,0,<<>>,<<>>,<<>>}
     ?_assertEqual(decode(<<129,7,0,0,0,0,0,0,0,0,0,0,0,0,0,123,0,0,0,0,0,0,0,0>>),  #response {
         state = complete,
         op_code = ?OP_QUIT,
