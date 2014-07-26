@@ -2,12 +2,12 @@
 
 Non-blocking Erlang Memcached client.
 
-Features:
+## Features ##
  * Performance optimized
  * Binary protocol
  * Pipelining
 
-Examples:
+##Examples ##
 
     1> application:start(anchor).
     ok
@@ -19,19 +19,12 @@ Examples:
     {ok,<<"bar">>}
     5> anchor:delete(<<"foo">>).
     ok
-    
-Commands:
 
- * add(Key::binary(), Value::binary()) -> ok | {error, Reason::atom()}.
- * add(Key::binary(), Value::binary(), TTL::non_neg_integer()) -> ok | {error, Reason::atom()}.
- * add(Key::binary(), Value::binary(), TTL::non_neg_integer(), Timeout::pos_integer()) -> ok | {error, Reason::atom()}.
- * delete(Key::binary()) -> ok | {error, Reason::atom()}.
- * delete(Key::binary(), Timeout::pos_integer()) -> ok | {error, Reason::atom()}.
- * get(Key::binary()) -> {ok, Value::binary()} | {error, Reason::atom()}.
- * get(Key::binary(), Timeout::pos_integer()) -> {ok, binary()} | {Reason::error, atom()}.
- * replace(Key::binary(), Value::binary()) -> ok | {error, Reason::atom()}.
- * replace(Key::binary(), Value::binary(), TTL::non_neg_integer()) -> ok | {error, Reason::atom()}.
- * replace(Key::binary(), Value::binary(), TTL::non_neg_integer(), Timeout::pos_integer()) -> ok | {error, Reason::atom()}.
- * set(Key::binary(), Value::binary()) -> ok | {error, Reason::atom()}.
- * set(Key::binary(), Value::binary(), TTL::non_neg_integer()) -> ok | {error, Reason::atom()}.
- * set(Key::binary(), Value::binary(), TTL::non_neg_integer(), Timeout::pos_integer()) -> ok | {error, Reason::atom()}.
+## Modules ##
+
+<table width="100%" border="0" summary="list of modules">
+<tr><td><a href="http://github.com/esl/gproc/blob/master/doc/anchor.md" class="module">anchor</a></td></tr>
+<tr><td><a href="http://github.com/esl/gproc/blob/master/doc/anchor_app.md" class="module">anchor_app</a></td></tr>
+<tr><td><a href="http://github.com/esl/gproc/blob/master/doc/anchor_protocol.md" class="module">anchor_protocol</a></td></tr>
+<tr><td><a href="http://github.com/esl/gproc/blob/master/doc/anchor_server.md" class="module">anchor_server</a></td></tr>
+<tr><td><a href="http://github.com/esl/gproc/blob/master/doc/anchor_sup.md" class="module">anchor_sup</a></td></tr></table>

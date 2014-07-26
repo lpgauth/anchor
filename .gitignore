@@ -3,6 +3,7 @@
 *.plt
 .eunit
 .rebar
-deps
-ebin
+deps/
+doc/README.md
+ebin/
 erl_crash.dump

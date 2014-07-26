@@ -1,7 +1,7 @@
 PROJECT=anchor
 REBAR=./rebar
 
-all: compile
+all: deps compile doc
 
 build-plt: all
 	@dialyzer --build_plt --output_plt ~/.$(PROJECT).plt \
@@ -13,14 +13,22 @@ check-plt:
 clean:
 	@echo "Running rebar clean..."
 	@$(REBAR) clean
-	@rm -rf ebin
+	@rm -rf deps ebin
 
 compile:
 	@echo "Running rebar compile..."
 	@$(REBAR) compile
 
+deps:
+	@echo "Running rebar update-deps..."
+	@$(REBAR) update-deps
+
 dialyze:
 	@dialyzer ebin/*.beam --plt ~/.$(PROJECT).plt -I include
+
+doc:
+	@echo "Running rebar doc..."
+	@$(REBAR) doc
 
 eunit:
 	@echo "Running EUnit suite..."
@@ -28,4 +36,4 @@ eunit:
 
 test: all eunit
 
-.PHONY: test
+.PHONY: deps doc test

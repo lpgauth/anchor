@@ -1,0 +1,217 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module anchor</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module anchor</h1>
+<ul class="index"><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>
+
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add-2">add/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#add-3">add/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#add-4">add/4</a></td><td></td></tr>
+<tr><td valign="top"><a href="#decrement-1">decrement/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#decrement-2">decrement/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#decrement-3">decrement/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#decrement-4">decrement/4</a></td><td></td></tr>
+<tr><td valign="top"><a href="#decrement-5">decrement/5</a></td><td></td></tr>
+<tr><td valign="top"><a href="#delete-1">delete/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#delete-2">delete/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#flush-0">flush/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#flush-1">flush/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#flush-2">flush/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get-1">get/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get-2">get/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#increment-1">increment/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#increment-2">increment/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#increment-3">increment/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#increment-4">increment/4</a></td><td></td></tr>
+<tr><td valign="top"><a href="#increment-5">increment/5</a></td><td></td></tr>
+<tr><td valign="top"><a href="#noop-0">noop/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#noop-1">noop/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#quit-0">quit/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#quit-1">quit/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#replace-2">replace/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#replace-3">replace/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#replace-4">replace/4</a></td><td></td></tr>
+<tr><td valign="top"><a href="#set-2">set/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#set-3">set/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#set-4">set/4</a></td><td></td></tr>
+<tr><td valign="top"><a href="#version-0">version/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#version-1">version/1</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="add-2">add/2</a></h3>
+<div class="spec">
+<p><tt>add(Key::binary(), Value::binary()) -&gt; ok | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="add-3">add/3</a></h3>
+<div class="spec">
+<p><tt>add(Key::binary(), Value::binary(), TTL::non_neg_integer()) -&gt; ok | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="add-4">add/4</a></h3>
+<div class="spec">
+<p><tt>add(Key::binary(), Value::binary(), TTL::non_neg_integer(), Timeout::pos_integer()) -&gt; ok | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="decrement-1">decrement/1</a></h3>
+<div class="spec">
+<p><tt>decrement(Key::binary()) -&gt; {ok, integer()} | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="decrement-2">decrement/2</a></h3>
+<div class="spec">
+<p><tt>decrement(Key::binary(), Amount::integer()) -&gt; {ok, integer()} | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="decrement-3">decrement/3</a></h3>
+<div class="spec">
+<p><tt>decrement(Key::binary(), Amount::integer(), InitialValue::integer()) -&gt; {ok, integer()} | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="decrement-4">decrement/4</a></h3>
+<div class="spec">
+<p><tt>decrement(Key::binary(), Amount::integer(), InitialValue::integer(), TTL::non_neg_integer()) -&gt; {ok, integer()} | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="decrement-5">decrement/5</a></h3>
+<div class="spec">
+<p><tt>decrement(Key::binary(), Amount::integer(), InitialValue::integer(), TTL::non_neg_integer(), Timeout::pos_integer()) -&gt; {ok, integer()} | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="delete-1">delete/1</a></h3>
+<div class="spec">
+<p><tt>delete(Key::binary()) -&gt; ok | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="delete-2">delete/2</a></h3>
+<div class="spec">
+<p><tt>delete(Key::binary(), Timeout::pos_integer()) -&gt; ok | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="flush-0">flush/0</a></h3>
+<div class="spec">
+<p><tt>flush() -&gt; ok | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="flush-1">flush/1</a></h3>
+<div class="spec">
+<p><tt>flush(TTL::non_neg_integer()) -&gt; ok | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="flush-2">flush/2</a></h3>
+<div class="spec">
+<p><tt>flush(TTL::non_neg_integer(), Timeout::pos_integer()) -&gt; ok | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="get-1">get/1</a></h3>
+<div class="spec">
+<p><tt>get(Key::binary()) -&gt; {ok, binary()} | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="get-2">get/2</a></h3>
+<div class="spec">
+<p><tt>get(Key::binary(), Timeout::pos_integer()) -&gt; {ok, binary()} | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="increment-1">increment/1</a></h3>
+<div class="spec">
+<p><tt>increment(Key::binary()) -&gt; {ok, integer()} | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="increment-2">increment/2</a></h3>
+<div class="spec">
+<p><tt>increment(Key::binary(), Amount::integer()) -&gt; {ok, integer()} | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="increment-3">increment/3</a></h3>
+<div class="spec">
+<p><tt>increment(Key::binary(), Amount::integer(), InitialValue::integer()) -&gt; {ok, integer()} | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="increment-4">increment/4</a></h3>
+<div class="spec">
+<p><tt>increment(Key::binary(), Amount::integer(), InitialValue::integer(), TTL::non_neg_integer()) -&gt; {ok, integer()} | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="increment-5">increment/5</a></h3>
+<div class="spec">
+<p><tt>increment(Key::binary(), Amount::integer(), InitialValue::integer(), TTL::non_neg_integer(), Timeout::pos_integer()) -&gt; {ok, integer()} | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="noop-0">noop/0</a></h3>
+<div class="spec">
+<p><tt>noop() -&gt; ok | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="noop-1">noop/1</a></h3>
+<div class="spec">
+<p><tt>noop(Timeout::pos_integer()) -&gt; ok | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="quit-0">quit/0</a></h3>
+<div class="spec">
+<p><tt>quit() -&gt; ok | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="quit-1">quit/1</a></h3>
+<div class="spec">
+<p><tt>quit(Timeout::pos_integer()) -&gt; ok | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="replace-2">replace/2</a></h3>
+<div class="spec">
+<p><tt>replace(Key::binary(), Value::binary()) -&gt; ok | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="replace-3">replace/3</a></h3>
+<div class="spec">
+<p><tt>replace(Key::binary(), Value::binary(), TTL::non_neg_integer()) -&gt; ok | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="replace-4">replace/4</a></h3>
+<div class="spec">
+<p><tt>replace(Key::binary(), Value::binary(), TTL::non_neg_integer(), Timeout::pos_integer()) -&gt; ok | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="set-2">set/2</a></h3>
+<div class="spec">
+<p><tt>set(Key::binary(), Value::binary()) -&gt; ok | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="set-3">set/3</a></h3>
+<div class="spec">
+<p><tt>set(Key::binary(), Value::binary(), TTL::non_neg_integer()) -&gt; ok | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="set-4">set/4</a></h3>
+<div class="spec">
+<p><tt>set(Key::binary(), Value::binary(), TTL::non_neg_integer(), Timeout::pos_integer()) -&gt; ok | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="version-0">version/0</a></h3>
+<div class="spec">
+<p><tt>version() -&gt; {ok, binary()} | <a href="#type-error">error()</a></tt><br></p>
+</div>
+
+<h3 class="function"><a name="version-1">version/1</a></h3>
+<div class="spec">
+<p><tt>version(Timeout::pos_integer()) -&gt; {ok, binary()} | <a href="#type-error">error()</a></tt><br></p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc, Jul 26 2014, 14:44:16.</i></p>
+</body>
+</html>
