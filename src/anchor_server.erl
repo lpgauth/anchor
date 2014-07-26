@@ -52,7 +52,7 @@ handle_call(Request, From, #state {
         req_counter = ReqCounter
     } = State) ->
 
-    ReqId = request_id(ReqCounter),
+    ReqId = req_id(ReqCounter),
     {ok, Packet} = anchor_protocol:encode(ReqId, Request),
     case gen_tcp:send(Socket, Packet) of
         {error, Reason} ->
@@ -144,7 +144,7 @@ decode_data(Data, #state {
     case queue:out(Queue) of
         {{value, {ReqId, From}}, Queue2} ->
             {ok, Rest, #response {
-                parsing = Parsing
+                state = Parsing
             } = Resp} = anchor_protocol:decode(ReqId, Data),
 
             case Parsing of
@@ -176,7 +176,7 @@ decode_data(Data, #state {
     } = State) ->
 
     {ok, Rest, #response {
-        parsing = Parsing
+        state = Parsing
     } = Resp2} = anchor_protocol:decode(ReqId, Data, Resp),
 
     case Parsing of
@@ -200,7 +200,7 @@ reply(From, Msg) ->
 reply_all(Queue, Msg) ->
     [gen_server:reply(From, Msg) || From <- queue:to_list(Queue)].
 
-request_id(N) ->
+req_id(N) ->
     (N + 1) rem ?MAX_32_BIT_INT.
 
 tcp_close(Queue) ->

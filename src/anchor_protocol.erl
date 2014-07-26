@@ -10,6 +10,7 @@
 ]).
 
 %% public
+-spec encode(pos_integer(), atom() | tuple()) -> {ok, binary()}.
 encode(ReqId, {add, Key, Value, TTL}) ->
     encode_request(#request {
         op_code = ?OP_ADD,
@@ -18,17 +19,47 @@ encode(ReqId, {add, Key, Value, TTL}) ->
         key     = Key,
         value   = Value
     });
+encode(ReqId, {decrement, Key, Amount, InitialValue, TTL}) ->
+    encode_request(#request {
+        op_code = ?OP_DECREMENT,
+        opaque  = ReqId,
+        key     = Key,
+        extras  = <<Amount:64, InitialValue:64, TTL:32>>
+    });
 encode(ReqId, {delete, Key}) ->
     encode_request(#request {
         op_code = ?OP_DELETE,
         opaque  = ReqId,
         key     = Key
     });
+encode(ReqId, {flush, TTL}) ->
+    encode_request(#request {
+        op_code = ?OP_FLUSH,
+        opaque  = ReqId,
+        extras  = <<TTL:32>>
+    });
 encode(ReqId, {get, Key}) ->
     encode_request(#request {
         op_code = ?OP_GET,
         opaque  = ReqId,
         key     = Key
+    });
+encode(ReqId, {increment, Key, Amount, InitialValue, TTL}) ->
+    encode_request(#request {
+        op_code = ?OP_INCREMENT,
+        opaque  = ReqId,
+        key     = Key,
+        extras  = <<Amount:64, InitialValue:64, TTL:32>>
+    });
+encode(ReqId, noop) ->
+    encode_request(#request {
+        op_code = ?OP_NOOP,
+        opaque  = ReqId
+    });
+encode(ReqId, quit) ->
+    encode_request(#request {
+        op_code = ?OP_QUIT,
+        opaque  = ReqId
     });
 encode(ReqId, {replace, Key, Value, TTL}) ->
     encode_request(#request {
@@ -45,21 +76,28 @@ encode(ReqId, {set, Key, Value, TTL}) ->
         extras  = <<16#deadbeef:32, TTL:32>>,
         key     = Key,
         value   = Value
+    });
+encode(ReqId, version) ->
+    encode_request(#request {
+        op_code = ?OP_VERSION,
+        opaque  = ReqId
     }).
 
+-spec decode(pos_integer(), binary()) -> {ok, binary(), response()}.
 decode(ReqId, Data) ->
     decode(ReqId, Data, #response {
-        parsing = header
+        state = parsing_header
     }).
 
+-spec decode(pos_integer(), binary(), response()) -> {ok, binary(), response()}.
 decode(ReqId, Data, #response {
-        parsing = header
+        state = parsing_header
     } = Resp) when size(Data) >= ?HEADER_LENGTH ->
 
     {ok, Rest, Resp2} = decode_header(ReqId, Data, Resp),
     decode(ReqId, Rest, Resp2);
 decode(_ReqId, Data, #response {
-        parsing = body,
+        state = parsing_body,
         body_length = BodyLength
     } = Resp) when size(Data) >= BodyLength ->
 
@@ -93,7 +131,7 @@ decode_header(ReqId, Data, Resp) ->
         DataType:8, Status:16, BodyLength:32, ReqId:32, CAS:64>> = Header,
 
     {ok, Rest, Resp#response {
-        parsing = body,
+        state = parsing_body,
         op_code = OpCode,
         key_length = KeyLength,
         extras_length = ExtrasLength,
@@ -114,7 +152,7 @@ decode_body(Data, #response {
     <<Extras:ExtrasLength/binary, Key:KeyLength/binary, Value/binary>> = Body,
 
     {ok, Rest, Resp#response {
-        parsing = complete,
+        state = complete,
         extras = Extras,
         key = Key,
         value = Value

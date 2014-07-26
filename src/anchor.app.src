@@ -1,7 +1,7 @@
 {application, anchor, [
   {description, "memcached client"},
   {vsn, "0.1.3"},
-  {registered, []},
+  {registered, [anchor_server]},
   {applications, [
     kernel,
     stdlib
