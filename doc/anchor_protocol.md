@@ -1,8 +1,38 @@
 
 
 # Module anchor_protocol #
+* [Data Types](#types)
 * [Function Index](#index)
 * [Function Details](#functions)
+
+
+
+<a name="types"></a>
+
+## Data Types ##
+
+
+
+
+### <a name="type-error">error()</a> ###
+
+
+
+<pre><code>
+error() = {error, atom()}
+</code></pre>
+
+
+
+
+
+### <a name="type-response">response()</a> ###
+
+
+
+<pre><code>
+response() = #response{state = undefined | parsing_header | parsing_body | complete, op_code = any(), key_length = any(), extras_length = any(), data_type = any(), status = any(), body_length = any(), opaque = any(), cas = any(), extras = any(), key = any(), value = any()}
+</code></pre>
 
 
 <a name="index"></a>
