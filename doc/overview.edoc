@@ -1,0 +1,29 @@
+@author Louis-Philippe Gauthier
+@doc Non-blocking Erlang Memcached client
+
+[![Build Status](https://travis-ci.org/lpgauth/anchor.svg?branch=master)](https://travis-ci.org/lpgauth/anchor)
+
+<h2>Features</h2>
+
+<ul>
+  <li>Performance optimized</li>
+  <li>Binary protocol</li>
+  <li>Pipelining</li>
+</ul>
+
+<h2>Examples</h2>
+
+<pre lang="erlang"><![CDATA[
+1> application:start(anchor).
+ok
+2> anchor:get(<<"foo">>).
+{error,key_not_found}
+3> anchor:set(<<"foo">>, <<"bar">>, 3600).
+ok
+4> anchor:get(<<"foo">>).
+{ok,<<"bar">>}
+5> anchor:delete(<<"foo">>).
+ok
+]]></pre>
+
+@end

@@ -28,7 +28,7 @@ dialyze:
 
 doc:
 	@echo "Running rebar doc..."
-	@$(REBAR) doc
+	@$(REBAR) skip_deps=true doc
 
 eunit:
 	@echo "Running EUnit suite..."
