@@ -20,6 +20,7 @@
     port        = undefined,
     socket      = undefined,
     queue       = queue:new(),
+    queue_size  = 0,
     req_counter = 0,
     buffer      = <<>>,
     from        = undefined,
@@ -46,6 +47,12 @@ handle_call(_Request, _From, #state{
 
     Reply = {error, no_socket},
     {reply, Reply, State};
+handle_call(_Request, _From, #state{
+        queue_size = QueueSize
+    } = State) when QueueSize > ?MAX_QUEUE_SIZE ->
+
+    Reply = {error, queue_full},
+    {reply, Reply, State};
 handle_call(Request, From, #state {
         socket = Socket,
         queue = Queue,
@@ -68,8 +75,8 @@ handle_call(Request, From, #state {
                 response = undefined
             }};
         ok ->
-            {noreply, State#state {
-                queue = queue:in({ReqId, From}, Queue),
+            {ok, State2} = queue_in({ReqId, From}, State),
+            {noreply, State2#state {
                 req_counter = ReqCounter + 1
             }}
     end;
@@ -141,8 +148,8 @@ decode_data(Data, #state {
         from = undefined
     } = State) ->
 
-    case queue:out(Queue) of
-        {{value, {ReqId, From}}, Queue2} ->
+    case queue_out(Queue) of
+        {ok, {ReqId, From}, State2} ->
             {ok, Rest, #response {
                 state = Parsing
             } = Resp} = anchor_protocol:decode(ReqId, Data),
@@ -150,13 +157,11 @@ decode_data(Data, #state {
             case Parsing of
                 complete ->
                     reply(From, {ok, Resp}),
-                    decode_data(Rest, State#state {
-                        queue = Queue2,
+                    decode_data(Rest, State2#state {
                         buffer = <<>>
                     });
                 _ ->
-                    {noreply, State#state {
-                        queue = Queue2,
+                    {noreply, State2#state {
                         buffer = Rest,
                         from = From,
                         response = Resp#response {
@@ -164,7 +169,7 @@ decode_data(Data, #state {
                         }
                     }}
             end;
-        {empty, Queue} ->
+        {error, empty} ->
             warning_msg("empty queue", []),
             {noreply, State}
     end;
@@ -192,6 +197,31 @@ decode_data(Data, #state {
                 buffer = Rest,
                 response = Resp2
             }}
+    end.
+
+queue_in(Item, #state {
+        queue = Queue,
+        queue_size = QueueSize
+    } = State) ->
+
+    {ok, State#state {
+        queue = queue:in(Item, Queue),
+        queue_size = QueueSize + 1
+    }}.
+
+queue_out(#state {
+        queue = Queue,
+        queue_size = QueueSize
+    } = State) ->
+
+    case queue:out(Queue) of
+        {{value, Item}, Queue2} ->
+            {ok, Item , State#state {
+                queue = Queue2,
+                queue_size = QueueSize - 1
+            }};
+        {empty, Queue} ->
+            {error, emtpy}
     end.
 
 reply(From, Msg) ->
