@@ -155,7 +155,7 @@ decode_data(Data, #state {
         from = undefined
     } = State) ->
 
-    case queue_out(Queue) of
+    case queue_out(State) of
         {ok, {ReqId, From}, State2} ->
             {ok, Rest, #response {
                 state = Parsing
