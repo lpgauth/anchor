@@ -2,7 +2,7 @@
 -define(APP, anchor).
 -define(CHILD(Mod), {Mod, {Mod, start_link, []}, permanent, 5000, worker, [Mod]}).
 -define(MAX_32_BIT_INT, 4294967296).
--define(MAX_QUEUE_SIZE, 1024).
+-define(MAX_QUEUE_SIZE, 4096).
 -define(SERVER, anchor_server).
 
 -define(DEFAULT_INCREMENT, 1).
