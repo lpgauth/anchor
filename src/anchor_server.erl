@@ -151,7 +151,6 @@ terminate(_Reason, _State) ->
 decode_data(<<>>, State) ->
     {noreply, State};
 decode_data(Data, #state {
-        queue = Queue,
         from = undefined
     } = State) ->
 
