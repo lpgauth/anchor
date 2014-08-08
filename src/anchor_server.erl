@@ -93,7 +93,14 @@ handle_info(newsocket, #state {
         port = Port
     } = State) ->
 
-    Opts = [binary, {active, once}, {nodelay, true}, {packet, raw}],
+    Opts = [
+        binary,
+        {active, once},
+        {nodelay, true},
+        {packet, raw},
+        {send_timeout, ?DEFAULT_SEND_TIMEOUT},
+        {send_timeout_close, true}
+    ],
     case gen_tcp:connect(Ip, Port, Opts) of
         {ok, Socket} ->
             {noreply, State#state {
