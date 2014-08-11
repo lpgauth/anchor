@@ -1,4 +1,4 @@
--module(backpressure).
+-module(anchor_backpressure).
 
 -export([
     decrement/1,
