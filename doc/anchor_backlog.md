@@ -21,13 +21,21 @@
 
 ### function/3 ###
 
-`function(Tid, MaxBacklog, Fun) -> any()`
+
+<pre><code>
+function(Tid::atom(), MaxBacklog::pos_integer(), Fun::function()) -&gt; term() | {error, atom()}
+</code></pre>
+<br />
 
 
 <a name="new-1"></a>
 
 ### new/1 ###
 
-`new(Tid) -> any()`
+
+<pre><code>
+new(Tid::atom()) -&gt; ok
+</code></pre>
+<br />
 
 

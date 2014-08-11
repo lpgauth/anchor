@@ -8,6 +8,7 @@
 -define(KEY, backlog).
 
 %% public
+-spec function(atom(), pos_integer(), fun()) -> term() | {error, atom()}.
 function(Tid, MaxBacklog, Fun) ->
     case increment(Tid, MaxBacklog) of
         Value when Value =< MaxBacklog ->
@@ -20,14 +21,16 @@ function(Tid, MaxBacklog, Fun) ->
             {error, queue_full}
     end.
 
+-spec new(atom()) -> ok.
 new(Tid) ->
-    ets:new(Tid, [
+    Tid = ets:new(Tid, [
         named_table,
         public,
         {read_concurrency, true},
         {write_concurrency, true}
     ]),
-    ets:insert(Tid, {?KEY, 0}).
+    true = ets:insert(Tid, {?KEY, 0}),
+    ok.
 
 %% private
 decrement(Tid) ->

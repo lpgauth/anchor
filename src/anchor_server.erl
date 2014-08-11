@@ -224,7 +224,7 @@ queue_out(#state {
                 queue = Queue2
             }};
         {empty, Queue} ->
-            {error, emtpy}
+            {error, empty}
     end.
 
 reply(Ref, From, Msg) ->
