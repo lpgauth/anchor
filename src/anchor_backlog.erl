@@ -12,7 +12,11 @@
 function(Tid, MaxBacklog, Fun) ->
     case increment(Tid, MaxBacklog) of
         Value when Value =< MaxBacklog ->
-            Response = Fun(),
+            Response = try Fun()
+            catch
+                _Error:_Reason ->
+                    {error, badarg}
+            end,
             decrement(Tid),
             Response;
         {error, Reason} ->
