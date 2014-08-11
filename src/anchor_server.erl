@@ -28,7 +28,7 @@ call(Msg, Timeout) ->
     backpressure:function(?BACKLOG_TID, ?BACKLOG_MAX, fun () ->
         ?MODULE ! {call, Pid, Msg},
         receive
-            Response ->
+            {reply, Response} ->
                 Response
         after Timeout ->
             {error, timeout}
@@ -221,7 +221,7 @@ queue_out(#state {
     end.
 
 reply(From, Msg) ->
-    From ! Msg.
+    From ! {reply, Msg}.
 
 reply_all(Queue, Msg) ->
     [reply(From, Msg) || From <- queue:to_list(Queue)].
