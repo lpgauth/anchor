@@ -15,8 +15,8 @@ function(Tid, MaxBacklog, Fun) ->
             Response = Fun(),
             decrement(Tid),
             Response;
-        {error, tid_missing} ->
-            {error, table_missing};
+        {error, Reason} ->
+            {error, Reason};
         _Value ->
             {error, backlog_full}
     end.
@@ -43,5 +43,5 @@ safe_update_counter(Tid, UpdateOp) ->
     try ets:update_counter(Tid, ?KEY, UpdateOp)
     catch
         error:badarg ->
-            {error, tid_missing}
+            {error, table_missing}
     end.
