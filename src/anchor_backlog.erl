@@ -18,7 +18,7 @@ function(Tid, MaxBacklog, Fun) ->
         {error, tid_missing} ->
             {error, table_missing};
         _Value ->
-            {error, queue_full}
+            {error, backlog_full}
     end.
 
 -spec new(atom()) -> ok.
