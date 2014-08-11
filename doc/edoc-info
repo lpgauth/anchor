@@ -1,5 +1,5 @@
 %% encoding: UTF-8
 {application,anchor}.
 {packages,[]}.
-{modules,[anchor,anchor_app,anchor_backpressure,anchor_protocol,anchor_server,
+{modules,[anchor,anchor_app,anchor_backlog,anchor_protocol,anchor_server,
           anchor_sup]}.

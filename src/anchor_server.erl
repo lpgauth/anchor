@@ -28,7 +28,7 @@ call(Msg, Timeout) ->
     Ref = make_ref(),
     Pid = self(),
 
-    backpressure:function(?BACKLOG_TID, ?BACKLOG_MAX, fun () ->
+    anchor_backlog:function(?BACKLOG_TID, ?BACKLOG_MAX, fun () ->
         ?MODULE ! {call, Ref, Pid, Msg},
         receive
             {reply, Ref, Response} ->
@@ -46,7 +46,7 @@ start_link() ->
 init(Parent) ->
     register(?MODULE, self()),
     proc_lib:init_ack(Parent, {ok, self()}),
-    backpressure:new(?BACKLOG_TID),
+    anchor_backlog:new(?BACKLOG_TID),
     self() ! newsocket,
 
     loop(#state {
