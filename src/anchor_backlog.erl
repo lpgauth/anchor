@@ -1,9 +1,7 @@
 -module(anchor_backlog).
 
 -export([
-    decrement/1,
     function/3,
-    increment/2,
     new/1
 ]).
 
@@ -22,13 +20,6 @@ function(Tid, MaxBacklog, Fun) ->
             {error, queue_full}
     end.
 
-%% private
-decrement(Tid) ->
-    safe_update_counter(Tid, {2, -1, 0, 0}).
-
-increment(Tid, MaxBacklog) ->
-    safe_update_counter(Tid, {2, 1, MaxBacklog + 1, MaxBacklog + 1}).
-
 new(Tid) ->
     ets:new(Tid, [
         named_table,
@@ -37,6 +28,13 @@ new(Tid) ->
         {write_concurrency, true}
     ]),
     ets:insert(Tid, {?KEY, 0}).
+
+%% private
+decrement(Tid) ->
+    safe_update_counter(Tid, {2, -1, 0, 0}).
+
+increment(Tid, MaxBacklog) ->
+    safe_update_counter(Tid, {2, 1, MaxBacklog + 1, MaxBacklog + 1}).
 
 safe_update_counter(Tid, UpdateOp) ->
     try ets:update_counter(Tid, ?KEY, UpdateOp)
