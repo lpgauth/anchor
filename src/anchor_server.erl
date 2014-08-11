@@ -56,10 +56,9 @@ init(Parent) ->
 
 %% private
 loop(State) ->
-    receive
-        Msg ->
-            {ok, State2} = handle_msg(Msg, State),
-            loop(State2)
+    receive Msg ->
+        {ok, State2} = handle_msg(Msg, State),
+        loop(State2)
     end.
 
 handle_msg({call, Ref, From, _Msg}, #state {
