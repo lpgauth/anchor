@@ -10,8 +10,8 @@
 -define(DEFAULT_IP, "127.0.0.1").
 -define(DEFAULT_PORT, 11211).
 -define(DEFAULT_RECONNECT, 5000).
--define(DEFAULT_SEND_TIMEOUT, 100).
--define(DEFAULT_TIMEOUT, 10000).
+-define(DEFAULT_SEND_TIMEOUT, 20).
+-define(DEFAULT_TIMEOUT, 1000).
 -define(DEFAULT_TTL, 0).
 
 % protocol

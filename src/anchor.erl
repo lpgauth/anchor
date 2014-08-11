@@ -167,16 +167,11 @@ version(Timeout) ->
 
 %% private
 call(Msg, Timeout) ->
-    try gen_server:call(?SERVER, Msg, Timeout) of
+    case anchor_server:call(Msg, Timeout) of
         {ok, Response} ->
             reply(Response);
         {error, Reason} ->
             {error, Reason}
-    catch
-        exit:{noproc, _} ->
-            {error, not_started};
-        exit:{timeout, _} ->
-            {error, timeout}
     end.
 
 reply(#response {status = Status} = Response) ->

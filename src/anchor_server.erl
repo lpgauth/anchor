@@ -2,17 +2,9 @@
 -include("anchor.hrl").
 
 -export([
-    start_link/0
-]).
-
--behaviour(gen_server).
--export([
-    init/1,
-    handle_call/3,
-    handle_cast/2,
-    handle_info/2,
-    code_change/3,
-    terminate/2
+    call/2,
+    start_link/0,
+    init/1
 ]).
 
 -record(state, {
@@ -20,54 +12,75 @@
     port        = undefined,
     socket      = undefined,
     queue       = queue:new(),
-    queue_size  = 0,
     req_counter = 0,
     buffer      = <<>>,
     from        = undefined,
     response    = undefined
 }).
 
+-define(BACKLOG_MAX, 4096).
+-define(BACKLOG_TID, anchor_backlog).
+
 %% public
+-spec call(term(), pos_integer()) -> {ok, term()} | {error, atom()}.
+call(Msg, Timeout) ->
+    Pid = self(),
+    backpressure:function(?BACKLOG_TID, ?BACKLOG_MAX, fun () ->
+        ?MODULE ! {call, Pid, Msg},
+        receive
+            Response ->
+                Response
+        after Timeout ->
+            {error, timeout}
+        end
+    end).
+
 -spec start_link() -> {ok, pid()}.
 start_link() ->
-    gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
+    proc_lib:start_link(?MODULE, init, [self()]).
 
-%% gen_server callbacks
-init([]) ->
+-spec init(pid()) -> no_return().
+init(Parent) ->
+    register(?MODULE, self()),
+    proc_lib:init_ack(Parent, {ok, self()}),
+    backpressure:new(?BACKLOG_TID),
     self() ! newsocket,
 
-    {ok, #state {
+    loop(#state {
         ip = application:get_env(?APP, ip, ?DEFAULT_IP),
         port = application:get_env(?APP, port, ?DEFAULT_PORT)
-    }}.
+    }).
 
-handle_call(_Request, _From, #state{
+%% private
+loop(State) ->
+    receive
+        Msg ->
+            {ok, State2} = handle_msg(Msg, State),
+            loop(State2)
+    end.
+
+handle_msg({call, From, _Msg}, #state {
         socket = undefined
     } = State) ->
 
-    Reply = {error, no_socket},
-    {reply, Reply, State};
-handle_call(_Request, _From, #state{
-        queue_size = QueueSize
-    } = State) when QueueSize > ?MAX_QUEUE_SIZE ->
-
-    Reply = {error, queue_full},
-    {reply, Reply, State};
-handle_call(Request, From, #state {
+    reply(From, {error, no_socket}),
+    {ok, State};
+handle_msg({call, From, Msg}, #state {
         socket = Socket,
         queue = Queue,
         req_counter = ReqCounter
     } = State) ->
 
     ReqId = req_id(ReqCounter),
-    {ok, Packet} = anchor_protocol:encode(ReqId, Request),
+    {ok, Packet} = anchor_protocol:encode(ReqId, Msg),
     case gen_tcp:send(Socket, Packet) of
         {error, Reason} ->
             error_msg("tcp send error: ~p", [Reason]),
             gen_tcp:close(Socket),
             tcp_close(Queue),
-            Reply = {error, Reason},
-            {reply, Reply, State#state {
+            reply(From, {error, Reason}),
+
+            {ok, State#state {
                 socket = undefined,
                 queue = queue:new(),
                 buffer = <<>>,
@@ -76,19 +89,12 @@ handle_call(Request, From, #state {
             }};
         ok ->
             {ok, State2} = queue_in({ReqId, From}, State),
-            {noreply, State2#state {
+
+            {ok, State2#state {
                 req_counter = ReqCounter + 1
             }}
     end;
-handle_call(Call, _From, State) ->
-    warning_msg("unexpected call: ~p~n", [Call]),
-    {noreply, State}.
-
-handle_cast(Cast, State) ->
-    warning_msg("unexpected cast: ~p~n", [Cast]),
-    {noreply, State}.
-
-handle_info(newsocket, #state {
+handle_msg(newsocket, #state {
         ip = Ip,
         port = Port
     } = State) ->
@@ -103,53 +109,44 @@ handle_info(newsocket, #state {
     ],
     case gen_tcp:connect(Ip, Port, Opts) of
         {ok, Socket} ->
-            {noreply, State#state {
+            {ok, State#state {
                 socket = Socket
             }};
         {error, Reason} ->
             error_msg("tcp connect error: ~p", [Reason]),
             erlang:send_after(?DEFAULT_RECONNECT, self(), newsocket),
-            {noreply, State}
+            {ok, State}
     end;
-handle_info({tcp, Socket, Data}, #state {
+handle_msg({tcp, Socket, Data}, #state {
         socket = Socket,
         buffer = Buffer
     } = State) ->
 
     inet:setopts(Socket, [{active, once}]),
     decode_data(<<Buffer/binary, Data/binary>>, State);
-handle_info({tcp_closed, Socket}, #state {
+handle_msg({tcp_closed, Socket}, #state {
         socket = Socket,
         queue = Queue
     } = State) ->
 
     tcp_close(Queue),
-    {noreply, State#state {
+    {ok, State#state {
         socket = undefined,
         queue = queue:new(),
         buffer = <<>>,
         from = undefined,
         response = undefined
     }};
-handle_info({tcp_error, Socket, Reason}, #state {
+handle_msg({tcp_error, Socket, Reason}, #state {
         socket = Socket
     } = State) ->
 
     error_msg("tcp error: ~p", [Reason]),
-    {noreply, State};
-handle_info(Info, State) ->
-    warning_msg("unexpected info: ~p~n", [Info]),
-    {noreply, State}.
-
-code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
-
-terminate(_Reason, _State) ->
-    ok.
 
 %% private
 decode_data(<<>>, State) ->
-    {noreply, State};
+    {ok, State};
 decode_data(Data, #state {
         from = undefined
     } = State) ->
@@ -167,7 +164,7 @@ decode_data(Data, #state {
                         buffer = <<>>
                     });
                 _ ->
-                    {noreply, State2#state {
+                    {ok, State2#state {
                         buffer = Rest,
                         from = From,
                         response = Resp#response {
@@ -177,7 +174,7 @@ decode_data(Data, #state {
             end;
         {error, empty} ->
             warning_msg("empty queue", []),
-            {noreply, State}
+            {ok, State}
     end;
 decode_data(Data, #state {
         from = From,
@@ -199,42 +196,35 @@ decode_data(Data, #state {
                 response = undefined
             });
         _ ->
-            {noreply, State#state {
+            {ok, State#state {
                 buffer = Rest,
                 response = Resp2
             }}
     end.
 
-queue_in(Item, #state {
-        queue = Queue,
-        queue_size = QueueSize
-    } = State) ->
-
+queue_in(Item, #state {queue = Queue} = State) ->
     {ok, State#state {
-        queue = queue:in(Item, Queue),
-        queue_size = QueueSize + 1
+        queue = queue:in(Item, Queue)
     }}.
 
 queue_out(#state {
-        queue = Queue,
-        queue_size = QueueSize
+        queue = Queue
     } = State) ->
 
     case queue:out(Queue) of
         {{value, Item}, Queue2} ->
             {ok, Item , State#state {
-                queue = Queue2,
-                queue_size = QueueSize - 1
+                queue = Queue2
             }};
         {empty, Queue} ->
             {error, emtpy}
     end.
 
 reply(From, Msg) ->
-    gen_server:reply(From, Msg).
+    From ! Msg.
 
 reply_all(Queue, Msg) ->
-    [gen_server:reply(From, Msg) || From <- queue:to_list(Queue)].
+    [reply(From, Msg) || From <- queue:to_list(Queue)].
 
 req_id(N) ->
     (N + 1) rem ?MAX_32_BIT_INT.
