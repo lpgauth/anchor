@@ -14,6 +14,7 @@
     queue       = queue:new(),
     req_counter = 0,
     buffer      = <<>>,
+    ref         = undefined,
     from        = undefined,
     response    = undefined
 }).
@@ -24,11 +25,13 @@
 %% public
 -spec call(term(), pos_integer()) -> {ok, term()} | {error, atom()}.
 call(Msg, Timeout) ->
+    Ref = make_ref(),
     Pid = self(),
+
     backpressure:function(?BACKLOG_TID, ?BACKLOG_MAX, fun () ->
-        ?MODULE ! {call, Pid, Msg},
+        ?MODULE ! {call, Ref, Pid, Msg},
         receive
-            {reply, Response} ->
+            {reply, Ref, Response} ->
                 Response
         after Timeout ->
             {error, timeout}
@@ -59,13 +62,13 @@ loop(State) ->
             loop(State2)
     end.
 
-handle_msg({call, From, _Msg}, #state {
+handle_msg({call, Ref, From, _Msg}, #state {
         socket = undefined
     } = State) ->
 
-    reply(From, {error, no_socket}),
+    reply(Ref, From, {error, no_socket}),
     {ok, State};
-handle_msg({call, From, Msg}, #state {
+handle_msg({call, Ref, From, Msg}, #state {
         socket = Socket,
         queue = Queue,
         req_counter = ReqCounter
@@ -78,17 +81,18 @@ handle_msg({call, From, Msg}, #state {
             error_msg("tcp send error: ~p", [Reason]),
             gen_tcp:close(Socket),
             tcp_close(Queue),
-            reply(From, {error, Reason}),
+            reply(Ref, From, {error, Reason}),
 
             {ok, State#state {
                 socket = undefined,
                 queue = queue:new(),
                 buffer = <<>>,
+                ref = undefined,
                 from = undefined,
                 response = undefined
             }};
         ok ->
-            {ok, State2} = queue_in({ReqId, From}, State),
+            {ok, State2} = queue_in({ReqId, Ref, From}, State),
 
             {ok, State2#state {
                 req_counter = ReqCounter + 1
@@ -134,6 +138,7 @@ handle_msg({tcp_closed, Socket}, #state {
         socket = undefined,
         queue = queue:new(),
         buffer = <<>>,
+        ref = undefined,
         from = undefined,
         response = undefined
     }};
@@ -148,24 +153,25 @@ handle_msg({tcp_error, Socket, Reason}, #state {
 decode_data(<<>>, State) ->
     {ok, State};
 decode_data(Data, #state {
-        from = undefined
+        ref = undefined
     } = State) ->
 
     case queue_out(State) of
-        {ok, {ReqId, From}, State2} ->
+        {ok, {ReqId, Ref, From}, State2} ->
             {ok, Rest, #response {
                 state = Parsing
             } = Resp} = anchor_protocol:decode(ReqId, Data),
 
             case Parsing of
                 complete ->
-                    reply(From, {ok, Resp}),
+                    reply(Ref, From, {ok, Resp}),
                     decode_data(Rest, State2#state {
                         buffer = <<>>
                     });
                 _ ->
                     {ok, State2#state {
                         buffer = Rest,
+                        ref = Ref,
                         from = From,
                         response = Resp#response {
                             opaque = ReqId
@@ -177,6 +183,7 @@ decode_data(Data, #state {
             {ok, State}
     end;
 decode_data(Data, #state {
+        ref = Ref,
         from = From,
         response = #response {
             opaque = ReqId
@@ -189,8 +196,9 @@ decode_data(Data, #state {
 
     case Parsing of
         complete ->
-            reply(From, {ok, Resp2}),
+            reply(Ref, From, {ok, Resp2}),
             decode_data(Rest, State#state {
+                ref = undefined,
                 from = undefined,
                 buffer = <<>>,
                 response = undefined
@@ -213,18 +221,18 @@ queue_out(#state {
 
     case queue:out(Queue) of
         {{value, Item}, Queue2} ->
-            {ok, Item , State#state {
+            {ok, Item, State#state {
                 queue = Queue2
             }};
         {empty, Queue} ->
             {error, emtpy}
     end.
 
-reply(From, Msg) ->
-    From ! {reply, Msg}.
+reply(Ref, From, Msg) ->
+    From ! {reply, Ref, Msg}.
 
 reply_all(Queue, Msg) ->
-    [reply(From, Msg) || From <- queue:to_list(Queue)].
+    [reply(Ref, From, Msg) || {Ref, From} <- queue:to_list(Queue)].
 
 req_id(N) ->
     (N + 1) rem ?MAX_32_BIT_INT.
