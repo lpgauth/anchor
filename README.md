@@ -13,6 +13,7 @@ Non-blocking Erlang Memcached client
 * Performance optimized
 * Binary protocol
 * Pipelining
+* Backpressure (OOM protection)
 
 
 
