@@ -6,7 +6,6 @@
     new/1
 ]).
 
-
 %% public
 -spec function(atom(), pos_integer(), fun()) -> term() | {error, atom()}.
 function(TableId, MaxBacklog, Fun) ->
