@@ -3,8 +3,8 @@
 
 -export([
     call/2,
-    start_link/0,
-    init/1
+    init/1,
+    start_link/0
 ]).
 
 -record(state, {
@@ -19,16 +19,13 @@
     response    = undefined
 }).
 
--define(BACKLOG_MAX, 256).
--define(BACKLOG_TID, anchor_backlog).
-
 %% public
 -spec call(term(), pos_integer()) -> {ok, term()} | {error, atom()}.
 call(Msg, Timeout) ->
     Ref = make_ref(),
     Pid = self(),
 
-    anchor_backlog:function(?BACKLOG_TID, ?BACKLOG_MAX, fun () ->
+    anchor_backlog:function(?BACKLOG_TABLE_ID, ?BACKLOG_MAX_SIZE, fun () ->
         ?MODULE ! {call, Ref, Pid, Msg},
         receive
             {reply, Ref, Response} ->
@@ -38,15 +35,11 @@ call(Msg, Timeout) ->
         end
     end).
 
--spec start_link() -> {ok, pid()}.
-start_link() ->
-    proc_lib:start_link(?MODULE, init, [self()]).
-
 -spec init(pid()) -> no_return().
 init(Parent) ->
     register(?MODULE, self()),
     proc_lib:init_ack(Parent, {ok, self()}),
-    anchor_backlog:new(?BACKLOG_TID),
+    anchor_backlog:new(?BACKLOG_TABLE_ID),
     self() ! newsocket,
 
     loop(#state {
@@ -54,11 +47,72 @@ init(Parent) ->
         port = application:get_env(?APP, port, ?DEFAULT_PORT)
     }).
 
+-spec start_link() -> {ok, pid()}.
+start_link() ->
+    proc_lib:start_link(?MODULE, init, [self()]).
+
 %% private
-loop(State) ->
-    receive Msg ->
-        {ok, State2} = handle_msg(Msg, State),
-        loop(State2)
+error_msg(Format, Data) ->
+    error_logger:error_msg(Format, Data).
+
+handle_data(<<>>, State) ->
+    {ok, State};
+handle_data(Data, #state {
+        ref = undefined
+    } = State) ->
+
+    case queue_out(State) of
+        {ok, {ReqId, Ref, From}, State2} ->
+            {ok, Rest, #response {
+                state = Parsing
+            } = Resp} = anchor_protocol:decode(ReqId, Data),
+
+            case Parsing of
+                complete ->
+                    reply(Ref, From, {ok, Resp}),
+                    handle_data(Rest, State2#state {
+                        buffer = <<>>
+                    });
+                _ ->
+                    {ok, State2#state {
+                        buffer = Rest,
+                        ref = Ref,
+                        from = From,
+                        response = Resp#response {
+                            opaque = ReqId
+                        }
+                    }}
+            end;
+        {error, empty} ->
+            warning_msg("empty queue", []),
+            {ok, State}
+    end;
+handle_data(Data, #state {
+        ref = Ref,
+        from = From,
+        response = #response {
+            opaque = ReqId
+        } = Resp
+    } = State) ->
+
+    {ok, Rest, #response {
+        state = Parsing
+    } = Resp2} = anchor_protocol:decode(ReqId, Data, Resp),
+
+    case Parsing of
+        complete ->
+            reply(Ref, From, {ok, Resp2}),
+            handle_data(Rest, State#state {
+                ref = undefined,
+                from = undefined,
+                buffer = <<>>,
+                response = undefined
+            });
+        _ ->
+            {ok, State#state {
+                buffer = Rest,
+                response = Resp2
+            }}
     end.
 
 handle_msg({call, Ref, From, _Msg}, #state {
@@ -126,7 +180,7 @@ handle_msg({tcp, Socket, Data}, #state {
     } = State) ->
 
     inet:setopts(Socket, [{active, once}]),
-    decode_data(<<Buffer/binary, Data/binary>>, State);
+    handle_data(<<Buffer/binary, Data/binary>>, State);
 handle_msg({tcp_closed, Socket}, #state {
         socket = Socket,
         queue = Queue
@@ -148,65 +202,10 @@ handle_msg({tcp_error, Socket, Reason}, #state {
     error_msg("tcp error: ~p", [Reason]),
     {ok, State}.
 
-%% private
-decode_data(<<>>, State) ->
-    {ok, State};
-decode_data(Data, #state {
-        ref = undefined
-    } = State) ->
-
-    case queue_out(State) of
-        {ok, {ReqId, Ref, From}, State2} ->
-            {ok, Rest, #response {
-                state = Parsing
-            } = Resp} = anchor_protocol:decode(ReqId, Data),
-
-            case Parsing of
-                complete ->
-                    reply(Ref, From, {ok, Resp}),
-                    decode_data(Rest, State2#state {
-                        buffer = <<>>
-                    });
-                _ ->
-                    {ok, State2#state {
-                        buffer = Rest,
-                        ref = Ref,
-                        from = From,
-                        response = Resp#response {
-                            opaque = ReqId
-                        }
-                    }}
-            end;
-        {error, empty} ->
-            warning_msg("empty queue", []),
-            {ok, State}
-    end;
-decode_data(Data, #state {
-        ref = Ref,
-        from = From,
-        response = #response {
-            opaque = ReqId
-        } = Resp
-    } = State) ->
-
-    {ok, Rest, #response {
-        state = Parsing
-    } = Resp2} = anchor_protocol:decode(ReqId, Data, Resp),
-
-    case Parsing of
-        complete ->
-            reply(Ref, From, {ok, Resp2}),
-            decode_data(Rest, State#state {
-                ref = undefined,
-                from = undefined,
-                buffer = <<>>,
-                response = undefined
-            });
-        _ ->
-            {ok, State#state {
-                buffer = Rest,
-                response = Resp2
-            }}
+loop(State) ->
+    receive Msg ->
+        {ok, State2} = handle_msg(Msg, State),
+        loop(State2)
     end.
 
 queue_in(Item, #state {queue = Queue} = State) ->
@@ -239,10 +238,6 @@ req_id(N) ->
 tcp_close(Queue) ->
     reply_all(Queue, {error, tcp_closed}),
     erlang:send_after(?DEFAULT_RECONNECT, self(), newsocket).
-
-%% logging
-error_msg(Format, Data) ->
-    error_logger:error_msg(Format, Data).
 
 warning_msg(Format, Data) ->
     error_logger:warning_msg(Format, Data).
