@@ -10,7 +10,7 @@
 %% public
 -spec function(atom(), pos_integer(), fun()) -> term() | {error, atom()}.
 function(Tid, MaxBacklog, Fun) ->
-    case increment(Tid, MaxBacklog) of
+    Result = case increment(Tid, MaxBacklog) of
         Value when Value =< MaxBacklog ->
             Response = try Fun()
             catch
@@ -22,8 +22,10 @@ function(Tid, MaxBacklog, Fun) ->
         {error, Reason} ->
             {error, Reason};
         _Value ->
+            decrement(Tid),
             {error, backlog_full}
-    end.
+    end,
+    Result.
 
 -spec new(atom()) -> ok.
 new(Tid) ->
