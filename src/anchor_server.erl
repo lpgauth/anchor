@@ -19,7 +19,7 @@
     response    = undefined
 }).
 
--define(BACKLOG_MAX, 4096).
+-define(BACKLOG_MAX, 256).
 -define(BACKLOG_TID, anchor_backlog).
 
 %% public
