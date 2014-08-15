@@ -40,7 +40,7 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#call-2">call/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#call-2">call/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#queue_size-0">queue_size/0</a></td><td></td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
@@ -65,6 +65,17 @@ call(Msg::term(), Timeout::pos_integer()) -&gt; {ok, term()} | {error, atom()}
 
 <pre><code>
 init(Parent::pid()) -&gt; no_return()
+</code></pre>
+<br />
+
+
+<a name="queue_size-0"></a>
+
+### queue_size/0 ###
+
+
+<pre><code>
+queue_size() -&gt; non_neg_integer()
 </code></pre>
 <br />
 

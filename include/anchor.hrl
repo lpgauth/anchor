@@ -1,11 +1,10 @@
 % application
 -define(APP, anchor).
--define(BACKLOG_KEY, backlog).
--define(BACKLOG_MAX_SIZE, 256).
+-define(BACKLOG_MAX_SIZE, 1024).
 -define(BACKLOG_TABLE_ID, anchor_backlog).
 -define(CHILD(Mod), {Mod, {Mod, start_link, []}, permanent, 5000, worker, [Mod]}).
 -define(MAX_32_BIT_INT, 4294967296).
--define(MAX_QUEUE_SIZE, 4096).
+-define(RETRY, 3).
 -define(SERVER, anchor_server).
 
 -define(DEFAULT_INCREMENT, 1).

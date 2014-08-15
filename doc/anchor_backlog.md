@@ -1,8 +1,38 @@
 
 
 # Module anchor_backlog #
+* [Data Types](#types)
 * [Function Index](#index)
 * [Function Details](#functions)
+
+
+
+<a name="types"></a>
+
+## Data Types ##
+
+
+
+
+### <a name="type-error">error()</a> ###
+
+
+
+<pre><code>
+error() = {error, atom()}
+</code></pre>
+
+
+
+
+
+### <a name="type-response">response()</a> ###
+
+
+
+<pre><code>
+response() = #response{state = undefined | parsing_header | parsing_body | complete, op_code = any(), key_length = any(), extras_length = any(), data_type = any(), status = any(), body_length = any(), opaque = any(), cas = any(), extras = any(), key = any(), value = any()}
+</code></pre>
 
 
 <a name="index"></a>
@@ -10,31 +40,31 @@
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#function-3">function/3</a></td><td></td></tr><tr><td valign="top"><a href="#new-1">new/1</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#apply-4">apply/4</a></td><td></td></tr><tr><td valign="top"><a href="#new-2">new/2</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
 
 ## Function Details ##
 
-<a name="function-3"></a>
+<a name="apply-4"></a>
 
-### function/3 ###
+### apply/4 ###
 
 
 <pre><code>
-function(Tid::atom(), MaxBacklog::pos_integer(), Fun::function()) -&gt; term() | {error, atom()}
+apply(TableId::atom(), Ref::<a href="erlang.md#type-ref">erlang:ref()</a>, MaxSize::pos_integer(), Fun::function()) -&gt; term() | {error, atom()}
 </code></pre>
 <br />
 
 
-<a name="new-1"></a>
+<a name="new-2"></a>
 
-### new/1 ###
+### new/2 ###
 
 
 <pre><code>
-new(Tid::atom()) -&gt; ok
+new(TableId::atom(), MaxSize::pos_integer()) -&gt; ok
 </code></pre>
 <br />
 

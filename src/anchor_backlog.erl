@@ -2,50 +2,55 @@
 -include("anchor.hrl").
 
 -export([
-    function/3,
-    new/1
+    apply/4,
+    new/2
 ]).
 
 %% public
--spec function(atom(), pos_integer(), fun()) -> term() | {error, atom()}.
-function(TableId, MaxBacklog, Fun) ->
-    Result = case increment(TableId) of
-        Value when Value =< MaxBacklog ->
+-spec apply(atom(), erlang:ref(), pos_integer(), fun()) -> term() | {error, atom()}.
+apply(TableId, Ref, MaxSize, Fun) ->
+    maybe_apply(TableId, Ref, MaxSize, Fun, ?RETRY).
+
+-spec new(atom(), pos_integer()) -> ok.
+new(TableId, MaxSize) ->
+    TableOpts = [named_table, public, {write_concurrency, true}],
+    TableId = ets:new(TableId, TableOpts),
+    [reset(TableId, Key) || Key <- lists:seq(1, MaxSize)],
+    ok.
+
+%% private
+increment(TableId, Key) ->
+    safe_update_counter(TableId, Key, {2, 1}).
+
+maybe_apply(_TableId, _Ref, _MaxSize, _Fun, 0) ->
+    {error, backlog_full};
+maybe_apply(TableId, Ref, MaxSize, Fun, Retry) ->
+    Key = random(Ref, MaxSize),
+    case increment(TableId, Key) of
+        {ok, 1} ->
             Response = try Fun()
             catch
                 _Error:_Reason ->
                     {error, badarg}
             end,
-            decrement(TableId),
+            reset(TableId, Key),
             Response;
+        {ok, _N} ->
+            maybe_apply(TableId, Ref, MaxSize, Fun, Retry - 1);
         {error, Reason} ->
-            {error, Reason};
-        _Value ->
-            decrement(TableId),
-            {error, backlog_full}
-    end,
-    Result.
+            {error, Reason}
+    end.
 
--spec new(atom()) -> ok.
-new(TableId) ->
-    TableId = ets:new(TableId, [
-        named_table,
-        public,
-        {read_concurrency, true},
-        {write_concurrency, true}
-    ]),
-    true = ets:insert(TableId, {?BACKLOG_KEY, 0}),
-    ok.
+random(Ref, Number) ->
+    erlang:phash2(Ref, Number) + 1.
 
-%% private
-decrement(TableId) ->
-    safe_update_counter(TableId, {2, -1, 0, 0}).
+reset(TableId, Key) ->
+    true = ets:insert(TableId, {Key, 0}).
 
-increment(TableId) ->
-    safe_update_counter(TableId, {2, 1}).
-
-safe_update_counter(TableId, UpdateOp) ->
-    try ets:update_counter(TableId, ?BACKLOG_KEY, UpdateOp)
+safe_update_counter(TableId, Key, UpdateOp) ->
+    try ets:update_counter(TableId, Key, UpdateOp) of
+        N ->
+            {ok, N}
     catch
         error:badarg ->
             {error, table_missing}
