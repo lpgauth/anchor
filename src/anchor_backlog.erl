@@ -7,7 +7,7 @@
 ]).
 
 %% public
--spec apply(atom(), erlang:ref(), pos_integer(), fun()) -> term() | {error, atom()}.
+-spec apply(atom(), reference(), pos_integer(), fun()) -> term() | {error, atom()}.
 apply(TableId, Ref, MaxSize, Fun) ->
     maybe_apply(TableId, Ref, MaxSize, Fun, ?RETRY).
 

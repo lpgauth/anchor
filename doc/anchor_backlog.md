@@ -53,7 +53,7 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 
 
 <pre><code>
-apply(TableId::atom(), Ref::<a href="erlang.md#type-ref">erlang:ref()</a>, MaxSize::pos_integer(), Fun::function()) -&gt; term() | {error, atom()}
+apply(TableId::atom(), Ref::reference(), MaxSize::pos_integer(), Fun::function()) -&gt; term() | {error, atom()}
 </code></pre>
 <br />
 
