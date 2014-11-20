@@ -5,35 +5,46 @@
     add/2,
     add/3,
     add/4,
+    add/5,
     decrement/1,
     decrement/2,
     decrement/3,
     decrement/4,
     decrement/5,
+    decrement/6,
     delete/1,
     delete/2,
+    delete/3,
     flush/0,
     flush/1,
     flush/2,
+    flush/3,
     get/1,
     get/2,
+    % get/3,
     increment/1,
     increment/2,
     increment/3,
     increment/4,
     increment/5,
+    % increment/6,
     noop/0,
     noop/1,
+    % noop/2,
     quit/0,
     quit/1,
+    % quit/2,
     replace/2,
     replace/3,
     replace/4,
+    % replace/5,
     set/2,
     set/3,
     set/4,
+    % set/5,
     version/0,
-    version/1
+    version/1 %,
+    % version/2
 ]).
 
 %% public
@@ -47,7 +58,11 @@ add(Key, Value, TTL) ->
 
 -spec add(binary(), binary(), non_neg_integer(), pos_integer()) -> ok | error().
 add(Key, Value, TTL, Timeout) ->
-    call({add, Key, Value, TTL}, Timeout).
+    add(Key, Value, TTL, Timeout, []).
+
+-spec add(binary(), binary(), non_neg_integer(), pos_integer(), options()) -> ok | error().
+add(Key, Value, TTL, Timeout, Options) ->
+    call({add, Key, Value, TTL}, Timeout, Options).
 
 -spec decrement(binary()) -> {ok, integer()} | error().
 decrement(Key) ->
@@ -67,7 +82,11 @@ decrement(Key, Amount, InitialValue, TTL) ->
 
 -spec decrement(binary(), integer(), integer(), non_neg_integer(), pos_integer()) -> {ok, integer()} | error().
 decrement(Key, Amount, InitialValue, TTL, Timeout) ->
-    call({decrement, Key, Amount, InitialValue, TTL}, Timeout).
+    decrement(Key, Amount, InitialValue, TTL, Timeout, []).
+
+-spec decrement(binary(), integer(), integer(), non_neg_integer(), pos_integer(), options()) -> {ok, integer()} | error().
+decrement(Key, Amount, InitialValue, TTL, Timeout, Options) ->
+    call({decrement, Key, Amount, InitialValue, TTL}, Timeout, Options).
 
 -spec delete(binary()) -> ok | error().
 delete(Key) ->
@@ -75,7 +94,11 @@ delete(Key) ->
 
 -spec delete(binary(), pos_integer()) -> ok | error().
 delete(Key, Timeout) ->
-    call({delete, Key}, Timeout).
+    delete(Key, Timeout, []).
+
+-spec delete(binary(), pos_integer(), options()) -> ok | error().
+delete(Key, Timeout, Options) ->
+    call({delete, Key}, Timeout, Options).
 
 -spec flush() -> ok | error().
 flush() ->
@@ -87,7 +110,11 @@ flush(TTL) ->
 
 -spec flush(non_neg_integer(), pos_integer()) -> ok | error().
 flush(TTL, Timeout) ->
-    call({flush, TTL}, Timeout).
+    flush(TTL, Timeout, []).
+
+-spec flush(non_neg_integer(), pos_integer(), options()) -> ok | error().
+flush(TTL, Timeout, Options) ->
+    call({flush, TTL}, Timeout, Options).
 
 -spec quit() -> ok | error().
 quit() ->
@@ -95,7 +122,11 @@ quit() ->
 
 -spec quit(pos_integer()) -> ok | error().
 quit(Timeout) ->
-    call(quit, Timeout).
+    quit(Timeout, []).
+
+-spec quit(pos_integer(), options()) -> ok | error().
+quit(Timeout, Options) ->
+    call(quit, Timeout, Options).
 
 -spec get(binary()) -> {ok, binary()} | error().
 get(Key) ->
@@ -103,7 +134,11 @@ get(Key) ->
 
 -spec get(binary(), pos_integer()) -> {ok, binary()} | error().
 get(Key, Timeout) ->
-    call({get, Key}, Timeout).
+    get(Key, Timeout, []).
+
+-spec get(binary(), pos_integer(), options()) -> {ok, binary()} | error().
+get(Key, Timeout, Options) ->
+    call({get, Key}, Timeout, Options).
 
 -spec increment(binary()) -> {ok, integer()} | error().
 increment(Key) ->
@@ -123,7 +158,12 @@ increment(Key, Amount, InitialValue, TTL) ->
 
 -spec increment(binary(), integer(), integer(), non_neg_integer(), pos_integer()) -> {ok, integer()} | error().
 increment(Key, Amount, InitialValue, TTL, Timeout) ->
-    call({increment, Key, Amount, InitialValue, TTL}, Timeout).
+    increment(Key, Amount, InitialValue, TTL, Timeout, []).
+
+-spec increment(binary(), integer(), integer(), non_neg_integer(), pos_integer(), options()) -> {ok, integer()} | error().
+increment(Key, Amount, InitialValue, TTL, Timeout, Options) ->
+    Msg = {increment, Key, Amount, InitialValue, TTL},
+    call(Msg, Timeout, Options).
 
 -spec noop() -> ok | error().
 noop() ->
@@ -131,7 +171,11 @@ noop() ->
 
 -spec noop(pos_integer()) -> ok | error().
 noop(Timeout) ->
-    call(noop, Timeout).
+    noop(Timeout, []).
+
+-spec noop(pos_integer(), options()) -> ok | error().
+noop(Timeout, Options) ->
+    call(noop, Timeout, Options).
 
 -spec replace(binary(), binary()) -> ok | error().
 replace(Key, Value) ->
@@ -143,7 +187,11 @@ replace(Key, Value, TTL) ->
 
 -spec replace(binary(), binary(), non_neg_integer(), pos_integer()) -> ok | error().
 replace(Key, Value, TTL, Timeout) ->
-    call({replace, Key, Value, TTL}, Timeout).
+    replace(Key, Value, TTL, Timeout, []).
+
+-spec replace(binary(), binary(), non_neg_integer(), pos_integer(), options()) -> ok | error().
+replace(Key, Value, TTL, Timeout, Options) ->
+    call({replace, Key, Value, TTL}, Timeout, Options).
 
 -spec set(binary(), binary()) -> ok | error().
 set(Key, Value) ->
@@ -155,7 +203,11 @@ set(Key, Value, TTL) ->
 
 -spec set(binary(), binary(), non_neg_integer(), pos_integer()) -> ok | error().
 set(Key, Value, TTL, Timeout) ->
-    call({set, Key, Value, TTL}, Timeout).
+    set(Key, Value, TTL, Timeout, []).
+
+-spec set(binary(), binary(), non_neg_integer(), pos_integer(), options()) -> ok | error().
+set(Key, Value, TTL, Timeout, Options) ->
+    call({set, Key, Value, TTL}, Timeout, Options).
 
 -spec version() -> {ok, binary()} | error().
 version() ->
@@ -163,11 +215,15 @@ version() ->
 
 -spec version(pos_integer()) -> {ok, binary()} | error().
 version(Timeout) ->
-    call(version, Timeout).
+    version(Timeout, []).
+
+-spec version(pos_integer(), options()) -> {ok, binary()} | error().
+version(Timeout, Options) ->
+    call(version, Timeout, Options).
 
 %% private
-call(Msg, Timeout) ->
-    case anchor_server:call(Msg, Timeout) of
+call(Msg, Timeout, Options) ->
+    case anchor_server:call(Msg, Timeout, Options) of
         {ok, Response} ->
             reply(Response);
         {error, Reason} ->

@@ -2,7 +2,7 @@
 -include("anchor.hrl").
 
 -export([
-    call/2,
+    call/3,
     init/1,
     queue_size/0,
     start_link/0
@@ -21,25 +21,34 @@
 }).
 
 %% public
--spec call(term(), pos_integer()) -> {ok, term()} | {error, atom()}.
-call(Msg, Timeout) ->
+-spec call(term(), pos_integer(), options()) -> {ok, term()} | {error, atom()}.
+call(Msg, Timeout, Options) ->
     Ref = make_ref(),
-    Pid = self(),
+    {Async, Pid} = case lookup(async, Options, undefined) of
+        undefined -> {false, self()};
+        AsyncPid -> {true, AsyncPid}
+    end,
 
     spawn(fun () ->
         anchor_backlog:apply(?BACKLOG_TABLE_ID, Ref,?BACKLOG_MAX_SIZE, fun () ->
             ?MODULE ! {call, Ref, self(), Msg},
             receive
                 {reply, Ref, Response} ->
-                    Pid ! {response, Ref, Response}
+                    Pid ! {anchor, Ref, Response}
             end
         end)
     end),
 
-    receive
-        {response, Ref, Response} -> Response
-    after Timeout ->
-        {error, timeout}
+    case Async of
+        true ->
+            {ok, Ref};
+        false ->
+            receive
+                {anchor, Ref, Response} ->
+                    Response
+            after Timeout ->
+                {error, timeout}
+            end
     end.
 
 -spec init(pid()) -> no_return().
@@ -214,6 +223,12 @@ decode_data(Data, #state {
                 buffer = Rest,
                 response = Resp2
             }}
+    end.
+
+lookup(Key, List, Default) ->
+    case lists:keyfind(Key, 1, List) of
+        false -> Default;
+        {_, Value} -> Value
     end.
 
 queue_in(Item, #state {

@@ -26,6 +26,30 @@ error() = {error, atom()}
 
 
 
+### <a name="type-option">option()</a> ###
+
+
+
+<pre><code>
+option() = {async, pid()}
+</code></pre>
+
+
+
+
+
+### <a name="type-options">options()</a> ###
+
+
+
+<pre><code>
+options() = [<a href="#type-option">option()</a>]
+</code></pre>
+
+
+
+
+
 ### <a name="type-response">response()</a> ###
 
 

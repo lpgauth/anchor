@@ -81,10 +81,13 @@
 }).
 
 % types
--type error () :: {error, atom()}.
+-type error ()   :: {error, atom()}.
+-type option()   :: {async, pid()}.
+-type options()  :: [option()].
 -type response() :: #response {}.
 
 -export_type([
     error/0,
+    options/0,
     response/0
 ]).

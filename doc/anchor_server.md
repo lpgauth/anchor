@@ -26,6 +26,30 @@ error() = {error, atom()}
 
 
 
+### <a name="type-option">option()</a> ###
+
+
+
+<pre><code>
+option() = {async, pid()}
+</code></pre>
+
+
+
+
+
+### <a name="type-options">options()</a> ###
+
+
+
+<pre><code>
+options() = [<a href="#type-option">option()</a>]
+</code></pre>
+
+
+
+
+
 ### <a name="type-response">response()</a> ###
 
 
@@ -40,20 +64,20 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#call-2">call/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#queue_size-0">queue_size/0</a></td><td></td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#call-3">call/3</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#queue_size-0">queue_size/0</a></td><td></td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
 
 ## Function Details ##
 
-<a name="call-2"></a>
+<a name="call-3"></a>
 
-### call/2 ###
+### call/3 ###
 
 
 <pre><code>
-call(Msg::term(), Timeout::pos_integer()) -&gt; {ok, term()} | {error, atom()}
+call(Msg::term(), Timeout::pos_integer(), Options::<a href="#type-options">options()</a>) -&gt; {ok, term()} | {error, atom()}
 </code></pre>
 <br />
 
