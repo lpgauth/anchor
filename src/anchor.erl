@@ -33,7 +33,7 @@
     noop/2,
     quit/0,
     quit/1,
-    % quit/2,
+    quit/2,
     replace/2,
     replace/3,
     replace/4,
@@ -41,7 +41,7 @@
     set/2,
     set/3,
     set/4,
-    % set/5,
+    set/5,
     version/0,
     version/1,
     version/2
