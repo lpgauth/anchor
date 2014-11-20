@@ -24,6 +24,7 @@
 -spec call(term(), pos_integer(), options()) -> {ok, term()} | {error, atom()}.
 call(Msg, Timeout, Options) ->
     Ref = make_ref(),
+
     {Async, Pid} = case lookup(async, Options, undefined) of
         undefined -> {false, self()};
         AsyncPid -> {true, AsyncPid}
@@ -33,8 +34,10 @@ call(Msg, Timeout, Options) ->
         anchor_backlog:apply(?BACKLOG_TABLE_ID, Ref,?BACKLOG_MAX_SIZE, fun () ->
             ?MODULE ! {call, Ref, self(), Msg},
             receive
-                {reply, Ref, Response} ->
-                    Pid ! {anchor, Ref, Response}
+                {reply, Ref, {ok, Response}} ->
+                    Pid ! {anchor, Ref, reply(Response)};
+                {reply, Ref, {error, Reason}} ->
+                    Pid ! {anchor, Ref, {error, Reason}}
             end
         end)
     end),
@@ -44,8 +47,8 @@ call(Msg, Timeout, Options) ->
             {ok, Ref};
         false ->
             receive
-                {anchor, Ref, Response} ->
-                    Response
+                {anchor, Ref, Reply} ->
+                    Reply
             after Timeout ->
                 {error, timeout}
             end
@@ -254,6 +257,14 @@ queue_out(#state {
             {error, empty}
     end.
 
+reply(#response {status = Status} = Response) ->
+    case status(Status) of
+        ok ->
+            return(Response);
+        Reason ->
+            {error, Reason}
+    end.
+
 reply(Ref, From, Msg) ->
     From ! {reply, Ref, Msg}.
 
@@ -262,6 +273,39 @@ reply_all(Queue, Msg) ->
 
 req_id(N) ->
     (N + 1) rem ?MAX_32_BIT_INT.
+
+return(#response {op_code = ?OP_ADD}) -> ok;
+return(#response {op_code = ?OP_DECREMENT, value = Value}) ->
+    {ok, binary:decode_unsigned(Value)};
+return(#response {op_code = ?OP_DELETE}) -> ok;
+return(#response {op_code = ?OP_FLUSH}) -> ok;
+return(#response {op_code = ?OP_GET, value = Value}) ->
+    {ok, Value};
+return(#response {op_code = ?OP_INCREMENT, value = Value}) ->
+    {ok, binary:decode_unsigned(Value)};
+return(#response {op_code = ?OP_NOOP}) -> ok;
+return(#response {op_code = ?OP_QUIT}) -> ok;
+return(#response {op_code = ?OP_REPLACE}) -> ok;
+return(#response {op_code = ?OP_SET}) -> ok;
+return(#response {op_code = ?OP_VERSION, value = Value}) ->
+    {ok, Value}.
+
+status(?STAT_AUTH_CONTINUE) -> auth_continue;
+status(?STAT_AUTH_ERROR) -> auth_error;
+status(?STAT_BUSY) -> busy;
+status(?STAT_INCR_NON_NUMERIC) -> incr_non_numeric;
+status(?STAT_INTERNAL_ERROR) -> internal_error;
+status(?STAT_INVALID_ARGS) -> invalid_args;
+status(?STAT_ITEM_NOT_STORED) -> item_not_stored;
+status(?STAT_KEY_EXISTS) -> key_exists;
+status(?STAT_KEY_NOT_FOUND) -> key_not_found;
+status(?STAT_NOT_SUPPORTED) -> not_supported;
+status(?STAT_OK) -> ok;
+status(?STAT_OUT_OF_MEMORY) -> out_of_memory;
+status(?STAT_TEMP_FAILURE) -> temp_failure;
+status(?STAT_UNKNOWN_COMMAND) -> unknown_command;
+status(?STAT_VALUE_TOO_LARGE) -> value_too_large;
+status(?STAT_VBUCKET_ERROR) -> vbucket_error.
 
 tcp_close(Queue, State) ->
     reply_all(Queue, {error, tcp_closed}),
