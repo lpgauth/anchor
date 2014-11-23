@@ -222,5 +222,7 @@ version(Timeout, Options) ->
     call(version, Timeout, Options).
 
 %% private
-call(Msg, Timeout, Options) ->
-    anchor_server:call(Msg, Timeout, Options).
+call(Msg, _Timeout, [{async, Pid}]) ->
+    anchor_server:async_call(Msg, Pid);
+call(Msg, Timeout, _Options) ->
+    anchor_server:call(Msg, Timeout).

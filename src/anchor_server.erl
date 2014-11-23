@@ -2,7 +2,8 @@
 -include("anchor.hrl").
 
 -export([
-    call/3,
+    async_call/2,
+    call/2,
     init/1,
     queue_size/0,
     start_link/0
@@ -21,44 +22,35 @@
 }).
 
 %% public
--spec call(term(), pos_integer(), options()) -> {ok, term()} | {error, atom()}.
-call(Msg, Timeout, Options) ->
-    Ref = make_ref(),
-
-    {Async, Pid} = case lookup(async, Options, undefined) of
-        undefined -> {false, self()};
-        AsyncPid -> {true, AsyncPid}
-    end,
-
-    spawn(fun () ->
-        anchor_backlog:apply(?BACKLOG_TABLE_ID, Ref,?BACKLOG_MAX_SIZE, fun () ->
-            ?MODULE ! {call, Ref, self(), Msg},
-            receive
-                {reply, Ref, {ok, Response}} ->
-                    Pid ! {anchor, Ref, reply(Response)};
-                {reply, Ref, {error, Reason}} ->
-                    Pid ! {anchor, Ref, {error, Reason}}
-            end
-        end)
-    end),
-
-    case Async of
-        true ->
-            {ok, Ref};
-        false ->
+call(Msg, Timeout) ->
+    case async_call(Msg, self()) of
+        {ok, Ref} ->
             receive
                 {anchor, Ref, Reply} ->
                     Reply
-            after Timeout ->
-                {error, timeout}
-            end
+                after Timeout ->
+                    {error, timeout}
+            end;
+        {error, Reason} ->
+            {error, Reason}
+    end.
+
+-spec async_call(term(), erlang:pid()) -> {ok, erlang:ref()} | {error, backlog_full}.
+async_call(Msg, Pid) ->
+    Ref = make_ref(),
+    case anchor_backlog:check(?BACKLOG_TABLE_ID, ?BACKLOG_MAX_SIZE) of
+        true ->
+            ?MODULE ! {call, Ref, Pid, Msg},
+            {ok, Ref};
+        _ ->
+            {error, backlog_full}
     end.
 
 -spec init(pid()) -> no_return().
 init(Parent) ->
     register(?MODULE, self()),
     proc_lib:init_ack(Parent, {ok, self()}),
-    anchor_backlog:new(?BACKLOG_TABLE_ID, ?BACKLOG_MAX_SIZE),
+    anchor_backlog:new(?BACKLOG_TABLE_ID),
     self() ! newsocket,
 
     loop(#state {
@@ -115,7 +107,7 @@ handle_msg({queue_size, Ref, From}, #state {
         queue = Queue
     } = State) ->
 
-    reply(Ref, From, queue:len(Queue)),
+    From ! {reply, Ref, queue:len(Queue)},
     {ok, State};
 handle_msg(newsocket, #state {
         ip = Ip,
@@ -182,7 +174,8 @@ decode_data(Data, #state {
 
             case Parsing of
                 complete ->
-                    reply(Ref, From, {ok, Resp}),
+
+                    reply(Ref, From, reply(Resp)),
                     decode_data(Rest, State2#state {
                         buffer = <<>>
                     });
@@ -214,7 +207,7 @@ decode_data(Data, #state {
 
     case Parsing of
         complete ->
-            reply(Ref, From, {ok, Resp2}),
+            reply(Ref, From, reply(Resp2)),
             decode_data(Rest, State#state {
                 ref = undefined,
                 from = undefined,
@@ -226,12 +219,6 @@ decode_data(Data, #state {
                 buffer = Rest,
                 response = Resp2
             }}
-    end.
-
-lookup(Key, List, Default) ->
-    case lists:keyfind(Key, 1, List) of
-        false -> Default;
-        {_, Value} -> Value
     end.
 
 queue_in(Item, #state {
@@ -266,7 +253,8 @@ reply(#response {status = Status} = Response) ->
     end.
 
 reply(Ref, From, Msg) ->
-    From ! {reply, Ref, Msg}.
+    anchor_backlog:decrement(?BACKLOG_TABLE_ID),
+    From ! {anchor, Ref, Msg}.
 
 reply_all(Queue, Msg) ->
     [reply(Ref, From, Msg) || {_ReqId, Ref, From} <- queue:to_list(Queue)].

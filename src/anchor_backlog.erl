@@ -2,56 +2,46 @@
 -include("anchor.hrl").
 
 -export([
-    apply/4,
-    new/2
+    check/2,
+    decrement/1,
+    new/1
 ]).
 
-%% public
--spec apply(atom(), reference(), pos_integer(), fun()) -> term() | {error, atom()}.
-apply(TableId, Ref, MaxSize, Fun) ->
-    maybe_apply(TableId, Ref, MaxSize, Fun, ?RETRY).
+-define(KEY, backlog).
 
--spec new(atom(), pos_integer()) -> ok.
-new(TableId, MaxSize) ->
-    TableOpts = [named_table, public, {write_concurrency, true}],
-    TableId = ets:new(TableId, TableOpts),
-    [reset(TableId, Key) || Key <- lists:seq(1, MaxSize)],
+%% public
+-spec check(atom(), pos_integer()) -> boolean().
+check(Tid, MaxBacklog) ->
+    case increment(Tid, MaxBacklog) of
+        [MaxBacklog, MaxBacklog] ->
+            false;
+        [_, Value] when Value =< MaxBacklog ->
+            true;
+        {error, tid_missing} ->
+            false
+    end.
+
+decrement(Tid) ->
+    safe_update_counter(Tid, {2, -1, 0, 0}).
+
+-spec new(atom()) -> ok.
+new(Tid) ->
+    Tid = ets:new(Tid, [
+        named_table,
+        public,
+        {read_concurrency, true},
+        {write_concurrency, true}
+    ]),
+    true = ets:insert(Tid, {?KEY, 0}),
     ok.
 
 %% private
-increment(TableId, Key) ->
-    safe_update_counter(TableId, Key, {2, 1}).
+increment(Tid, MaxBacklog) ->
+    safe_update_counter(Tid, [{2, 0}, {2, 1, MaxBacklog, MaxBacklog}]).
 
-maybe_apply(_TableId, _Ref, _MaxSize, _Fun, 0) ->
-    {error, backlog_full};
-maybe_apply(TableId, Ref, MaxSize, Fun, Retry) ->
-    Key = random(Ref, MaxSize),
-    case increment(TableId, Key) of
-        {ok, 1} ->
-            Response = try Fun()
-            catch
-                _Error:_Reason ->
-                    {error, badarg}
-            end,
-            reset(TableId, Key),
-            Response;
-        {ok, _N} ->
-            maybe_apply(TableId, Ref, MaxSize, Fun, Retry - 1);
-        {error, Reason} ->
-            {error, Reason}
-    end.
-
-random(Ref, Number) ->
-    erlang:phash2(Ref, Number) + 1.
-
-reset(TableId, Key) ->
-    true = ets:insert(TableId, {Key, 0}).
-
-safe_update_counter(TableId, Key, UpdateOp) ->
-    try ets:update_counter(TableId, Key, UpdateOp) of
-        N ->
-            {ok, N}
+safe_update_counter(Tid, UpdateOp) ->
+    try ets:update_counter(Tid, ?KEY, UpdateOp)
     catch
         error:badarg ->
-            {error, table_missing}
+            {error, tid_missing}
     end.
