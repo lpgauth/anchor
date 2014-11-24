@@ -14,6 +14,7 @@ Non-blocking Erlang Memcached client
 * Binary protocol
 * Pipelining
 * Backpressure (OOM protection)
+* Async mode
 
 
 
@@ -31,7 +32,11 @@ ok
 {ok,<<"bar">>}
 5> anchor:delete(<<"foo">>).
 ok
-
+6> anchor:get(<<"foo">>, 1000, [{async, self()}]).
+{ok,#Ref<0.0.0.23623>}
+7> flush().
+Shell got {anchor,#Ref<0.0.0.23623>,{error,key_not_found}}
+ok
 ```
 
 
@@ -40,10 +45,10 @@ ok
 
 
 <table width="100%" border="0" summary="list of modules">
-<tr><td><a href="http://github.com/lpgauth/anchor/blob/master/doc/anchor.md" class="module">anchor</a></td></tr>
-<tr><td><a href="http://github.com/lpgauth/anchor/blob/master/doc/anchor_app.md" class="module">anchor_app</a></td></tr>
-<tr><td><a href="http://github.com/lpgauth/anchor/blob/master/doc/anchor_backlog.md" class="module">anchor_backlog</a></td></tr>
-<tr><td><a href="http://github.com/lpgauth/anchor/blob/master/doc/anchor_protocol.md" class="module">anchor_protocol</a></td></tr>
-<tr><td><a href="http://github.com/lpgauth/anchor/blob/master/doc/anchor_server.md" class="module">anchor_server</a></td></tr>
-<tr><td><a href="http://github.com/lpgauth/anchor/blob/master/doc/anchor_sup.md" class="module">anchor_sup</a></td></tr></table>
+<tr><td><a href="http://github.com/lpgauth/anchor/blob/cleanup/doc/anchor.md" class="module">anchor</a></td></tr>
+<tr><td><a href="http://github.com/lpgauth/anchor/blob/cleanup/doc/anchor_app.md" class="module">anchor_app</a></td></tr>
+<tr><td><a href="http://github.com/lpgauth/anchor/blob/cleanup/doc/anchor_backlog.md" class="module">anchor_backlog</a></td></tr>
+<tr><td><a href="http://github.com/lpgauth/anchor/blob/cleanup/doc/anchor_protocol.md" class="module">anchor_protocol</a></td></tr>
+<tr><td><a href="http://github.com/lpgauth/anchor/blob/cleanup/doc/anchor_server.md" class="module">anchor_server</a></td></tr>
+<tr><td><a href="http://github.com/lpgauth/anchor/blob/cleanup/doc/anchor_sup.md" class="module">anchor_sup</a></td></tr></table>
 

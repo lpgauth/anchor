@@ -10,6 +10,7 @@
   <li>Binary protocol</li>
   <li>Pipelining</li>
   <li>Backpressure (OOM protection)</li>
+  <li>Async mode</li>
 </ul>
 
 <h2>Examples</h2>
@@ -25,6 +26,12 @@ ok
 {ok,<<"bar">>}
 5> anchor:delete(<<"foo">>).
 ok
+6> anchor:get(<<"foo">>, 1000, [{async, self()}]).
+{ok,#Ref<0.0.0.23623>}
+7> flush().
+Shell got {anchor,#Ref<0.0.0.23623>,{error,key_not_found}}
+ok
+
 ]]></pre>
 
 @end
