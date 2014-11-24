@@ -77,7 +77,7 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 
 
 <pre><code>
-async_call(Msg::term(), Pid::<a href="erlang.md#type-pid">erlang:pid()</a>) -&gt; {ok, <a href="erlang.md#type-ref">erlang:ref()</a>} | {error, backlog_full}
+async_call(Msg::term(), Pid::pid()) -&gt; {ok, <a href="erlang.md#type-ref">erlang:ref()</a>} | {error, backlog_full}
 </code></pre>
 <br />
 
