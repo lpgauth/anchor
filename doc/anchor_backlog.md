@@ -64,31 +64,38 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#apply-4">apply/4</a></td><td></td></tr><tr><td valign="top"><a href="#new-2">new/2</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#check-2">check/2</a></td><td></td></tr><tr><td valign="top"><a href="#decrement-1">decrement/1</a></td><td></td></tr><tr><td valign="top"><a href="#new-1">new/1</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
 
 ## Function Details ##
 
-<a name="apply-4"></a>
+<a name="check-2"></a>
 
-### apply/4 ###
+### check/2 ###
 
 
 <pre><code>
-apply(TableId::atom(), Ref::reference(), MaxSize::pos_integer(), Fun::function()) -&gt; term() | {error, atom()}
+check(Tid::atom(), MaxBacklog::pos_integer()) -&gt; boolean()
 </code></pre>
 <br />
 
 
-<a name="new-2"></a>
+<a name="decrement-1"></a>
 
-### new/2 ###
+### decrement/1 ###
+
+`decrement(Tid) -> any()`
+
+
+<a name="new-1"></a>
+
+### new/1 ###
 
 
 <pre><code>
-new(TableId::atom(), MaxSize::pos_integer()) -&gt; ok
+new(Tid::atom()) -&gt; ok
 </code></pre>
 <br />
 

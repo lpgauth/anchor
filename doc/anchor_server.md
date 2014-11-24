@@ -64,22 +64,29 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#call-3">call/3</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#queue_size-0">queue_size/0</a></td><td></td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#async_call-2">async_call/2</a></td><td></td></tr><tr><td valign="top"><a href="#call-2">call/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#queue_size-0">queue_size/0</a></td><td></td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
 
 ## Function Details ##
 
-<a name="call-3"></a>
+<a name="async_call-2"></a>
 
-### call/3 ###
+### async_call/2 ###
 
 
 <pre><code>
-call(Msg::term(), Timeout::pos_integer(), Options::<a href="#type-options">options()</a>) -&gt; {ok, term()} | {error, atom()}
+async_call(Msg::term(), Pid::<a href="erlang.md#type-pid">erlang:pid()</a>) -&gt; {ok, <a href="erlang.md#type-ref">erlang:ref()</a>} | {error, backlog_full}
 </code></pre>
 <br />
+
+
+<a name="call-2"></a>
+
+### call/2 ###
+
+`call(Msg, Timeout) -> any()`
 
 
 <a name="init-1"></a>
