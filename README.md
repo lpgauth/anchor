@@ -10,11 +10,11 @@ Non-blocking Erlang Memcached client
 
 
 ## Features ##
-* Performance optimized
-* Binary protocol
-* Pipelining
-* Backpressure (OOM protection)
 * Async mode
+* Backpressure via backlog (OOM protection)
+* Binary protocol
+* Performance optimized
+* Request pipelining
 
 
 

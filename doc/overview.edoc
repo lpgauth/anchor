@@ -6,11 +6,11 @@
 <h2>Features</h2>
 
 <ul>
-  <li>Performance optimized</li>
-  <li>Binary protocol</li>
-  <li>Pipelining</li>
-  <li>Backpressure (OOM protection)</li>
   <li>Async mode</li>
+  <li>Backpressure via backlog (OOM protection)</li>
+  <li>Binary protocol</li>
+  <li>Performance optimized</li>
+  <li>Request pipelining</li>
 </ul>
 
 <h2>Examples</h2>
