@@ -35,7 +35,7 @@ call(Msg, Timeout) ->
             {error, Reason}
     end.
 
--spec async_call(term(), erlang:pid()) -> {ok, erlang:ref()} | {error, backlog_full}.
+-spec async_call(term(), pid()) -> {ok, erlang:ref()} | {error, backlog_full}.
 async_call(Msg, Pid) ->
     Ref = make_ref(),
     case anchor_backlog:check(?BACKLOG_TABLE_ID, ?BACKLOG_MAX_SIZE) of
