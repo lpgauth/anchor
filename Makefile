@@ -31,7 +31,7 @@ doc:
 	@$(REBAR) skip_deps=true doc
 
 eunit:
-	@echo "Running EUnit suite..."
+	@echo "Running rebar eunit..."
 	@$(REBAR) skip_deps=true eunit
 
 test: all eunit
