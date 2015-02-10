@@ -5,7 +5,6 @@
     async_call/2,
     call/2,
     init/1,
-    queue_size/0,
     start_link/0
 ]).
 
@@ -22,6 +21,7 @@
 }).
 
 %% public
+-spec call(term(), pos_integer()) -> ok | {ok, term()} | error().
 call(Msg, Timeout) ->
     case async_call(Msg, self()) of
         {ok, Ref} ->
@@ -58,17 +58,6 @@ init(Parent) ->
         port = application:get_env(?APP, port, ?DEFAULT_PORT)
     }).
 
--spec queue_size() -> non_neg_integer().
-queue_size() ->
-    Ref = make_ref(),
-    Pid = self(),
-
-    ?MODULE ! {queue_size, Ref, Pid},
-    receive
-        {reply, Ref, Response} ->
-            Response
-    end.
-
 -spec start_link() -> {ok, pid()}.
 start_link() ->
     proc_lib:start_link(?MODULE, init, [self()]).
@@ -103,12 +92,6 @@ handle_msg({call, Ref, From, Msg}, #state {
         ok ->
             queue_in({ReqId, Ref, From}, State)
     end;
-handle_msg({queue_size, Ref, From}, #state {
-        queue = Queue
-    } = State) ->
-
-    From ! {reply, Ref, queue:len(Queue)},
-    {ok, State};
 handle_msg(newsocket, #state {
         ip = Ip,
         port = Port

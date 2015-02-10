@@ -64,7 +64,7 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#async_call-2">async_call/2</a></td><td></td></tr><tr><td valign="top"><a href="#call-2">call/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#queue_size-0">queue_size/0</a></td><td></td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#async_call-2">async_call/2</a></td><td></td></tr><tr><td valign="top"><a href="#call-2">call/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
@@ -86,7 +86,11 @@ async_call(Msg::term(), Pid::pid()) -&gt; {ok, <a href="erlang.md#type-ref">erla
 
 ### call/2 ###
 
-`call(Msg, Timeout) -> any()`
+
+<pre><code>
+call(Msg::term(), Timeout::pos_integer()) -&gt; ok | {ok, term()} | <a href="#type-error">error()</a>
+</code></pre>
+<br />
 
 
 <a name="init-1"></a>
@@ -96,17 +100,6 @@ async_call(Msg::term(), Pid::pid()) -&gt; {ok, <a href="erlang.md#type-ref">erla
 
 <pre><code>
 init(Parent::pid()) -&gt; no_return()
-</code></pre>
-<br />
-
-
-<a name="queue_size-0"></a>
-
-### queue_size/0 ###
-
-
-<pre><code>
-queue_size() -&gt; non_neg_integer()
 </code></pre>
 <br />
 

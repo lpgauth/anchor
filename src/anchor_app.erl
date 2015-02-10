@@ -1,4 +1,5 @@
 -module(anchor_app).
+-include("anchor.hrl").
 
 -export([
     start/0
