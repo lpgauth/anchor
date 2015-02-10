@@ -4,7 +4,6 @@
 -define(BACKLOG_TABLE_ID, anchor_backlog).
 -define(CHILD(Mod), {Mod, {Mod, start_link, []}, permanent, 5000, worker, [Mod]}).
 -define(MAX_32_BIT_INT, 4294967296).
--define(RETRY, 3).
 -define(SERVER, anchor_server).
 
 -define(DEFAULT_INCREMENT, 1).
