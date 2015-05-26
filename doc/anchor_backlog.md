@@ -99,7 +99,7 @@ decrement(ServerName::atom()) -&gt; non_neg_integer() | {error, tid_missing}
 
 
 <pre><code>
-init() -&gt; pacingderl_backlog
+init() -&gt; anchor_backlog
 </code></pre>
 <br />
 

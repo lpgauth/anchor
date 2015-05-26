@@ -8,7 +8,7 @@
     new/1
 ]).
 
--define(BACKLOG_TABLE_ID, pacingderl_backlog).
+-define(BACKLOG_TABLE_ID, anchor_backlog).
 
 %% public
 -spec check(atom()) -> boolean().
