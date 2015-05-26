@@ -11,6 +11,7 @@
 
 %% public
 -spec encode(pos_integer(), atom() | tuple()) -> {ok, binary()}.
+
 encode(ReqId, {add, Key, Value, TTL}) ->
     encode_request(#request {
         op_code = ?OP_ADD,
@@ -84,12 +85,14 @@ encode(ReqId, version) ->
     }).
 
 -spec decode(pos_integer(), binary()) -> {ok, binary(), response()}.
+
 decode(ReqId, Data) ->
     decode(ReqId, Data, #response {
         state = parsing_header
     }).
 
 -spec decode(pos_integer(), binary(), response()) -> {ok, binary(), response()}.
+
 decode(ReqId, Data, #response {
         state = parsing_header
     } = Resp) when size(Data) >= ?HEADER_LENGTH ->

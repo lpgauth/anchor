@@ -64,20 +64,20 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#check-2">check/2</a></td><td></td></tr><tr><td valign="top"><a href="#decrement-1">decrement/1</a></td><td></td></tr><tr><td valign="top"><a href="#new-1">new/1</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#check-1">check/1</a></td><td></td></tr><tr><td valign="top"><a href="#decrement-1">decrement/1</a></td><td></td></tr><tr><td valign="top"><a href="#init-0">init/0</a></td><td></td></tr><tr><td valign="top"><a href="#new-1">new/1</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
 
 ## Function Details ##
 
-<a name="check-2"></a>
+<a name="check-1"></a>
 
-### check/2 ###
+### check/1 ###
 
 
 <pre><code>
-check(Tid::atom(), MaxBacklog::pos_integer()) -&gt; boolean()
+check(ServerName::atom()) -&gt; boolean()
 </code></pre>
 <br />
 
@@ -86,7 +86,22 @@ check(Tid::atom(), MaxBacklog::pos_integer()) -&gt; boolean()
 
 ### decrement/1 ###
 
-`decrement(Tid) -> any()`
+
+<pre><code>
+decrement(ServerName::atom()) -&gt; non_neg_integer() | {error, tid_missing}
+</code></pre>
+<br />
+
+
+<a name="init-0"></a>
+
+### init/0 ###
+
+
+<pre><code>
+init() -&gt; pacingderl_backlog
+</code></pre>
+<br />
 
 
 <a name="new-1"></a>
@@ -95,7 +110,7 @@ check(Tid::atom(), MaxBacklog::pos_integer()) -&gt; boolean()
 
 
 <pre><code>
-new(Tid::atom()) -&gt; ok
+new(ServerName::atom()) -&gt; true
 </code></pre>
 <br />
 

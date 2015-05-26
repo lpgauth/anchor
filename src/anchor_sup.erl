@@ -12,11 +12,14 @@
 
 %% public
 -spec start_link() -> {ok, pid()}.
+
 start_link() ->
     supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 %% supervisor callbacks
 init([]) ->
-    {ok, {{one_for_one, 5, 10}, [
-        ?CHILD(anchor_server)
-    ]}}.
+    anchor_backlog:init(),
+
+    {ok, {{one_for_one, 5, 10},
+        anchor_utils:child_specs()
+    }}.
