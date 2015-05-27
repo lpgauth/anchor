@@ -1,6 +1,6 @@
 
 
-# Module anchor_server #
+# Module anchor_utils #
 * [Data Types](#types)
 * [Function Index](#index)
 * [Function Details](#functions)
@@ -64,32 +64,38 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#init-2">init/2</a></td><td></td></tr><tr><td valign="top"><a href="#start_link-1">start_link/1</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#child_name-1">child_name/1</a></td><td></td></tr><tr><td valign="top"><a href="#child_specs-0">child_specs/0</a></td><td></td></tr><tr><td valign="top"><a href="#error_msg-2">error_msg/2</a></td><td></td></tr><tr><td valign="top"><a href="#warning_msg-2">warning_msg/2</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
 
 ## Function Details ##
 
-<a name="init-2"></a>
+<a name="child_name-1"></a>
 
-### init/2 ###
+### child_name/1 ###
 
-
-<pre><code>
-init(Parent::pid(), Name::atom()) -&gt; no_return()
-</code></pre>
-<br />
+`child_name(N) -> any()`
 
 
-<a name="start_link-1"></a>
+<a name="child_specs-0"></a>
 
-### start_link/1 ###
+### child_specs/0 ###
+
+`child_specs() -> any()`
 
 
-<pre><code>
-start_link(Name::atom()) -&gt; {ok, pid()}
-</code></pre>
-<br />
+<a name="error_msg-2"></a>
+
+### error_msg/2 ###
+
+`error_msg(Format, Data) -> any()`
+
+
+<a name="warning_msg-2"></a>
+
+### warning_msg/2 ###
+
+`warning_msg(Format, Data) -> any()`
 
 
