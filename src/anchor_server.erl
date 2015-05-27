@@ -35,7 +35,7 @@ init(Parent, Name) ->
         name = Name,
         ip = application:get_env(?APP, ip, ?DEFAULT_IP),
         port = application:get_env(?APP, port, ?DEFAULT_PORT),
-        reconnect = application:get_env(?APP, health_level, ?DEFAULT_RECONNECT)
+        reconnect = application:get_env(?APP, reconnect, ?DEFAULT_RECONNECT)
     }).
 
 -spec start_link(atom()) -> {ok, pid()}.
