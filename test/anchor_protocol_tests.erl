@@ -1,8 +1,5 @@
 -module(anchor_protocol_tests).
--include_lib("anchor/include/anchor.hrl").
--include_lib("eunit/include/eunit.hrl").
-
--define(REQ_ID, 123).
+-include("test.hrl").
 
 decode_test_() ->
     % add
