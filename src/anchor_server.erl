@@ -260,7 +260,7 @@ tcp_close(#state {
     } = State) ->
 
     Msg = {error, tcp_closed},
-    [reply(Name, Ref, From, Msg) || {Ref, From, _, _} <- queue:to_list(Queue)],
+    [reply(Name, Ref, From, Msg) || {Ref, From, _} <- queue:to_list(Queue)],
     connect_retry(State).
 
 timeout(#state {
