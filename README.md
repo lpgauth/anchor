@@ -1,6 +1,4 @@
-
-
-# anchor #
+# anchor
 
 __Authors:__ Louis-Philippe Gauthier.
 
@@ -8,12 +6,18 @@ Non-blocking Erlang Memcached client
 
 [![Build Status](https://travis-ci.org/lpgauth/anchor.svg?branch=master)](https://travis-ci.org/lpgauth/anchor)
 
-## Features
-* Async mode
-* Backpressure via backlog (OOM protection)
+### Requirements
+
+* Memcached 1.4.0+
+* Erlang 16.0 +
+
+### Features
+
 * Binary protocol
 * Performance optimized
+* Asynchronous mode
 * Request pipelining
+* Backpressure via backlog (OOM protection)
 
 ### Environment variables
 
@@ -46,6 +50,7 @@ Non-blocking Erlang Memcached client
     <td>backlog_size</td>
     <td>pos_integer()</td>
     <td>1024</td>
+
     <td>maximum number of concurrent requests per connection</td>
   </tr>
   <tr>
@@ -59,7 +64,6 @@ Non-blocking Erlang Memcached client
 ## Examples
 
 ```erlang
-
 1> application:start(anchor).
 ok
 2> anchor:get(<<"foo">>).
@@ -80,13 +84,28 @@ ok
 ## Modules
 
 <table width="100%" border="0" summary="list of modules">
-<tr><td><a href="http://github.com/lpgauth/anchor/blob/dev/doc/anchor.md" class="module">anchor</a></td></tr>
-<tr><td><a href="http://github.com/lpgauth/anchor/blob/dev/doc/anchor_app.md" class="module">anchor_app</a></td></tr>
-<tr><td><a href="http://github.com/lpgauth/anchor/blob/dev/doc/anchor_backlog.md" class="module">anchor_backlog</a></td></tr>
-<tr><td><a href="http://github.com/lpgauth/anchor/blob/dev/doc/anchor_protocol.md" class="module">anchor_protocol</a></td></tr>
-<tr><td><a href="http://github.com/lpgauth/anchor/blob/dev/doc/anchor_server.md" class="module">anchor_server</a></td></tr>
-<tr><td><a href="http://github.com/lpgauth/anchor/blob/dev/doc/anchor_sup.md" class="module">anchor_sup</a></td></tr>
-<tr><td><a href="http://github.com/lpgauth/anchor/blob/dev/doc/anchor_utils.md" class="module">anchor_utils</a></td></tr></table>
+  <tr>
+    <td><a href="http://github.com/lpgauth/anchor/blob/dev/doc/anchor.md" class="module">anchor</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://github.com/lpgauth/anchor/blob/dev/doc/anchor_app.md" class="module">anchor_app</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://github.com/lpgauth/anchor/blob/dev/doc/anchor_backlog.md" class="module">anchor_backlog</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://github.com/lpgauth/anchor/blob/dev/doc/anchor_protocol.md" class="module">anchor_protocol</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://github.com/lpgauth/anchor/blob/dev/doc/anchor_server.md" class="module">anchor_server</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://github.com/lpgauth/anchor/blob/dev/doc/anchor_sup.md" class="module">anchor_sup</a></td>
+  </tr>
+  <tr><td>
+    <a href="http://github.com/lpgauth/anchor/blob/dev/doc/anchor_utils.md" class="module">anchor_utils</a></td>
+  </tr>
+</table>
 
 ## Tests
 
