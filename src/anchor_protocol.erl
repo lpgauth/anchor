@@ -5,8 +5,8 @@
 
 -export([
     encode/2,
-    decode/2,
-    decode/3
+    decode/1,
+    decode/2
 ]).
 
 %% public
@@ -84,28 +84,28 @@ encode(ReqId, version) ->
         opaque  = ReqId
     }).
 
--spec decode(pos_integer(), binary()) -> {ok, binary(), response()}.
+-spec decode(binary()) -> {ok, binary(), response()}.
 
-decode(ReqId, Data) ->
-    decode(ReqId, Data, #response {
+decode(Data) ->
+    decode(Data, #response {
         state = parsing_header
     }).
 
--spec decode(pos_integer(), binary(), response()) -> {ok, binary(), response()}.
+-spec decode(binary(), response()) -> {ok, binary(), response()}.
 
-decode(ReqId, Data, #response {
+decode(Data, #response {
         state = parsing_header
     } = Resp) when size(Data) >= ?HEADER_LENGTH ->
 
-    {ok, Rest, Resp2} = decode_header(ReqId, Data, Resp),
-    decode(ReqId, Rest, Resp2);
-decode(_ReqId, Data, #response {
+    {ok, Rest, Resp2} = decode_header(Data, Resp),
+    decode(Rest, Resp2);
+decode(Data, #response {
         state = parsing_body,
         body_length = BodyLength
     } = Resp) when size(Data) >= BodyLength ->
 
     decode_body(Data, Resp);
-decode(_ReqId, Data, Resp) ->
+decode(Data, Resp) ->
     {ok, Data, Resp}.
 
 %% private
@@ -128,7 +128,7 @@ encode_request(#request {
     {ok, <<?MAGIC_REQUEST:8, OpCode:8, KeyLength:16, ExtrasLength:8, DataType:8,
         VBucket:16, BodyLength:32, Opaque:32, CAS:64, Body/binary>>}.
 
-decode_header(ReqId, Data, Resp) ->
+decode_header(Data, Resp) ->
     <<Header:?HEADER_LENGTH/binary, Rest/binary>> = Data,
     <<?MAGIC_RESPONSE:8, OpCode:8, KeyLength:16, ExtrasLength:8,
         DataType:8, Status:16, BodyLength:32, ReqId:32, CAS:64>> = Header,

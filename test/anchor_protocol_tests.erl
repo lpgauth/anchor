@@ -205,7 +205,7 @@ encode_test_() ->
 
 % helpers
 decode(Reponse) ->
-    {ok, <<>>, DecodedResponse} = anchor_protocol:decode(?REQ_ID, Reponse),
+    {ok, <<>>, DecodedResponse} = anchor_protocol:decode(Reponse),
     DecodedResponse.
 
 encode(Request) ->

@@ -19,6 +19,7 @@ start_link() ->
 %% supervisor callbacks
 init([]) ->
     anchor_backlog:init(),
+    anchor_queue:init(),
 
     {ok, {{one_for_one, 5, 10},
         anchor_utils:child_specs()
