@@ -1,6 +1,6 @@
 # anchor
 
-__Authors:__ Louis-Philippe Gauthier.
+__Author:__ Louis-Philippe Gauthier.
 
 Non-blocking Erlang Memcached client
 
