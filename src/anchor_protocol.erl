@@ -91,8 +91,12 @@ decode(Data) ->
         state = parsing_header
     }).
 
--spec decode(binary(), response()) -> {ok, binary(), response()}.
+-spec decode(binary(), response() | undefined) -> {ok, binary(), response()}.
 
+decode(Data, undefined) ->
+    decode(Data, #response {
+        state = parsing_header
+    });
 decode(Data, #response {
         state = parsing_header
     } = Resp) when size(Data) >= ?HEADER_LENGTH ->

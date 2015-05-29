@@ -51,45 +51,26 @@ connect_retry(#state {
         connect_retry = ConnectRetry
     } = State) ->
 
+    Timeout = timeout(State),
+    Timer = erlang:send_after(Timeout, self(), ?CONNECT_RETRY_MSG),
+
     {ok, State#state {
         connect_retry = ConnectRetry + 1,
         socket = undefined,
-        timer = erlang:send_after(timeout(State), self(), ?CONNECT_RETRY_MSG)
+        timer = Timer
     }}.
 
 decode_data(<<>>, State) ->
     {ok, State};
-decode_data(Data, #state {
-        item = undefined,
-        name = Name
-    } = State) ->
-
-    {ok, Rest, Resp} = anchor_protocol:decode(Data),
-    case Resp#response.state of
-        complete ->
-            ReqId = Resp#response.opaque,
-            {Ref, From} = anchor_queue:out(Name, ReqId),
-            Reply = reply(Resp),
-            reply(Name, Ref, From, Reply),
-
-            decode_data(Rest, State#state {
-                buffer = <<>>
-            });
-        _ ->
-            {ok, State#state {
-                buffer = Rest
-            }}
-    end;
 decode_data(Data, #state {
         name = Name,
         response = Resp
     } = State) ->
 
     {ok, Rest, Resp2} = anchor_protocol:decode(Data, Resp),
-
     case Resp2#response.state of
         complete ->
-            ReqId = Resp#response.opaque,
+            ReqId = Resp2#response.opaque,
             {Ref, From} = anchor_queue:out(Name, ReqId),
             Reply = reply(Resp2),
             reply(Name, Ref, From, Reply),
@@ -146,7 +127,6 @@ handle_msg({call, Ref, From, Msg}, #state {
     case gen_tcp:send(Socket, Packet) of
         ok ->
             anchor_queue:in(Name, ReqId, {Ref, From}),
-
             {ok, State#state {
                 requests = Requests + 1
             }};

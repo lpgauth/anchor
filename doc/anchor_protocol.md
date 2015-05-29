@@ -88,7 +88,7 @@ decode(Data::binary()) -&gt; {ok, binary(), <a href="#type-response">response()<
 
 
 <pre><code>
-decode(Data::binary(), Response::<a href="#type-response">response()</a>) -&gt; {ok, binary(), <a href="#type-response">response()</a>}
+decode(Data::binary(), Response::<a href="#type-response">response()</a> | undefined) -&gt; {ok, binary(), <a href="#type-response">response()</a>}
 </code></pre>
 <br />
 
