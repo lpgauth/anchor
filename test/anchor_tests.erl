@@ -24,16 +24,18 @@ anchor_backlog_test_() ->
     {setup,
         fun () -> setup([{backlog_size, 1}]) end,
         fun (_) -> cleanup() end,
-    {inparallel, [
+    [
         ?T(test_backlogfull_async),
         ?T(test_backlogfull_sync)
-    ]}}.
+    ]}.
 
 anchor_connection_error_test_() ->
     {setup,
         fun () -> setup([{port, 11212}]) end,
         fun (_) -> cleanup() end,
-    [?T(test_no_socket)]}.
+    [
+        ?T(test_no_socket)
+    ]}.
 
 %% tests
 test_add() ->
