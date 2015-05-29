@@ -1,7 +1,10 @@
 -module(anchor_tests).
--include_lib("test.hrl").
+-include_lib("anchor/include/anchor.hrl").
+-include_lib("eunit/include/eunit.hrl").
 
 -compile(export_all).
+
+-define(T, fun (Test) -> test(Test) end).
 
 %% runners
 anchor_test_() ->
