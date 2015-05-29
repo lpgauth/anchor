@@ -8,7 +8,7 @@ Non-blocking Erlang Memcached client
 
 ### Requirements
 
-* Memcached 1.4.0+
+* Memcached
 * Erlang 16.0 +
 
 ### Features
@@ -97,6 +97,9 @@ ok
     <td><a href="http://github.com/lpgauth/anchor/blob/dev/doc/anchor_protocol.md" class="module">anchor_protocol</a></td>
   </tr>
   <tr>
+    <td><a href="http://github.com/lpgauth/anchor/blob/dev/doc/anchor_queue.md" class="module">anchor_queue</a></td>
+  </tr>
+  <tr>
     <td><a href="http://github.com/lpgauth/anchor/blob/dev/doc/anchor_server.md" class="module">anchor_server</a></td>
   </tr>
   <tr>
@@ -117,6 +120,7 @@ make xref
 
 ## License
 
+```license
 The MIT License (MIT)
 
 Copyright (c) 2015 Louis-Philippe Gauthier
@@ -138,3 +142,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+```
