@@ -61,6 +61,9 @@ Non-blocking Erlang Memcached client
   </tr>
 </table>
 
+## API
+<a href="http://github.com/lpgauth/anchor/blob/master/doc/anchor.md#index" class="module">Function Index</a>
+
 ## Examples
 
 ```erlang
