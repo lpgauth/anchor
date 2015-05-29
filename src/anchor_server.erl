@@ -214,7 +214,7 @@ status(?STAT_VBUCKET_ERROR) -> vbucket_error.
 tcp_close(#state {name = Name} = State) ->
     Msg = {error, tcp_closed},
     Items = anchor_queue:empty(Name),
-    [reply(Name, Ref, From, Msg) || {Ref, From, _} <- Items],
+    [reply(Name, Ref, From, Msg) || {Ref, From} <- Items],
     connect_retry(State).
 
 timeout(#state {
