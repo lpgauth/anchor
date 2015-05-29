@@ -1,6 +1,6 @@
 
 
-# Module anchor_protocol #
+# Module anchor_queue #
 * [Data Types](#types)
 * [Function Index](#index)
 * [Function Details](#functions)
@@ -64,42 +64,53 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#decode-1">decode/1</a></td><td></td></tr><tr><td valign="top"><a href="#decode-2">decode/2</a></td><td></td></tr><tr><td valign="top"><a href="#encode-2">encode/2</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#empty-1">empty/1</a></td><td></td></tr><tr><td valign="top"><a href="#in-3">in/3</a></td><td></td></tr><tr><td valign="top"><a href="#init-0">init/0</a></td><td></td></tr><tr><td valign="top"><a href="#out-2">out/2</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
 
 ## Function Details ##
 
-<a name="decode-1"></a>
+<a name="empty-1"></a>
 
-### decode/1 ###
+### empty/1 ###
 
 
 <pre><code>
-decode(Data::binary()) -&gt; {ok, binary(), <a href="#type-response">response()</a>}
+empty(ServerName::atom()) -&gt; [term()]
 </code></pre>
 <br />
 
 
-<a name="decode-2"></a>
+<a name="in-3"></a>
 
-### decode/2 ###
+### in/3 ###
 
 
 <pre><code>
-decode(Data::binary(), Response::<a href="#type-response">response()</a> | undefined) -&gt; {ok, binary(), <a href="#type-response">response()</a>}
+in(ServerName::atom(), Stream::non_neg_integer(), Item::term()) -&gt; true
 </code></pre>
 <br />
 
 
-<a name="encode-2"></a>
+<a name="init-0"></a>
 
-### encode/2 ###
+### init/0 ###
 
 
 <pre><code>
-encode(ReqId::pos_integer(), X2::atom() | tuple()) -&gt; {ok, binary()}
+init() -&gt; marina_queue
+</code></pre>
+<br />
+
+
+<a name="out-2"></a>
+
+### out/2 ###
+
+
+<pre><code>
+out(ServerName::atom(), Stream::non_neg_integer()) -&gt; term()
 </code></pre>
 <br />
 

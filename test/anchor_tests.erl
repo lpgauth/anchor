@@ -1,7 +1,10 @@
 -module(anchor_tests).
--include_lib("test.hrl").
+-include_lib("anchor/include/anchor.hrl").
+-include_lib("eunit/include/eunit.hrl").
 
 -compile(export_all).
+
+-define(T, fun (Test) -> test(Test) end).
 
 %% runners
 anchor_test_() ->
@@ -24,16 +27,18 @@ anchor_backlog_test_() ->
     {setup,
         fun () -> setup([{backlog_size, 1}]) end,
         fun (_) -> cleanup() end,
-    {inparallel, [
+    [
         ?T(test_backlogfull_async),
         ?T(test_backlogfull_sync)
-    ]}}.
+    ]}.
 
 anchor_connection_error_test_() ->
     {setup,
         fun () -> setup([{port, 11212}]) end,
         fun (_) -> cleanup() end,
-    [?T(test_no_socket)]}.
+    [
+        ?T(test_no_socket)
+    ]}.
 
 %% tests
 test_add() ->

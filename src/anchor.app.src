@@ -1,6 +1,6 @@
 {application, anchor, [
   {description, "memcached client"},
-  {vsn, "0.2.0"},
+  {vsn, "0.2.1"},
   {registered, [anchor_server]},
   {applications, [
     kernel,

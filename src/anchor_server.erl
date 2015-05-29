@@ -13,7 +13,6 @@
     item          = undefined,
     name          = undefined,
     port          = undefined,
-    queue         = queue:new(),
     reconnect     = undefined,
     requests      = 0,
     response      = undefined,
@@ -46,77 +45,38 @@ start_link(Name) ->
 %% private
 connect_retry(#state {reconnect = false} = State) ->
     {ok, State#state {
-        queue = queue:new(),
         socket = undefined
     }};
 connect_retry(#state {
         connect_retry = ConnectRetry
     } = State) ->
 
+    Timeout = timeout(State),
+    Timer = erlang:send_after(Timeout, self(), ?CONNECT_RETRY_MSG),
+
     {ok, State#state {
         connect_retry = ConnectRetry + 1,
-        queue = queue:new(),
         socket = undefined,
-        timer = erlang:send_after(timeout(State), self(), ?CONNECT_RETRY_MSG)
+        timer = Timer
     }}.
 
 decode_data(<<>>, State) ->
     {ok, State};
 decode_data(Data, #state {
-        item = undefined,
         name = Name,
-        queue = Queue
+        response = Resp
     } = State) ->
 
-    case queue:out(Queue) of
-        {{value, {Ref, From, RequestId} = Item}, Queue2} ->
-            {ok, Rest, #response {
-                state = Parsing
-            } = Resp} = anchor_protocol:decode(RequestId, Data),
-
-            case Parsing of
-                complete ->
-                    Reply = reply(Resp),
-                    reply(Name, Ref, From, Reply),
-
-                    decode_data(Rest, State#state {
-                        buffer = <<>>,
-                        queue = Queue2
-                    });
-                _ ->
-                    {ok, State#state {
-                        buffer = Rest,
-                        item = Item,
-                        queue = Queue2,
-                        response = Resp#response {
-                            opaque = RequestId
-                        }
-                    }}
-            end;
-        {empty, Queue} ->
-            anchor_utils:warning_msg("empty queue", []),
-            {ok, State}
-    end;
-decode_data(Data, #state {
-        item = {Ref, From, RequestId},
-        name = Name,
-        response = #response {
-            opaque = RequestId
-        } = Resp
-    } = State) ->
-
-    {ok, Rest, #response {
-        state = Parsing
-    } = Resp2} = anchor_protocol:decode(RequestId, Data, Resp),
-
-    case Parsing of
+    {ok, Rest, Resp2} = anchor_protocol:decode(Data, Resp),
+    case Resp2#response.state of
         complete ->
+            ReqId = Resp2#response.opaque,
+            {Ref, From} = anchor_queue:out(Name, ReqId),
             Reply = reply(Resp2),
             reply(Name, Ref, From, Reply),
 
             decode_data(Rest, State#state {
                 buffer = <<>>,
-                item = undefined,
                 response = undefined
             });
         _ ->
@@ -158,19 +118,16 @@ handle_msg({call, Ref, From, _Msg}, #state {
     {ok, State};
 handle_msg({call, Ref, From, Msg}, #state {
         name = Name,
-        queue = Queue,
         requests = Requests,
         socket = Socket
     } = State) ->
 
-    RequestId = request_id(Requests),
-    {ok, Packet} = anchor_protocol:encode(RequestId, Msg),
+    ReqId = request_id(Requests),
+    {ok, Packet} = anchor_protocol:encode(ReqId, Msg),
     case gen_tcp:send(Socket, Packet) of
         ok ->
-            Item = {Ref, From, RequestId},
-
+            anchor_queue:in(Name, ReqId, {Ref, From}),
             {ok, State#state {
-                queue = queue:in(Item, Queue),
                 requests = Requests + 1
             }};
         {error, Reason} ->
@@ -254,13 +211,10 @@ status(?STAT_UNKNOWN_COMMAND) -> unknown_command;
 status(?STAT_VALUE_TOO_LARGE) -> value_too_large;
 status(?STAT_VBUCKET_ERROR) -> vbucket_error.
 
-tcp_close(#state {
-        name = Name,
-        queue = Queue
-    } = State) ->
-
+tcp_close(#state {name = Name} = State) ->
     Msg = {error, tcp_closed},
-    [reply(Name, Ref, From, Msg) || {Ref, From, _} <- queue:to_list(Queue)],
+    Items = anchor_queue:empty(Name),
+    [reply(Name, Ref, From, Msg) || {Ref, From, _} <- Items],
     connect_retry(State).
 
 timeout(#state {
