@@ -8,7 +8,7 @@
     out/2
 ]).
 
--define(QUEUE_TABLE_ID, marina_queue).
+-define(QUEUE_TABLE_ID, anchor_queue).
 
 %% public
 -spec empty(atom()) -> [term()].
