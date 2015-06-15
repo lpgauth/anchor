@@ -283,19 +283,14 @@ async_call(Msg, Pid) ->
         true ->
             Server ! {call, Ref, Pid, Msg},
             {ok, Ref};
-        _ ->
+        false ->
             {error, backlog_full}
     end.
 
 call(Msg, Timeout) ->
     case async_call(Msg, self()) of
         {ok, Ref} ->
-            receive
-                {?APP, Ref, Reply} ->
-                    Reply
-                after Timeout ->
-                    {error, timeout}
-            end;
+            receive_response(Ref, Timeout);
         {error, Reason} ->
             {error, Reason}
     end.
@@ -309,3 +304,19 @@ random_server() ->
     PoolSize = application:get_env(?APP, pool_size, ?DEFAULT_POOL_SIZE),
     Random = erlang:phash2({os:timestamp(), self()}, PoolSize) + 1,
     anchor_utils:child_name(Random).
+
+receive_response(Ref, Timeout) ->
+    Timestamp = os:timestamp(),
+    receive
+        {?APP, Ref, Reply} ->
+            Reply;
+        {?APP, _, _} ->
+            Timeout2 = timeout(Timeout, Timestamp),
+            receive_response(Ref, Timeout2)
+    after Timeout ->
+        {error, timeout}
+    end.
+
+timeout(Timeout, Timestamp) ->
+    Diff = timer:now_diff(os:timestamp(), Timestamp) div 1000,
+    Timeout - Diff.

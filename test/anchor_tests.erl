@@ -91,7 +91,7 @@ test_noop() ->
     ok = anchor:noop().
 
 test_no_socket() ->
-    {error,no_socket} = anchor:noop().
+    {error, no_socket} = anchor:noop().
 
 test_quit() ->
     ok = anchor:quit().
