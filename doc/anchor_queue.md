@@ -99,7 +99,7 @@ in(ServerName::atom(), Stream::non_neg_integer(), Item::term()) -&gt; true
 
 
 <pre><code>
-init() -&gt; marina_queue
+init() -&gt; anchor_queue
 </code></pre>
 <br />
 
