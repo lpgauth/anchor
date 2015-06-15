@@ -283,7 +283,7 @@ async_call(Msg, Pid) ->
         true ->
             Server ! {call, Ref, Pid, Msg},
             {ok, Ref};
-        _ ->
+        false ->
             {error, backlog_full}
     end.
 
