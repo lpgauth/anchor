@@ -17,7 +17,6 @@ __Behaviours:__ [`application`](application.md).
 ### <a name="type-error">error()</a> ###
 
 
-
 <pre><code>
 error() = {error, atom()}
 </code></pre>
@@ -25,9 +24,7 @@ error() = {error, atom()}
 
 
 
-
 ### <a name="type-option">option()</a> ###
-
 
 
 <pre><code>
@@ -37,9 +34,7 @@ option() = {async, pid()}
 
 
 
-
 ### <a name="type-options">options()</a> ###
-
 
 
 <pre><code>
@@ -49,15 +44,12 @@ options() = [<a href="#type-option">option()</a>]
 
 
 
-
 ### <a name="type-response">response()</a> ###
-
 
 
 <pre><code>
 response() = #response{state = undefined | parsing_header | parsing_body | complete, op_code = any(), key_length = any(), extras_length = any(), data_type = any(), status = any(), body_length = any(), opaque = any(), cas = any(), extras = any(), key = any(), value = any()}
 </code></pre>
-
 
 <a name="index"></a>
 
@@ -75,12 +67,10 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 
 ### start/0 ###
 
-
 <pre><code>
 start() -&gt; ok
 </code></pre>
 <br />
-
 
 <a name="start-2"></a>
 
@@ -88,11 +78,9 @@ start() -&gt; ok
 
 `start(StartType, StartArgs) -> any()`
 
-
 <a name="stop-1"></a>
 
 ### stop/1 ###
 
 `stop(State) -> any()`
-
 

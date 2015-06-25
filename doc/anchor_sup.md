@@ -17,7 +17,6 @@ __Behaviours:__ [`supervisor`](supervisor.md).
 ### <a name="type-error">error()</a> ###
 
 
-
 <pre><code>
 error() = {error, atom()}
 </code></pre>
@@ -25,9 +24,7 @@ error() = {error, atom()}
 
 
 
-
 ### <a name="type-option">option()</a> ###
-
 
 
 <pre><code>
@@ -37,9 +34,7 @@ option() = {async, pid()}
 
 
 
-
 ### <a name="type-options">options()</a> ###
-
 
 
 <pre><code>
@@ -49,15 +44,12 @@ options() = [<a href="#type-option">option()</a>]
 
 
 
-
 ### <a name="type-response">response()</a> ###
-
 
 
 <pre><code>
 response() = #response{state = undefined | parsing_header | parsing_body | complete, op_code = any(), key_length = any(), extras_length = any(), data_type = any(), status = any(), body_length = any(), opaque = any(), cas = any(), extras = any(), key = any(), value = any()}
 </code></pre>
-
 
 <a name="index"></a>
 
@@ -77,15 +69,12 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 
 `init(X1) -> any()`
 
-
 <a name="start_link-0"></a>
 
 ### start_link/0 ###
-
 
 <pre><code>
 start_link() -&gt; {ok, pid()}
 </code></pre>
 <br />
-
 

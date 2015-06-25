@@ -5,8 +5,6 @@
 * [Function Index](#index)
 * [Function Details](#functions)
 
-
-
 <a name="types"></a>
 
 ## Data Types ##
@@ -17,7 +15,6 @@
 ### <a name="type-error">error()</a> ###
 
 
-
 <pre><code>
 error() = {error, atom()}
 </code></pre>
@@ -25,9 +22,7 @@ error() = {error, atom()}
 
 
 
-
 ### <a name="type-option">option()</a> ###
-
 
 
 <pre><code>
@@ -37,9 +32,7 @@ option() = {async, pid()}
 
 
 
-
 ### <a name="type-options">options()</a> ###
-
 
 
 <pre><code>
@@ -49,15 +42,12 @@ options() = [<a href="#type-option">option()</a>]
 
 
 
-
 ### <a name="type-response">response()</a> ###
-
 
 
 <pre><code>
 response() = #response{state = undefined | parsing_header | parsing_body | complete, op_code = any(), key_length = any(), extras_length = any(), data_type = any(), status = any(), body_length = any(), opaque = any(), cas = any(), extras = any(), key = any(), value = any()}
 </code></pre>
-
 
 <a name="index"></a>
 
@@ -77,13 +67,11 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 
 `child_name(N) -> any()`
 
-
 <a name="child_specs-0"></a>
 
 ### child_specs/0 ###
 
 `child_specs() -> any()`
-
 
 <a name="error_msg-2"></a>
 
@@ -91,11 +79,9 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 
 `error_msg(Format, Data) -> any()`
 
-
 <a name="warning_msg-2"></a>
 
 ### warning_msg/2 ###
 
 `warning_msg(Format, Data) -> any()`
-
 

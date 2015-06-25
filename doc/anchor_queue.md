@@ -5,8 +5,6 @@
 * [Function Index](#index)
 * [Function Details](#functions)
 
-
-
 <a name="types"></a>
 
 ## Data Types ##
@@ -17,7 +15,6 @@
 ### <a name="type-error">error()</a> ###
 
 
-
 <pre><code>
 error() = {error, atom()}
 </code></pre>
@@ -25,9 +22,7 @@ error() = {error, atom()}
 
 
 
-
 ### <a name="type-option">option()</a> ###
-
 
 
 <pre><code>
@@ -37,9 +32,7 @@ option() = {async, pid()}
 
 
 
-
 ### <a name="type-options">options()</a> ###
-
 
 
 <pre><code>
@@ -49,15 +42,12 @@ options() = [<a href="#type-option">option()</a>]
 
 
 
-
 ### <a name="type-response">response()</a> ###
-
 
 
 <pre><code>
 response() = #response{state = undefined | parsing_header | parsing_body | complete, op_code = any(), key_length = any(), extras_length = any(), data_type = any(), status = any(), body_length = any(), opaque = any(), cas = any(), extras = any(), key = any(), value = any()}
 </code></pre>
-
 
 <a name="index"></a>
 
@@ -75,43 +65,35 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 
 ### empty/1 ###
 
-
 <pre><code>
 empty(ServerName::atom()) -&gt; [term()]
 </code></pre>
 <br />
 
-
 <a name="in-3"></a>
 
 ### in/3 ###
-
 
 <pre><code>
 in(ServerName::atom(), Stream::non_neg_integer(), Item::term()) -&gt; true
 </code></pre>
 <br />
 
-
 <a name="init-0"></a>
 
 ### init/0 ###
-
 
 <pre><code>
 init() -&gt; anchor_queue
 </code></pre>
 <br />
 
-
 <a name="out-2"></a>
 
 ### out/2 ###
-
 
 <pre><code>
 out(ServerName::atom(), Stream::non_neg_integer()) -&gt; term()
 </code></pre>
 <br />
-
 
