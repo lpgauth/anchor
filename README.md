@@ -9,7 +9,7 @@ Non-blocking Erlang Memcached client
 ### Requirements
 
 * Memcached
-* Erlang 16 +
+* Erlang 16.0 +
 
 ### Features
 
