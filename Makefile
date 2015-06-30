@@ -7,9 +7,6 @@ build-plt: all
 	@dialyzer --build_plt --output_plt ~/.$(PROJECT).plt \
 		--apps erts kernel stdlib crypto public_key ssl
 
-check-plt:
-	@dialyzer --check_plt --plt ~/.$(PROJECT).plt
-
 clean:
 	@echo "Running rebar clean..."
 	@$(REBAR) clean
