@@ -6,4 +6,4 @@ otp_release:
   - R16B03-1
 services:
   - memcached
-script: "make build-plt dialyze eunit xref"
+script: "make dialyzer eunit xref"
