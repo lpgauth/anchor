@@ -22,7 +22,7 @@ edoc:
 eunit:
 	@echo "Running rebar3 eunit..."
 	@rm -rf _build/test/lib
-	@$(REBAR) do eunit, cover
+	@$(REBAR) do eunit, cover --verbose
 
 xref:
 	@echo "Running rebar3 xref..."
