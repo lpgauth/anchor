@@ -9,9 +9,9 @@
 ]).
 
 -ifdef(TEST).
--define(IF_DEF_TEST, fun (A, _) -> A end).
+-define(IF_DEF_TEST, fun (_F) -> ok end).
 -else.
--define(IF_DEF_TEST, fun (_, B) -> B end).
+-define(IF_DEF_TEST, fun (F) -> F() end).
 -endif.
 
 %% public
@@ -23,7 +23,7 @@ child_specs() ->
     [?CHILD(child_name(N), ?SERVER) || N <- lists:seq(1, PoolSize)].
 
 error_msg(Format, Data) ->
-    ?IF_DEF_TEST(ok, error_logger:error_msg("[anchor] " ++ Format, Data)).
+    ?IF_DEF_TEST(fun () -> error_logger:error_msg("[anchor] " ++ Format, Data) end).
 
 warning_msg(Format, Data) ->
-    ?IF_DEF_TEST(ok, error_logger:warning_msg("[anchor] " ++ Format, Data)).
+    ?IF_DEF_TEST(fun () -> error_logger:warning_msg("[anchor] " ++ Format, Data) end).
