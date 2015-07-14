@@ -8,6 +8,12 @@
     warning_msg/2
 ]).
 
+-ifdef(TEST).
+-define(IF_DEF_TEST, fun (A, _) -> A end).
+-else.
+-define(IF_DEF_TEST, fun (_, B) -> B end).
+-endif.
+
 %% public
 child_name(N) ->
     list_to_atom(?SERVER_BASE_NAME ++ integer_to_list(N)).
@@ -17,7 +23,7 @@ child_specs() ->
     [?CHILD(child_name(N), ?SERVER) || N <- lists:seq(1, PoolSize)].
 
 error_msg(Format, Data) ->
-    error_logger:error_msg("[anchor] " ++ Format, Data).
+    ?IF_DEF_TEST(ok, error_logger:error_msg("[anchor] " ++ Format, Data)).
 
 warning_msg(Format, Data) ->
-    error_logger:warning_msg("[anchor] " ++ Format, Data).
+    ?IF_DEF_TEST(ok, error_logger:warning_msg("[anchor] " ++ Format, Data)).

@@ -24,6 +24,8 @@ eunit:
 	@rm -rf _build/test/lib
 	@$(REBAR) do eunit, cover --verbose
 
+test: dialyzer eunit xref
+
 xref:
 	@echo "Running rebar3 xref..."
 	@$(REBAR) xref
