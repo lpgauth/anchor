@@ -1,5 +1,6 @@
 cache:
-  directories: .cache/rebar3
+  directories:
+    - $HOME/.cache/rebar3
 language: erlang
 notifications:
   email: false
