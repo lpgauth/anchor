@@ -17,7 +17,7 @@ dialyzer:
 
 edoc:
 	@echo "Running rebar3 edoc..."
-	@$(REBAR) edoc
+	@$(REBAR) as doc edoc
 
 eunit:
 	@echo "Running rebar3 eunit..."
