@@ -21,7 +21,6 @@ edoc:
 
 eunit:
 	@echo "Running rebar3 eunit..."
-	@rm -rf _build/test/lib
 	@$(REBAR) do eunit, cover --verbose
 
 test: dialyzer eunit xref
@@ -30,4 +29,4 @@ xref:
 	@echo "Running rebar3 xref..."
 	@$(REBAR) xref
 
-.PHONY: deps doc test xref
+.PHONY: edoc test xref
