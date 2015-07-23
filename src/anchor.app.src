@@ -4,7 +4,8 @@
   {registered, [anchor_server]},
   {applications, [
     kernel,
-    stdlib
+    stdlib,
+    shackle
   ]},
   {mod, {anchor_app, []}},
   {env, []}

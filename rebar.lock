@@ -1,1 +1,4 @@
-[].
+[{<<"shackle">>,
+  {git,"https://github.com/lpgauth/shackle.git",
+       {ref,"31ee413c29dacca414a5e0f005c67021c619f93d"}},
+  0}].

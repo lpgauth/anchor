@@ -67,7 +67,10 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 
 ### init/1 ###
 
-`init(X1) -> any()`
+<pre><code>
+init(X1::[]) -&gt; {ok, {{one_for_one, 5, 10}, []}}
+</code></pre>
+<br />
 
 <a name="start_link-0"></a>
 
