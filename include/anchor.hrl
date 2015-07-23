@@ -80,9 +80,9 @@
 }).
 
 %% types
--type error ()   :: {error, atom()}.
--type option()   :: {async, pid()}.
--type options()  :: [option()].
+-type error () :: {error, atom()}.
+-type option() :: {async, pid()}.
+-type options() :: [option()].
 -type response() :: #response {}.
 
 -export_type([

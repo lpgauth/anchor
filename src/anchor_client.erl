@@ -18,6 +18,13 @@
 }).
 
 %% shackle_server callbacks
+-spec init() -> {ok, [
+    {ip, inet:ip_address() | inet:hostname()} |
+    {port, inet:port_number()} |
+    {reconnect, boolean()} |
+    {state, term()}
+]}.
+
 init() ->
     Ip = application:get_env(?APP, ip, ?DEFAULT_IP),
     Port = application:get_env(?APP, port, ?DEFAULT_PORT),
@@ -30,8 +37,13 @@ init() ->
         {state, #state {}}
     ]}.
 
+-spec after_connect(inet:socket(), #state {}) -> {ok, #state {}}.
+
 after_connect(_Socket, State) ->
     {ok, State}.
+
+-spec handle_cast(term(), #state {}) ->
+    {ok, pos_integer(), binary(), #state {}}.
 
 handle_cast(Request, #state {
         requests = Requests
@@ -43,12 +55,17 @@ handle_cast(Request, #state {
         requests = Requests + 1
     }}.
 
+-spec handle_data(binary(), #state {}) ->
+    {ok, [{pos_integer(), term()}], #state {}}.
+
 handle_data(Data, #state {
         buffer = Buffer
     } = State) ->
 
     Data2 = <<Buffer/binary, Data/binary>>,
     decode_data(Data2, [], State).
+
+-spec terminate(#state {}) -> ok.
 
 terminate(_State) ->
     ok.
