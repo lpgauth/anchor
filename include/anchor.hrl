@@ -3,7 +3,7 @@
 -define(MAX_32_BIT_INT, 4294967296).
 -define(CLIENT, anchor_client).
 
-%% default
+%% defaults
 -define(DEFAULT_BACKLOG_SIZE, 1024).
 -define(DEFAULT_INCREMENT, 1).
 -define(DEFAULT_INITIAL_VALUE, 0).

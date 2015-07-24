@@ -22,7 +22,7 @@
     {ip, inet:ip_address() | inet:hostname()} |
     {port, inet:port_number()} |
     {reconnect, boolean()} |
-    {state, term()}
+    {state, #state {}}
 ]}.
 
 init() ->

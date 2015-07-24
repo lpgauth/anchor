@@ -89,6 +89,10 @@ Shell got {anchor,#Ref<0.0.0.23623>,{error,key_not_found}}
 ok
 ```
 
+## TODO
+
+* ASCII protocol
+
 ## Tests
 
 ```makefile
