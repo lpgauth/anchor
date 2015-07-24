@@ -3,10 +3,10 @@
 
 -behavior(shackle_client).
 -export([
-    init/0,
     after_connect/2,
     handle_cast/2,
     handle_data/2,
+    options/0,
     terminate/1
 ]).
 
@@ -18,25 +18,6 @@
 }).
 
 %% shackle_server callbacks
--spec init() -> {ok, [
-    {ip, inet:ip_address() | inet:hostname()} |
-    {port, inet:port_number()} |
-    {reconnect, boolean()} |
-    {state, #state {}}
-]}.
-
-init() ->
-    Ip = application:get_env(?APP, ip, ?DEFAULT_IP),
-    Port = application:get_env(?APP, port, ?DEFAULT_PORT),
-    Reconnect = application:get_env(?APP, reconnect, ?DEFAULT_RECONNECT),
-
-    {ok, [
-        {ip, Ip},
-        {port, Port},
-        {reconnect, Reconnect},
-        {state, #state {}}
-    ]}.
-
 -spec after_connect(inet:socket(), #state {}) -> {ok, #state {}}.
 
 after_connect(_Socket, State) ->
@@ -64,6 +45,25 @@ handle_data(Data, #state {
 
     Data2 = <<Buffer/binary, Data/binary>>,
     decode_data(Data2, [], State).
+
+-spec options() -> {ok, [
+    {ip, inet:ip_address() | inet:hostname()} |
+    {port, inet:port_number()} |
+    {reconnect, boolean()} |
+    {state, #state {}}
+]}.
+
+options() ->
+    Ip = application:get_env(?APP, ip, ?DEFAULT_IP),
+    Port = application:get_env(?APP, port, ?DEFAULT_PORT),
+    Reconnect = application:get_env(?APP, reconnect, ?DEFAULT_RECONNECT),
+
+    {ok, [
+        {ip, Ip},
+        {port, Port},
+        {reconnect, Reconnect},
+        {state, #state {}}
+    ]}.
 
 -spec terminate(#state {}) -> ok.
 
