@@ -1,5 +1,3 @@
-% https://code.google.com/p/memcached/wiki/BinaryProtocolRevamped
-
 -module(anchor_protocol).
 -include("anchor.hrl").
 

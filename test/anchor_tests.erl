@@ -2,84 +2,45 @@
 -include_lib("anchor/include/anchor.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
--compile(export_all).
-
--define(T, fun (Test) -> test(Test) end).
-
 %% runners
 anchor_test_() ->
     {setup,
         fun () -> setup() end,
         fun (_) -> cleanup() end,
     [
-        ?T(test_add),
-        ?T(test_delete),
-        ?T(test_flush),
-        ?T(test_increment_decrement),
-        ?T(test_noop),
-        ?T(test_quit),
-        ?T(test_replace),
-        ?T(test_set_get),
-        ?T(test_version)
+        fun add_subtest/0,
+        fun delete_subtest/0,
+        fun flush_subtest/0,
+        fun increment_decrement_subtest/0,
+        fun noop_subtest/0,
+        fun replace_subtest/0,
+        fun set_get_subtest/0,
+        fun version_subtest/0
     ]}.
 
-anchor_backlog_test_() ->
+anchor_quit_test_() ->
     {setup,
-        fun () -> setup([{backlog_size, 1}]) end,
+        fun () -> setup([{pool_size, 1}]) end,
         fun (_) -> cleanup() end,
-    [
-        ?T(test_backlogfull_async),
-        ?T(test_backlogfull_sync)
-    ]}.
-
-anchor_connection_error_test_() ->
-    {setup,
-        fun () -> setup([{port, 11212}]) end,
-        fun (_) -> cleanup() end,
-    [
-        ?T(test_no_socket)
-    ]}.
+    [fun quit_subtest/0]}.
 
 %% tests
-test_add() ->
+add_subtest() ->
     Key = random(),
     Value = random(),
     ok = anchor:add(Key, Value),
     {error, key_exists} = anchor:add(Key, Value).
 
-test_backlogfull_async() ->
-    Key = random(),
-    Value = random(),
-    ok = anchor:set(Key, Value),
-
-    Responses = [anchor:get(Key, 1000, [{async, self()}]) || _ <- lists:seq(1,100)],
-    ?assert(lists:any(fun
-        ({error, backlog_full}) -> true;
-        (_) -> false
-    end, Responses)).
-
-test_backlogfull_sync() ->
-    Key = random(),
-    Value = random(),
-    ok = anchor:set(Key, Value),
-    Pid = self(),
-
-    [spawn(fun () -> Pid ! {response, anchor:get(Key)} end) || _ <- lists:seq(1,20)],
-    ?assert(lists:any(fun
-        ({error, backlog_full}) -> true;
-        (_) -> false
-    end, receive_loop(20))).
-
-test_delete() ->
+delete_subtest() ->
     Key = random(),
     Value = random(),
     ok = anchor:set(Key, Value),
     ok = anchor:delete(Key).
 
-test_flush() ->
+flush_subtest() ->
     ok = anchor:flush().
 
-test_increment_decrement() ->
+increment_decrement_subtest() ->
     Key = random(),
     {ok, 0} = anchor:increment(Key),
     {ok, 1} = anchor:increment(Key),
@@ -87,16 +48,14 @@ test_increment_decrement() ->
     {ok, 1} = anchor:decrement(Key),
     {ok, 0} = anchor:decrement(Key).
 
-test_noop() ->
+noop_subtest() ->
     ok = anchor:noop().
 
-test_no_socket() ->
-    {error, no_socket} = anchor:noop().
+quit_subtest() ->
+    anchor:quit(),
+    {error, _} = anchor:get(random()).
 
-test_quit() ->
-    ok = anchor:quit().
-
-test_replace() ->
+replace_subtest() ->
     Key = random(),
     Value = random(),
     {error, key_not_found} = anchor:replace(Key, Value),
@@ -104,30 +63,21 @@ test_replace() ->
     ok = anchor:replace(Key, Value),
     {ok, Value} = anchor:get(Key).
 
-test_set_get() ->
+set_get_subtest() ->
     Key = random(),
     Value = random(),
     ok = anchor:set(Key, Value),
     {ok, Value} = anchor:get(Key).
 
-test_version() ->
+version_subtest() ->
     {ok, _} = anchor:version().
 
 %% utils
 cleanup() ->
-    error_logger:tty(false),
-    application:stop(?APP),
-    error_logger:tty(true).
+    anchor_app:stop().
 
 random() ->
     crypto:rand_bytes(24).
-
-receive_loop(0) -> [];
-receive_loop(N) ->
-    receive
-        {response, X} ->
-            [X | receive_loop(N - 1)]
-    end.
 
 setup() ->
     setup([]).
@@ -135,9 +85,11 @@ setup() ->
 setup(KeyVals) ->
     error_logger:tty(false),
     application:load(?APP),
-    [application:set_env(?APP, K, V) || {K, V} <- KeyVals],
-    anchor_app:start(),
-    error_logger:tty(true).
+    set_env(KeyVals),
+    anchor_app:start().
 
-test(Test) ->
-    {atom_to_list(Test), ?MODULE, Test}.
+set_env([]) ->
+    ok;
+set_env([{K, V} | T]) ->
+    application:set_env(?APP, K, V),
+    set_env(T).

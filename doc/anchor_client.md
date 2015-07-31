@@ -1,6 +1,6 @@
 
 
-# Module anchor_backlog #
+# Module anchor_client #
 * [Data Types](#types)
 * [Function Index](#index)
 * [Function Details](#functions)
@@ -54,46 +54,40 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#check-1">check/1</a></td><td></td></tr><tr><td valign="top"><a href="#decrement-1">decrement/1</a></td><td></td></tr><tr><td valign="top"><a href="#init-0">init/0</a></td><td></td></tr><tr><td valign="top"><a href="#new-1">new/1</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#after_connect-2">after_connect/2</a></td><td></td></tr><tr><td valign="top"><a href="#handle_cast-2">handle_cast/2</a></td><td></td></tr><tr><td valign="top"><a href="#handle_data-2">handle_data/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-0">init/0</a></td><td></td></tr><tr><td valign="top"><a href="#terminate-1">terminate/1</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
 
 ## Function Details ##
 
-<a name="check-1"></a>
+<a name="after_connect-2"></a>
 
-### check/1 ###
+### after_connect/2 ###
 
-<pre><code>
-check(ServerName::atom()) -&gt; boolean()
-</code></pre>
-<br />
+`after_connect(Socket, State) -> any()`
 
-<a name="decrement-1"></a>
+<a name="handle_cast-2"></a>
 
-### decrement/1 ###
+### handle_cast/2 ###
 
-<pre><code>
-decrement(ServerName::atom()) -&gt; non_neg_integer() | {error, tid_missing}
-</code></pre>
-<br />
+`handle_cast(Request, State) -> any()`
+
+<a name="handle_data-2"></a>
+
+### handle_data/2 ###
+
+`handle_data(Data, State) -> any()`
 
 <a name="init-0"></a>
 
 ### init/0 ###
 
-<pre><code>
-init() -&gt; anchor_backlog
-</code></pre>
-<br />
+`init() -> any()`
 
-<a name="new-1"></a>
+<a name="terminate-1"></a>
 
-### new/1 ###
+### terminate/1 ###
 
-<pre><code>
-new(ServerName::atom()) -&gt; true
-</code></pre>
-<br />
+`terminate(State) -> any()`
 

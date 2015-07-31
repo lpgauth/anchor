@@ -5,11 +5,11 @@ all: compile
 
 clean:
 	@echo "Running rebar3 clean..."
-	@$(REBAR) clean
+	@$(REBAR) clean -a
 
 compile:
 	@echo "Running rebar3 compile..."
-	@$(REBAR) compile
+	@$(REBAR) as compile compile
 
 dialyzer:
 	@echo "Running rebar3 dialyze..."
@@ -17,11 +17,11 @@ dialyzer:
 
 edoc:
 	@echo "Running rebar3 edoc..."
-	@$(REBAR) as doc edoc
+	@$(REBAR) as edoc edoc
 
 eunit:
 	@echo "Running rebar3 eunit..."
-	@$(REBAR) do eunit, cover --verbose
+	@$(REBAR) do eunit -cv, cover -v
 
 test: dialyzer eunit xref
 

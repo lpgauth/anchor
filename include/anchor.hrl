@@ -1,21 +1,17 @@
 %% macros
 -define(APP, anchor).
--define(CHILD(Name, Mod), {Name, {Mod, start_link, [Name]}, permanent, 5000, worker, [Mod]}).
--define(CONNECT_RETRY_MSG, connect_retry).
 -define(MAX_32_BIT_INT, 4294967296).
--define(SERVER, anchor_server).
--define(SERVER_BASE_NAME, "anchor_server_").
+-define(CLIENT, anchor_client).
 
-%% default
+%% defaults
 -define(DEFAULT_BACKLOG_SIZE, 1024).
--define(DEFAULT_CONNECT_RETRY, 5000).
 -define(DEFAULT_INCREMENT, 1).
 -define(DEFAULT_INITIAL_VALUE, 0).
 -define(DEFAULT_IP, "127.0.0.1").
 -define(DEFAULT_POOL_SIZE, 8).
+-define(DEFAULT_POOL_STRATEGY, random).
 -define(DEFAULT_PORT, 11211).
 -define(DEFAULT_RECONNECT, true).
--define(DEFAULT_SEND_TIMEOUT, 20).
 -define(DEFAULT_TIMEOUT, 1000).
 -define(DEFAULT_TTL, 0).
 
@@ -84,9 +80,9 @@
 }).
 
 %% types
--type error ()   :: {error, atom()}.
--type option()   :: {async, pid()}.
--type options()  :: [option()].
+-type error () :: {error, atom()}.
+-type option() :: {async, pid()}.
+-type options() :: [option()].
 -type response() :: #response {}.
 
 -export_type([

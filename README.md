@@ -47,10 +47,15 @@ Non-blocking Erlang Memcached client
     <td>number of connections</td>
   </tr>
   <tr>
+    <td>pool_strategy</td>
+    <td>random | round_robin</td>
+    <td>random</td>
+    <td>connection selection strategy</td>
+  </tr>
+  <tr>
     <td>backlog_size</td>
     <td>pos_integer()</td>
     <td>1024</td>
-
     <td>maximum number of concurrent requests per connection</td>
   </tr>
   <tr>
@@ -83,6 +88,10 @@ ok
 Shell got {anchor,#Ref<0.0.0.23623>,{error,key_not_found}}
 ok
 ```
+
+## TODO
+
+* ASCII protocol
 
 ## Tests
 

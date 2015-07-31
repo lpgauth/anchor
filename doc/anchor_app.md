@@ -56,7 +56,7 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#start-0">start/0</a></td><td></td></tr><tr><td valign="top"><a href="#start-2">start/2</a></td><td></td></tr><tr><td valign="top"><a href="#stop-1">stop/1</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#start-0">start/0</a></td><td></td></tr><tr><td valign="top"><a href="#start-2">start/2</a></td><td></td></tr><tr><td valign="top"><a href="#stop-0">stop/0</a></td><td></td></tr><tr><td valign="top"><a href="#stop-1">stop/1</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
@@ -68,7 +68,7 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 ### start/0 ###
 
 <pre><code>
-start() -&gt; ok
+start() -&gt; {ok, [atom()]}
 </code></pre>
 <br />
 
@@ -76,11 +76,23 @@ start() -&gt; ok
 
 ### start/2 ###
 
-`start(StartType, StartArgs) -> any()`
+<pre><code>
+start(StartType::<a href="application.md#type-start_type">application:start_type()</a>, StartArgs::term()) -&gt; {ok, pid()}
+</code></pre>
+<br />
+
+<a name="stop-0"></a>
+
+### stop/0 ###
+
+`stop() -> any()`
 
 <a name="stop-1"></a>
 
 ### stop/1 ###
 
-`stop(State) -> any()`
+<pre><code>
+stop(State::term()) -&gt; ok
+</code></pre>
+<br />
 

@@ -276,47 +276,7 @@ version(Timeout, Options) ->
     call(version, Timeout, Options).
 
 %% private
-async_call(Msg, Pid) ->
-    Ref = make_ref(),
-    Server = random_server(),
-    case anchor_backlog:check(Server) of
-        true ->
-            Server ! {call, Ref, Pid, Msg},
-            {ok, Ref};
-        false ->
-            {error, backlog_full}
-    end.
-
-call(Msg, Timeout) ->
-    case async_call(Msg, self()) of
-        {ok, Ref} ->
-            receive_response(Ref, Timeout);
-        {error, Reason} ->
-            {error, Reason}
-    end.
-
-call(Msg, _Timeout, [{async, Pid}]) ->
-    async_call(Msg, Pid);
-call(Msg, Timeout, _Options) ->
-    call(Msg, Timeout).
-
-random_server() ->
-    PoolSize = application:get_env(?APP, pool_size, ?DEFAULT_POOL_SIZE),
-    Random = erlang:phash2({os:timestamp(), self()}, PoolSize) + 1,
-    anchor_utils:child_name(Random).
-
-receive_response(Ref, Timeout) ->
-    Timestamp = os:timestamp(),
-    receive
-        {?APP, Ref, Reply} ->
-            Reply;
-        {?APP, _, _} ->
-            Timeout2 = timeout(Timeout, Timestamp),
-            receive_response(Ref, Timeout2)
-    after Timeout ->
-        {error, timeout}
-    end.
-
-timeout(Timeout, Timestamp) ->
-    Diff = timer:now_diff(os:timestamp(), Timestamp) div 1000,
-    Timeout - Diff.
+call(Request, _Timeout, [{async, Pid}]) ->
+    shackle:cast(?APP, Request, Pid);
+call(Request, Timeout, _Options) ->
+    shackle:call(?APP, Request, Timeout).
