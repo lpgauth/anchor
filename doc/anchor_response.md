@@ -1,11 +1,9 @@
 
 
-# Module anchor_app #
+# Module anchor_response #
 * [Data Types](#types)
 * [Function Index](#index)
 * [Function Details](#functions)
-
-__Behaviours:__ [`application`](application.md).
 
 <a name="types"></a>
 
@@ -56,46 +54,19 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#start-0">start/0</a></td><td></td></tr><tr><td valign="top"><a href="#start-2">start/2</a></td><td></td></tr><tr><td valign="top"><a href="#stop-0">stop/0</a></td><td></td></tr><tr><td valign="top"><a href="#stop-1">stop/1</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#format-1">format/1</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
 
 ## Function Details ##
 
-<a name="start-0"></a>
+<a name="format-1"></a>
 
-### start/0 ###
-
-<pre><code>
-start() -&gt; {ok, [atom()]}
-</code></pre>
-<br />
-
-<a name="start-2"></a>
-
-### start/2 ###
+### format/1 ###
 
 <pre><code>
-start(StartType::<a href="application.md#type-start_type">application:start_type()</a>, StartArgs::term()) -&gt; {ok, pid()}
-</code></pre>
-<br />
-
-<a name="stop-0"></a>
-
-### stop/0 ###
-
-<pre><code>
-stop() -&gt; ok | {error, {not_started, anchor}}
-</code></pre>
-<br />
-
-<a name="stop-1"></a>
-
-### stop/1 ###
-
-<pre><code>
-stop(State::term()) -&gt; ok
+format(Response::#response{state = undefined | parsing_header | parsing_body | complete, op_code = any(), key_length = any(), extras_length = any(), data_type = any(), status = any(), body_length = any(), opaque = any(), cas = any(), extras = any(), key = any(), value = any()}) -&gt; ok | {ok, term()} | {error, term()}
 </code></pre>
 <br />
 
