@@ -96,8 +96,8 @@ ok
 ## Tests
 
 ```makefile
+make dialyzer
 make eunit
-make build-plt && make dialyze
 make xref
 ```
 
