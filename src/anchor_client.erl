@@ -4,10 +4,10 @@
 -behavior(shackle_client).
 -export([
     after_connect/2,
-    handle_cast/2,
     handle_data/2,
+    handle_request/2,
+    handle_timing/2,
     options/0,
-    process_timings/2,
     terminate/1
 ]).
 
@@ -24,19 +24,6 @@
 after_connect(_Socket, State) ->
     {ok, State}.
 
--spec handle_cast(term(), #state {}) ->
-    {ok, pos_integer(), binary(), #state {}}.
-
-handle_cast(Request, #state {
-        requests = Requests
-    } = State) ->
-
-    RequestId = request_id(Requests),
-    {ok, Data} = anchor_protocol:encode(RequestId, Request),
-    {ok, RequestId, Data, State#state {
-        requests = Requests + 1
-    }}.
-
 -spec handle_data(binary(), #state {}) ->
     {ok, [{pos_integer(), term()}], #state {}}.
 
@@ -46,6 +33,24 @@ handle_data(Data, #state {
 
     Data2 = <<Buffer/binary, Data/binary>>,
     decode_data(Data2, [], State).
+
+-spec handle_request(term(), #state {}) ->
+    {ok, pos_integer(), binary(), #state {}}.
+
+handle_request(Request, #state {
+        requests = Requests
+    } = State) ->
+
+    RequestId = request_id(Requests),
+    {ok, Data} = anchor_protocol:encode(RequestId, Request),
+    {ok, RequestId, Data, State#state {
+        requests = Requests + 1
+    }}.
+
+-spec handle_timing(term(), [non_neg_integer()]) -> ok.
+
+handle_timing(_Cast, _Timings) ->
+    ok.
 
 -spec options() -> {ok, [
     {ip, inet:ip_address() | inet:hostname()} |
@@ -65,11 +70,6 @@ options() ->
         {reconnect, Reconnect},
         {state, #state {}}
     ]}.
-
--spec process_timings(term(), [non_neg_integer()]) -> ok.
-
-process_timings(_Cast, _Timings) ->
-    ok.
 
 -spec terminate(#state {}) -> ok.
 
