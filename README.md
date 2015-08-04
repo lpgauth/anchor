@@ -64,6 +64,18 @@ Non-blocking Erlang Memcached client
     <td>true</td>
     <td>reconnect closed connections</td>
   </tr>
+  <tr>
+    <td>reconnect_time_max</td>
+    <td>boolean()</td>
+    <td>true</td>
+    <td>reconnect maximum time</td>
+  </tr>
+  <tr>
+    <td>reconnect_time_min</td>
+    <td>boolean()</td>
+    <td>true</td>
+    <td>reconnect minimum time</td>
+  </tr>
 </table>
 
 ## API

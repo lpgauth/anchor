@@ -63,11 +63,15 @@ options() ->
     Ip = application:get_env(?APP, ip, ?DEFAULT_IP),
     Port = application:get_env(?APP, port, ?DEFAULT_PORT),
     Reconnect = application:get_env(?APP, reconnect, ?DEFAULT_RECONNECT),
+    ReconnectTimeMax = application:get_env(?APP, reconnect_time_max, ?DEFAULT_RECONNECT),
+    ReconnectTimeMin = application:get_env(?APP, reconnect_time_min, ?DEFAULT_RECONNECT),
 
     {ok, [
         {ip, Ip},
         {port, Port},
         {reconnect, Reconnect},
+        {reconnect_time_max, ReconnectTimeMax},
+        {reconnect_time_min, ReconnectTimeMin},
         {state, #state {}}
     ]}.
 

@@ -12,6 +12,8 @@
 -define(DEFAULT_POOL_STRATEGY, random).
 -define(DEFAULT_PORT, 11211).
 -define(DEFAULT_RECONNECT, true).
+-define(DEFAULT_RECONNECT_MAX, timer:minutes(2)).
+-define(DEFAULT_RECONNECT_MIN, timer:seconds(1)).
 -define(DEFAULT_TIMEOUT, 1000).
 -define(DEFAULT_TTL, 0).
 
