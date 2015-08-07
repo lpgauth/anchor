@@ -29,16 +29,16 @@ Non-blocking Erlang Memcached client
     <th>Description</th>
   </theader>
   <tr>
+    <td>backlog_size</td>
+    <td>pos_integer()</td>
+    <td>1024</td>
+    <td>maximum number of concurrent requests per connection</td>
+  </tr>
+  <tr>
     <td>ip</td>
     <td>list()</td>
     <td>"127.0.0.1"</td>
     <td>server ip</td>
-  </tr>
-  <tr>
-    <td>port</td>
-    <td>pos_integer()</td>
-    <td>9042</td>
-    <td>server port</td>
   </tr>
   <tr>
     <td>pool_size</td>
@@ -53,10 +53,10 @@ Non-blocking Erlang Memcached client
     <td>connection selection strategy</td>
   </tr>
   <tr>
-    <td>backlog_size</td>
+    <td>port</td>
     <td>pos_integer()</td>
-    <td>1024</td>
-    <td>maximum number of concurrent requests per connection</td>
+    <td>9042</td>
+    <td>server port</td>
   </tr>
   <tr>
     <td>reconnect</td>
@@ -87,17 +87,17 @@ Non-blocking Erlang Memcached client
 1> application:start(anchor).
 ok
 2> anchor:get(<<"foo">>).
-{error,key_not_found}
+{error, key_not_found}
 3> anchor:set(<<"foo">>, <<"bar">>, 3600).
 ok
 4> anchor:get(<<"foo">>).
-{ok,<<"bar">>}
+{ok, <<"bar">>}
 5> anchor:delete(<<"foo">>).
 ok
 6> anchor:get(<<"foo">>, 1000, [{async, self()}]).
-{ok,#Ref<0.0.0.23623>}
+{ok, #Ref<0.0.0.23623>}
 7> flush().
-Shell got {anchor,#Ref<0.0.0.23623>,{error,key_not_found}}
+Shell got {anchor, #Ref<0.0.0.23623>, {error, key_not_found}}
 ok
 ```
 
