@@ -1,4 +1,4 @@
 [{<<"shackle">>,
   {git,"https://github.com/lpgauth/shackle.git",
-       {ref,"3930664eb5359b9b417a87968fbf89268c36ddf7"}},
+       {ref,"aa71c75bc3f5f94858fa678c9cd1c71313895d76"}},
   0}].
