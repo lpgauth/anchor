@@ -1,4 +1,3 @@
-PROJECT=anchor
 REBAR=./rebar3
 
 all: compile
