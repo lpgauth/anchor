@@ -1,6 +1,9 @@
 -module(anchor_response).
 -include("anchor.hrl").
 
+-compile(inline).
+-compile({inline_size, 512}).
+
 -export([
     format/1
 ]).
