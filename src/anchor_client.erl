@@ -3,11 +3,11 @@
 
 -behavior(shackle_client).
 -export([
-    after_connect/2,
-    handle_data/2,
-    handle_request/2,
-    handle_timing/2,
     options/0,
+    init/0,
+    setup/2,
+    handle_request/2,
+    handle_data/2,
     terminate/1
 ]).
 
@@ -19,45 +19,8 @@
 }).
 
 %% shackle_server callbacks
--spec after_connect(inet:socket(), #state {}) -> {ok, #state {}}.
-
-after_connect(_Socket, State) ->
-    {ok, State}.
-
--spec handle_data(binary(), #state {}) ->
-    {ok, [{pos_integer(), term()}], #state {}}.
-
-handle_data(Data, #state {
-        buffer = Buffer
-    } = State) ->
-
-    Data2 = <<Buffer/binary, Data/binary>>,
-    decode_data(Data2, [], State).
-
--spec handle_request(term(), #state {}) ->
-    {ok, pos_integer(), binary(), #state {}}.
-
-handle_request(Request, #state {
-        requests = Requests
-    } = State) ->
-
-    RequestId = request_id(Requests),
-    {ok, Data} = anchor_protocol:encode(RequestId, Request),
-    {ok, RequestId, Data, State#state {
-        requests = Requests + 1
-    }}.
-
--spec handle_timing(term(), [non_neg_integer()]) -> ok.
-
-handle_timing(_Cast, _Timings) ->
-    ok.
-
--spec options() -> {ok, [
-    {ip, inet:ip_address() | inet:hostname()} |
-    {port, inet:port_number()} |
-    {reconnect, boolean()} |
-    {state, #state {}}
-]}.
+-spec options() ->
+    {ok, shackle:client_options()}.
 
 options() ->
     Ip = application:get_env(?APP, ip, ?DEFAULT_IP),
@@ -72,8 +35,48 @@ options() ->
         {reconnect, Reconnect},
         {reconnect_time_max, ReconnectTimeMax},
         {reconnect_time_min, ReconnectTimeMin},
-        {state, #state {}}
+        {socket_options, [
+            binary,
+            {packet, raw},
+            {send_timeout, 50},
+            {send_timeout_close, true}
+        ]}
     ]}.
+
+-spec init() ->
+    {ok, #state {}}.
+
+init() ->
+    {ok, #state {}}.
+
+-spec setup(inet:socket(), #state {}) ->
+    {ok, #state {}}.
+
+setup(_Socket, State) ->
+    {ok, State}.
+
+-spec handle_request(term(), #state {}) ->
+    {ok, pos_integer(), binary(), #state {}}.
+
+handle_request(Request, #state {
+        requests = Requests
+    } = State) ->
+
+    RequestId = request_id(Requests),
+    {ok, Data} = anchor_protocol:encode(RequestId, Request),
+    {ok, RequestId, Data, State#state {
+        requests = Requests + 1
+    }}.
+
+-spec handle_data(binary(), #state {}) ->
+    {ok, [{pos_integer(), term()}], #state {}}.
+
+handle_data(Data, #state {
+        buffer = Buffer
+    } = State) ->
+
+    Data2 = <<Buffer/binary, Data/binary>>,
+    decode_data(Data2, [], State).
 
 -spec terminate(#state {}) -> ok.
 
