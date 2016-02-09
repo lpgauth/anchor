@@ -85,19 +85,20 @@ decrement(Key, Amount) ->
 decrement(Key, Amount, InitialValue) ->
     decrement(Key, Amount, InitialValue, ?DEFAULT_TTL).
 
--spec decrement(binary(), integer(), integer(), non_neg_integer()) -> {ok, integer()} | error().
+-spec decrement(binary(), integer(), integer(), non_neg_integer()) ->
+    {ok, integer()} | error().
 
 decrement(Key, Amount, InitialValue, TTL) ->
     decrement(Key, Amount, InitialValue, TTL, ?DEFAULT_TIMEOUT).
 
--spec decrement(binary(), integer(), integer(), non_neg_integer(), pos_integer()) ->
-    {ok, integer()} | error().
+-spec decrement(binary(), integer(), integer(), non_neg_integer(),
+    pos_integer()) -> {ok, integer()} | error().
 
 decrement(Key, Amount, InitialValue, TTL, Timeout) ->
     decrement(Key, Amount, InitialValue, TTL, Timeout, []).
 
--spec decrement(binary(), integer(), integer(), non_neg_integer(), pos_integer(), options()) ->
-    {ok, integer()} | error().
+-spec decrement(binary(), integer(), integer(), non_neg_integer(),
+    pos_integer(), options()) -> {ok, integer()} | error().
 
 decrement(Key, Amount, InitialValue, TTL, Timeout, Options) ->
     call({decrement, Key, Amount, InitialValue, TTL}, Timeout, Options).
@@ -188,14 +189,14 @@ increment(Key, Amount, InitialValue, TTL) ->
 
     increment(Key, Amount, InitialValue, TTL, ?DEFAULT_TIMEOUT).
 
--spec increment(binary(), integer(), integer(), non_neg_integer(), pos_integer()) ->
-    {ok, integer()} | error().
+-spec increment(binary(), integer(), integer(), non_neg_integer(),
+    pos_integer()) -> {ok, integer()} | error().
 
 increment(Key, Amount, InitialValue, TTL, Timeout) ->
     increment(Key, Amount, InitialValue, TTL, Timeout, []).
 
--spec increment(binary(), integer(), integer(), non_neg_integer(), pos_integer(), options()) ->
-    {ok, integer()} | error().
+-spec increment(binary(), integer(), integer(), non_neg_integer(),
+    pos_integer(), options()) -> {ok, integer()} | error().
 
 increment(Key, Amount, InitialValue, TTL, Timeout, Options) ->
     Msg = {increment, Key, Amount, InitialValue, TTL},
@@ -232,8 +233,8 @@ replace(Key, Value, TTL) ->
 replace(Key, Value, TTL, Timeout) ->
     replace(Key, Value, TTL, Timeout, []).
 
--spec replace(binary(), binary(), non_neg_integer(), pos_integer(), options()) ->
-    ok | error().
+-spec replace(binary(), binary(), non_neg_integer(), pos_integer(),
+    options()) -> ok | error().
 
 replace(Key, Value, TTL, Timeout, Options) ->
     call({replace, Key, Value, TTL}, Timeout, Options).

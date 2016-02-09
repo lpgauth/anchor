@@ -9,7 +9,7 @@
 ]).
 
 %% public
--spec format(#response {}) -> ok | {ok, term()} | {error, term()}.
+-spec format(response()) -> ok | {ok, term()} | {error, term()}.
 
 format(#response {status = ?STAT_OK} = Response) ->
     return(Response);

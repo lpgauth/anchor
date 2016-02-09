@@ -1,5 +1,6 @@
 CACHEGRIND=qcachegrind
-REBAR3=./rebar3
+ELVIS=./bin/elvis
+REBAR3=./bin/rebar3
 
 all: compile
 
@@ -19,6 +20,10 @@ edoc:
 	@echo "Running rebar3 edoc..."
 	@$(REBAR3) as edoc edoc
 
+elvis:
+	@echo "Running elvis rock..."
+	@$(ELVIS) rock
+
 eunit:
 	@echo "Running rebar3 eunit..."
 	@$(REBAR3) do eunit -cv, cover -v
@@ -33,7 +38,7 @@ profile:
 	@_build/test/lib/fprofx/erlgrindx -p fprofx.analysis
 	@$(CACHEGRIND) fprofx.cgrind
 
-test: dialyzer eunit xref
+test: elvis xref eunit dialyzer
 
 xref:
 	@echo "Running rebar3 xref..."

@@ -21,16 +21,18 @@
     response = undefined
 }).
 
+-type state() :: #state {}.
+
 %% shackle_server callbacks
 -spec options() ->
     {ok, shackle:client_options()}.
 
 options() ->
-    Ip = application:get_env(?APP, ip, ?DEFAULT_IP),
-    Port = application:get_env(?APP, port, ?DEFAULT_PORT),
-    Reconnect = application:get_env(?APP, reconnect, ?DEFAULT_RECONNECT),
-    ReconnectTimeMax = application:get_env(?APP, reconnect_time_max, ?DEFAULT_RECONNECT_MAX),
-    ReconnectTimeMin = application:get_env(?APP, reconnect_time_min, ?DEFAULT_RECONNECT_MIN),
+    Ip = ?GET_ENV(ip, ?DEFAULT_IP),
+    Port = ?GET_ENV(port, ?DEFAULT_PORT),
+    Reconnect = ?GET_ENV(reconnect, ?DEFAULT_RECONNECT),
+    ReconnectTimeMax = ?GET_ENV(reconnect_time_max, ?DEFAULT_RECONNECT_MAX),
+    ReconnectTimeMin = ?GET_ENV(reconnect_time_min, ?DEFAULT_RECONNECT_MIN),
 
     {ok, [
         {ip, Ip},
@@ -47,19 +49,19 @@ options() ->
     ]}.
 
 -spec init() ->
-    {ok, #state {}}.
+    {ok, state()}.
 
 init() ->
     {ok, #state {}}.
 
--spec setup(inet:socket(), #state {}) ->
-    {ok, #state {}}.
+-spec setup(inet:socket(), state()) ->
+    {ok, state()}.
 
 setup(_Socket, State) ->
     {ok, State}.
 
--spec handle_request(term(), #state {}) ->
-    {ok, pos_integer(), binary(), #state {}}.
+-spec handle_request(term(), state()) ->
+    {ok, pos_integer(), binary(), state()}.
 
 handle_request(Request, #state {
         requests = Requests
@@ -71,8 +73,8 @@ handle_request(Request, #state {
         requests = Requests + 1
     }}.
 
--spec handle_data(binary(), #state {}) ->
-    {ok, [{pos_integer(), term()}], #state {}}.
+-spec handle_data(binary(), state()) ->
+    {ok, [{pos_integer(), term()}], state()}.
 
 handle_data(Data, #state {
         buffer = Buffer
@@ -81,7 +83,7 @@ handle_data(Data, #state {
     Data2 = <<Buffer/binary, Data/binary>>,
     decode_data(Data2, [], State).
 
--spec terminate(#state {}) -> ok.
+-spec terminate(state()) -> ok.
 
 terminate(_State) ->
     ok.
