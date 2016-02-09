@@ -1,12 +1,13 @@
 cache:
   directories:
     - $HOME/.cache/rebar3
+    - $TRAVIS_BUILD_DIR/_build
 install: true
 language: erlang
 notifications:
   email: false
 otp_release:
-  - 18.0
+  - 18.2.1
   - 17.5
 services:
   - memcached

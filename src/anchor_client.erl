@@ -15,10 +15,9 @@
 ]).
 
 -record(state, {
-    buffer   = <<>>,
-    item     = undefined,
-    requests = 0,
-    response = undefined
+    buffer   = <<>>      :: binary(),
+    requests = 0         :: non_neg_integer(),
+    response = undefined :: response() | undefined
 }).
 
 -type state() :: #state {}.
@@ -69,6 +68,7 @@ handle_request(Request, #state {
 
     RequestId = request_id(Requests),
     {ok, Data} = anchor_protocol:encode(RequestId, Request),
+
     {ok, RequestId, Data, State#state {
         requests = Requests + 1
     }}.

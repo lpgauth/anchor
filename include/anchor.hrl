@@ -57,29 +57,29 @@
 
 %% records
 -record(request, {
-    op_code   = undefined,
-    data_type = ?DATA_TYPE,
-    vbucket   = ?VBUCKET,
-    opaque    = <<>>,
-    cas       = ?CAS,
-    extras    = <<>>,
-    key       = <<>>,
-    value     = <<>>
+    op_code   = undefined  :: non_neg_integer(),
+    data_type = ?DATA_TYPE :: non_neg_integer(),
+    vbucket   = ?VBUCKET   :: non_neg_integer(),
+    opaque    = <<>>       :: non_neg_integer(),
+    cas       = ?CAS       :: non_neg_integer(),
+    extras    = <<>>       :: binary(),
+    key       = <<>>       :: binary(),
+    value     = <<>>       :: binary()
 }).
 
 -record(response, {
-    state :: parsing_header | parsing_body | complete,
-    op_code,
-    key_length,
-    extras_length,
-    data_type,
-    status,
-    body_length,
-    opaque,
-    cas,
-    extras,
-    key,
-    value
+    state         :: parsing_header | parsing_body | complete,
+    op_code       :: non_neg_integer() | undefined,
+    key_length    :: non_neg_integer() | undefined,
+    extras_length :: non_neg_integer() | undefined,
+    data_type     :: non_neg_integer() | undefined,
+    status        :: non_neg_integer() | undefined,
+    body_length   :: non_neg_integer() | undefined,
+    opaque        :: non_neg_integer() | undefined,
+    cas           :: non_neg_integer() | undefined,
+    extras        :: binary() | undefined,
+    key           :: binary() | undefined,
+    value         :: binary() | undefined
 }).
 
 %% types
