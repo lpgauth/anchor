@@ -10,7 +10,7 @@
 -define(DEFAULT_INITIAL_VALUE, 0).
 -define(DEFAULT_IP, "127.0.0.1").
 -define(DEFAULT_POOL_SIZE, 8).
--define(DEFAULT_POOL_STRATEGY, random).
+-define(DEFAULT_POOL_STRATEGY, round_robin).
 -define(DEFAULT_PORT, 11211).
 -define(DEFAULT_RECONNECT, true).
 -define(DEFAULT_RECONNECT_MAX, timer:minutes(2)).
