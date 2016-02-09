@@ -17,6 +17,9 @@ Non-blocking Erlang Memcached client
 * Performance optimized
 * Request pipelining
 
+## API
+<a href="http://github.com/lpgauth/anchor/blob/master/doc/anchor.md#index" class="module">Function Index</a>
+
 ### Environment variables
 
 <table width="100%">
@@ -76,9 +79,6 @@ Non-blocking Erlang Memcached client
   </tr>
 </table>
 
-## API
-<a href="http://github.com/lpgauth/anchor/blob/master/doc/anchor.md#index" class="module">Function Index</a>
-
 ## Examples
 
 ```erlang
@@ -98,10 +98,6 @@ ok
 Shell got {anchor, #Ref<0.0.0.23623>, {error, key_not_found}}
 ok
 ```
-
-## TODO
-
-* ASCII protocol
 
 ## Tests
 
