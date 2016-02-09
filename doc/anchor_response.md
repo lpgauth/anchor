@@ -66,7 +66,7 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 ### format/1 ###
 
 <pre><code>
-format(Response::#response{state = undefined | parsing_header | parsing_body | complete, op_code = any(), key_length = any(), extras_length = any(), data_type = any(), status = any(), body_length = any(), opaque = any(), cas = any(), extras = any(), key = any(), value = any()}) -&gt; ok | {ok, term()} | {error, term()}
+format(Response::<a href="#type-response">response()</a>) -&gt; ok | {ok, term()} | {error, term()}
 </code></pre>
 <br />
 

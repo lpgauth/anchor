@@ -1,7 +1,5 @@
 # anchor
 
-__Author:__ Louis-Philippe Gauthier.
-
 Non-blocking Erlang Memcached client
 
 [![Build Status](https://travis-ci.org/lpgauth/anchor.svg?branch=master)](https://travis-ci.org/lpgauth/anchor)
