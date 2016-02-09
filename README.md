@@ -5,7 +5,7 @@ __Author:__ Louis-Philippe Gauthier.
 Non-blocking Erlang Memcached client
 
 [![Build Status](https://travis-ci.org/lpgauth/anchor.svg?branch=master)](https://travis-ci.org/lpgauth/anchor)
-
+[![Coverage Status](https://coveralls.io/repos/github/lpgauth/anchor/badge.svg?branch=master)](https://coveralls.io/github/lpgauth/anchor?branch=master)
 ### Requirements
 
 * Memcached
