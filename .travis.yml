@@ -10,5 +10,5 @@ otp_release:
   - 17.5
 services:
   - memcached
-script: "make test"
+script: "make travis"
 sudo: false
