@@ -109,6 +109,7 @@ ok
 
 ```makefile
 make dialyzer
+make elvis
 make eunit
 make xref
 ```
