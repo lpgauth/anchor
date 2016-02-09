@@ -1,15 +1,15 @@
 # anchor
 
-Non-blocking Erlang Memcached client
+High Performance Erlang Memcached Client
 
 [![Build Status](https://travis-ci.org/lpgauth/anchor.svg?branch=master)](https://travis-ci.org/lpgauth/anchor)
 [![Coverage Status](https://coveralls.io/repos/github/lpgauth/anchor/badge.svg?branch=master)](https://coveralls.io/github/lpgauth/anchor?branch=master)
-### Requirements
+#### Requirements
 
 * Memcached
 * Erlang 16.0 +
 
-### Features
+#### Features
 
 * Backpressure via backlog (OOM protection)
 * Binary protocol
@@ -20,7 +20,7 @@ Non-blocking Erlang Memcached client
 ## API
 <a href="http://github.com/lpgauth/anchor/blob/master/doc/anchor.md#index" class="module">Function Index</a>
 
-### Environment variables
+#### Environment variables
 
 <table width="100%">
   <theader>
