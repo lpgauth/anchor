@@ -77,6 +77,17 @@ High Performance Erlang Memcached Client
     <td>true</td>
     <td>reconnect minimum time</td>
   </tr>
+  <tr>
+    <td>socket_options</td>
+    <td>[gen_tcp:connect_option() | gen_udp:option()]</td>
+    <td>
+        [binary,
+        {packet, raw},
+        {send_timeout, 50},
+        {send_timeout_close, true}]
+    </td>
+    <td>options passed to the socket</td>
+  </tr>
 </table>
 
 ## Examples
