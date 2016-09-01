@@ -15,6 +15,12 @@
 -define(DEFAULT_RECONNECT, true).
 -define(DEFAULT_RECONNECT_MAX, timer:minutes(2)).
 -define(DEFAULT_RECONNECT_MIN, timer:seconds(1)).
+-define(DEFAULT_SOCKET_OPTIONS, [
+    binary,
+    {packet, raw},
+    {send_timeout, 50},
+    {send_timeout_close, true}
+]).
 -define(DEFAULT_TIMEOUT, 1000).
 -define(DEFAULT_TTL, 0).
 
