@@ -79,9 +79,11 @@ High Performance Erlang Memcached Client
   </tr>
   <tr>
     <td>socket_options</td>
-    <td>[gen_tcp:connect_option() | gen_udp:option()]</td>
+    <td>[gen_tcp:connect_option()]</td>
     <td>
         [binary,
+        {buffer, 65535},
+        {nodelay, true},
         {packet, raw},
         {send_timeout, 50},
         {send_timeout_close, true}]

@@ -46,7 +46,7 @@ options() = [<a href="#type-option">option()</a>]
 
 
 <pre><code>
-response() = #response{state = undefined | parsing_header | parsing_body | complete, op_code = any(), key_length = any(), extras_length = any(), data_type = any(), status = any(), body_length = any(), opaque = any(), cas = any(), extras = any(), key = any(), value = any()}
+response() = #response{state = parsing_header | parsing_body | complete, op_code = non_neg_integer() | undefined, key_length = non_neg_integer() | undefined, extras_length = non_neg_integer() | undefined, data_type = non_neg_integer() | undefined, status = non_neg_integer() | undefined, body_length = non_neg_integer() | undefined, opaque = non_neg_integer() | undefined, cas = non_neg_integer() | undefined, extras = binary() | undefined, key = binary() | undefined, value = binary() | undefined}
 </code></pre>
 
 
@@ -56,7 +56,7 @@ response() = #response{state = undefined | parsing_header | parsing_body | compl
 
 
 <pre><code>
-state() = #state{}
+state() = #state{buffer = binary(), requests = non_neg_integer(), response = <a href="#type-response">response()</a> | undefined}
 </code></pre>
 
 <a name="index"></a>
@@ -64,7 +64,7 @@ state() = #state{}
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#handle_data-2">handle_data/2</a></td><td></td></tr><tr><td valign="top"><a href="#handle_request-2">handle_request/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-0">init/0</a></td><td></td></tr><tr><td valign="top"><a href="#options-0">options/0</a></td><td></td></tr><tr><td valign="top"><a href="#setup-2">setup/2</a></td><td></td></tr><tr><td valign="top"><a href="#terminate-1">terminate/1</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#handle_data-2">handle_data/2</a></td><td></td></tr><tr><td valign="top"><a href="#handle_request-2">handle_request/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-0">init/0</a></td><td></td></tr><tr><td valign="top"><a href="#setup-2">setup/2</a></td><td></td></tr><tr><td valign="top"><a href="#terminate-1">terminate/1</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
@@ -95,15 +95,6 @@ handle_request(Request::term(), State::<a href="#type-state">state()</a>) -&gt; 
 
 <pre><code>
 init() -&gt; {ok, <a href="#type-state">state()</a>}
-</code></pre>
-<br />
-
-<a name="options-0"></a>
-
-### options/0 ###
-
-<pre><code>
-options() -&gt; {ok, <a href="/Users/lpgauth/Git/anchor/_build/default/lib/shackle/doc/shackle.md#type-client_options">shackle:client_options()</a>}
 </code></pre>
 <br />
 
