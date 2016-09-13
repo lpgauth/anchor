@@ -73,9 +73,8 @@ decode_data(Data, Replies, #state {
     {ok, Rest, Response2} = anchor_protocol:decode(Data, Response),
     case Response2#response.state of
         complete ->
-            ReqId = Response2#response.opaque,
-            Response3 = anchor_response:format(Response2),
-            decode_data(Rest, [{ReqId, Response3} | Replies], State#state {
+            Reply = {Response2#response.opaque, {ok, Response2}},
+            decode_data(Rest, [Reply | Replies], State#state {
                 buffer = <<>>,
                 response = undefined
             });
