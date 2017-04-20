@@ -58,6 +58,7 @@
     noop/1,
     quit/0,
     quit/1,
+    receive_response/2,
     replace/2,
     replace/3,
     replace/4,
@@ -194,7 +195,7 @@ async_increment(Key, Amount, InitialValue, TTL, Pid) ->
     {ok, reference()} | error().
 
 async_noop() ->
-    noop(?DEFAULT_TIMEOUT).
+    async_noop(?DEFAULT_PID).
 
 -spec async_noop(pid()) ->
     {ok, reference()} | error().
@@ -206,7 +207,7 @@ async_noop(Pid) ->
     {ok, reference()} | error().
 
 async_quit() ->
-    quit(?DEFAULT_TIMEOUT).
+    async_quit(?DEFAULT_PID).
 
 -spec async_quit(pid()) ->
     {ok, reference()} | error().
@@ -218,7 +219,7 @@ async_quit(Pid) ->
     {ok, reference()} | error().
 
 async_replace(Key, Value) ->
-    replace(Key, Value, ?DEFAULT_TTL).
+    async_replace(Key, Value, ?DEFAULT_TTL).
 
 -spec async_replace(binary(), binary(), non_neg_integer()) ->
     {ok, reference()} | error().
@@ -405,6 +406,12 @@ quit() ->
 
 quit(Timeout) ->
     call(quit, Timeout).
+
+-spec receive_response(shackle:request_id(), non_neg_integer()) ->
+    {ok, term()} | {error, term()}.
+
+receive_response(RequestId, Timeout) ->
+    response(shackle:receive_response(RequestId, Timeout)).
 
 -spec replace(binary(), binary()) ->
     ok | error().

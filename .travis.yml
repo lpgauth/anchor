@@ -15,8 +15,8 @@ language: erlang
 notifications:
   email: false
 otp_release:
+  - 19.1
   - 18.3
-  - 17.5
 services:
   - memcached
 script: "make travis"

@@ -98,18 +98,17 @@ decode(<<Header:?HEADER_LENGTH/binary, Rest/binary>>) ->
                 Value/binary>> = Body,
 
             {ok, Rest2, #response {
-                    state = complete,
-                    op_code = OpCode,
-                    key_length = KeyLength,
-                    extras_length = ExtrasLength,
-                    data_type = DataType,
-                    status = Status,
-                    body_length = BodyLength,
-                    opaque = ReqId,
-                    cas = CAS,
-                    extras = Extras,
-                    key = Key,
-                    value = Value
+                op_code = OpCode,
+                key_length = KeyLength,
+                extras_length = ExtrasLength,
+                data_type = DataType,
+                status = Status,
+                body_length = BodyLength,
+                opaque = ReqId,
+                cas = CAS,
+                extras = Extras,
+                key = Key,
+                value = Value
             }};
         false ->
             {error, not_enough_data}

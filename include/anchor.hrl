@@ -77,7 +77,6 @@
 }).
 
 -record(response, {
-    state         :: parsing_header | parsing_body | complete,
     op_code       :: non_neg_integer() | undefined,
     key_length    :: non_neg_integer() | undefined,
     extras_length :: non_neg_integer() | undefined,
