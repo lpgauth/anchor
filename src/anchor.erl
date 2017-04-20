@@ -2,58 +2,275 @@
 -include("anchor.hrl").
 
 -export([
+    async_add/2,
+    async_add/3,
+    async_add/4,
+    async_decrement/1,
+    async_decrement/2,
+    async_decrement/3,
+    async_decrement/4,
+    async_decrement/5,
+    async_delete/1,
+    async_delete/2,
+    async_flush/0,
+    async_flush/1,
+    async_flush/2,
+    async_get/1,
+    async_get/2,
+    async_increment/1,
+    async_increment/2,
+    async_increment/3,
+    async_increment/4,
+    async_increment/5,
+    async_noop/0,
+    async_noop/1,
+    async_quit/0,
+    async_quit/1,
+    async_replace/2,
+    async_replace/3,
+    async_replace/4,
+    async_set/2,
+    async_set/3,
+    async_set/4,
+    async_version/0,
+    async_version/1,
     add/2,
     add/3,
     add/4,
-    add/5,
     decrement/1,
     decrement/2,
     decrement/3,
     decrement/4,
     decrement/5,
-    decrement/6,
     delete/1,
     delete/2,
-    delete/3,
     flush/0,
     flush/1,
     flush/2,
-    flush/3,
     get/1,
     get/2,
-    get/3,
     increment/1,
     increment/2,
     increment/3,
     increment/4,
     increment/5,
-    increment/6,
     noop/0,
     noop/1,
-    noop/2,
     quit/0,
     quit/1,
-    quit/2,
+    receive_response/2,
     replace/2,
     replace/3,
     replace/4,
-    replace/5,
+    response/1,
     set/2,
     set/3,
     set/4,
-    set/5,
     version/0,
-    version/1,
-    version/2
+    version/1
 ]).
 
 %% public
--spec add(binary(), binary()) -> ok | error().
+-spec async_add(binary(), binary()) ->
+    {ok, reference()} | error().
+
+async_add(Key, Value) ->
+    async_add(Key, Value, ?DEFAULT_TTL).
+
+-spec async_add(binary(), binary(), non_neg_integer()) ->
+    {ok, reference()} | error().
+
+async_add(Key, Value, TTL) ->
+    async_add(Key, Value, TTL, ?DEFAULT_PID).
+
+-spec async_add(binary(), binary(), non_neg_integer(), pid()) ->
+    {ok, reference()} | error().
+
+async_add(Key, Value, TTL, Pid) ->
+    cast({add, Key, Value, TTL}, Pid).
+
+-spec async_decrement(binary()) ->
+    {ok, reference()} | error().
+
+async_decrement(Key) ->
+    async_decrement(Key, ?DEFAULT_INCREMENT).
+
+-spec async_decrement(binary(), integer()) ->
+    {ok, reference()} | error().
+
+async_decrement(Key, Amount) ->
+    async_decrement(Key, Amount, ?DEFAULT_INITIAL_VALUE).
+
+-spec async_decrement(binary(), integer(), integer()) ->
+    {ok, reference()} | error().
+
+async_decrement(Key, Amount, InitialValue) ->
+    async_decrement(Key, Amount, InitialValue, ?DEFAULT_TTL).
+
+-spec async_decrement(binary(), integer(), integer(), non_neg_integer()) ->
+    {ok, reference()} | error().
+
+async_decrement(Key, Amount, InitialValue, TTL) ->
+    async_decrement(Key, Amount, InitialValue, TTL, ?DEFAULT_PID).
+
+-spec async_decrement(binary(), integer(), integer(), non_neg_integer(),
+        pid()) -> {ok, reference()} | error().
+
+async_decrement(Key, Amount, InitialValue, TTL, Pid) ->
+    cast({decrement, Key, Amount, InitialValue, TTL}, Pid).
+
+-spec async_delete(binary()) ->
+    {ok, reference()} | error().
+
+async_delete(Key) ->
+    async_delete(Key, ?DEFAULT_PID).
+
+-spec async_delete(binary(), pid()) ->
+    {ok, reference()} | error().
+
+async_delete(Key, Pid) ->
+    cast({delete, Key}, Pid).
+
+-spec async_flush() ->
+    {ok, reference()} | error().
+
+async_flush() ->
+    async_flush(?DEFAULT_TTL).
+
+-spec async_flush(non_neg_integer()) ->
+    {ok, reference()} | error().
+
+async_flush(TTL) ->
+    async_flush(TTL, ?DEFAULT_PID).
+
+-spec async_flush(non_neg_integer(), pid()) ->
+    {ok, reference()} | error().
+
+async_flush(TTL, Pid) ->
+    cast({flush, TTL}, Pid).
+
+-spec async_get(binary()) ->
+    {ok, reference()} | error().
+
+async_get(Key) ->
+    async_get(Key, ?DEFAULT_PID).
+
+-spec async_get(binary(), pid()) ->
+    {ok, reference()} | error().
+
+async_get(Key, Pid) ->
+    cast({get, Key}, Pid).
+
+-spec async_increment(binary()) ->
+    {ok, reference()} | error().
+
+async_increment(Key) ->
+    async_increment(Key, ?DEFAULT_INCREMENT).
+
+-spec async_increment(binary(), integer()) ->
+    {ok, reference()} | error().
+
+async_increment(Key, Amount) ->
+    async_increment(Key, Amount, ?DEFAULT_INITIAL_VALUE).
+
+-spec async_increment(binary(), integer(), integer()) ->
+    {ok, reference()} | error().
+
+async_increment(Key, Amount, InitialValue) ->
+    async_increment(Key, Amount, InitialValue, ?DEFAULT_TTL).
+
+-spec async_increment(binary(), integer(), integer(), non_neg_integer()) ->
+    {ok, reference()} | error().
+
+async_increment(Key, Amount, InitialValue, TTL) ->
+    async_increment(Key, Amount, InitialValue, TTL, ?DEFAULT_PID).
+
+-spec async_increment(binary(), integer(), integer(), non_neg_integer(),
+        pid()) -> {ok, reference()} | error().
+
+async_increment(Key, Amount, InitialValue, TTL, Pid) ->
+    cast({increment, Key, Amount, InitialValue, TTL}, Pid).
+
+-spec async_noop() ->
+    {ok, reference()} | error().
+
+async_noop() ->
+    async_noop(?DEFAULT_PID).
+
+-spec async_noop(pid()) ->
+    {ok, reference()} | error().
+
+async_noop(Pid) ->
+    cast(noop, Pid).
+
+-spec async_quit() ->
+    {ok, reference()} | error().
+
+async_quit() ->
+    async_quit(?DEFAULT_PID).
+
+-spec async_quit(pid()) ->
+    {ok, reference()} | error().
+
+async_quit(Pid) ->
+    cast(quit, Pid).
+
+-spec async_replace(binary(), binary()) ->
+    {ok, reference()} | error().
+
+async_replace(Key, Value) ->
+    async_replace(Key, Value, ?DEFAULT_TTL).
+
+-spec async_replace(binary(), binary(), non_neg_integer()) ->
+    {ok, reference()} | error().
+
+async_replace(Key, Value, TTL) ->
+    async_replace(Key, Value, TTL, ?DEFAULT_PID).
+
+-spec async_replace(binary(), binary(), non_neg_integer(), pid()) ->
+    {ok, reference()} | error().
+
+async_replace(Key, Value, TTL, Pid) ->
+    cast({replace, Key, Value, TTL}, Pid).
+
+-spec async_set(binary(), binary()) ->
+    {ok, reference()} | error().
+
+async_set(Key, Value) ->
+    async_set(Key, Value, ?DEFAULT_TTL).
+
+-spec async_set(binary(), binary(), non_neg_integer()) ->
+    {ok, reference()} | error().
+
+async_set(Key, Value, TTL) ->
+    async_set(Key, Value, TTL, ?DEFAULT_PID).
+
+-spec async_set(binary(), binary(), non_neg_integer(), pid()) ->
+    {ok, reference()} | error().
+
+async_set(Key, Value, TTL, Pid) ->
+    cast({set, Key, Value, TTL}, Pid).
+
+-spec async_version() ->
+    {ok, reference()} | error().
+
+async_version() ->
+    async_version(?DEFAULT_PID).
+
+-spec async_version(pid()) ->
+    {ok, reference()} | error().
+
+async_version(Pid) ->
+    cast(version, Pid).
+
+-spec add(binary(), binary()) ->
+    ok | error().
 
 add(Key, Value) ->
     add(Key, Value, ?DEFAULT_TTL).
 
--spec add(binary(), binary(), non_neg_integer()) -> ok | error().
+-spec add(binary(), binary(), non_neg_integer()) ->
+    ok | error().
 
 add(Key, Value, TTL) ->
     add(Key, Value, TTL, ?DEFAULT_TIMEOUT).
@@ -62,25 +279,22 @@ add(Key, Value, TTL) ->
     ok | error().
 
 add(Key, Value, TTL, Timeout) ->
-    add(Key, Value, TTL, Timeout, []).
+    call({add, Key, Value, TTL}, Timeout).
 
--spec add(binary(), binary(), non_neg_integer(), pos_integer(), options()) ->
-    ok | error().
-
-add(Key, Value, TTL, Timeout, Options) ->
-    call({add, Key, Value, TTL}, Timeout, Options).
-
--spec decrement(binary()) -> {ok, integer()} | error().
+-spec decrement(binary()) ->
+    {ok, integer()} | error().
 
 decrement(Key) ->
     decrement(Key, ?DEFAULT_INCREMENT).
 
--spec decrement(binary(), integer()) -> {ok, integer()} | error().
+-spec decrement(binary(), integer()) ->
+    {ok, integer()} | error().
 
 decrement(Key, Amount) ->
     decrement(Key, Amount, ?DEFAULT_INITIAL_VALUE).
 
--spec decrement(binary(), integer(), integer()) -> {ok, integer()} | error().
+-spec decrement(binary(), integer(), integer()) ->
+    {ok, integer()} | error().
 
 decrement(Key, Amount, InitialValue) ->
     decrement(Key, Amount, InitialValue, ?DEFAULT_TTL).
@@ -92,137 +306,121 @@ decrement(Key, Amount, InitialValue, TTL) ->
     decrement(Key, Amount, InitialValue, TTL, ?DEFAULT_TIMEOUT).
 
 -spec decrement(binary(), integer(), integer(), non_neg_integer(),
-    pos_integer()) -> {ok, integer()} | error().
+        pos_integer()) -> {ok, integer()} | error().
 
 decrement(Key, Amount, InitialValue, TTL, Timeout) ->
-    decrement(Key, Amount, InitialValue, TTL, Timeout, []).
+    call({decrement, Key, Amount, InitialValue, TTL}, Timeout).
 
--spec decrement(binary(), integer(), integer(), non_neg_integer(),
-    pos_integer(), options()) -> {ok, integer()} | error().
-
-decrement(Key, Amount, InitialValue, TTL, Timeout, Options) ->
-    call({decrement, Key, Amount, InitialValue, TTL}, Timeout, Options).
-
--spec delete(binary()) -> ok | error().
+-spec delete(binary()) ->
+    ok | error().
 
 delete(Key) ->
     delete(Key, ?DEFAULT_TIMEOUT).
 
--spec delete(binary(), pos_integer()) -> ok | error().
+-spec delete(binary(), pos_integer()) ->
+    ok | error().
 
 delete(Key, Timeout) ->
-    delete(Key, Timeout, []).
+    call({delete, Key}, Timeout).
 
--spec delete(binary(), pos_integer(), options()) -> ok | error().
-
-delete(Key, Timeout, Options) ->
-    call({delete, Key}, Timeout, Options).
-
--spec flush() -> ok | error().
+-spec flush() ->
+    ok | error().
 
 flush() ->
     flush(?DEFAULT_TTL).
 
--spec flush(non_neg_integer()) -> ok | error().
+-spec flush(non_neg_integer()) ->
+    ok | error().
 
 flush(TTL) ->
     flush(TTL, ?DEFAULT_TIMEOUT).
 
--spec flush(non_neg_integer(), pos_integer()) -> ok | error().
+-spec flush(non_neg_integer(), pos_integer()) ->
+    ok | error().
 
 flush(TTL, Timeout) ->
-    flush(TTL, Timeout, []).
+    call({flush, TTL}, Timeout).
 
--spec flush(non_neg_integer(), pos_integer(), options()) -> ok | error().
-
-flush(TTL, Timeout, Options) ->
-    call({flush, TTL}, Timeout, Options).
-
--spec quit() -> ok | error().
-
-quit() ->
-    quit(?DEFAULT_TIMEOUT).
-
--spec quit(pos_integer()) -> ok | error().
-
-quit(Timeout) ->
-    quit(Timeout, []).
-
--spec quit(pos_integer(), options()) -> ok | error().
-
-quit(Timeout, Options) ->
-    call(quit, Timeout, Options).
-
--spec get(binary()) -> {ok, binary()} | error().
+-spec get(binary()) ->
+    {ok, binary()} | error().
 
 get(Key) ->
     get(Key, ?DEFAULT_TIMEOUT).
 
--spec get(binary(), pos_integer()) -> {ok, binary()} | error().
+-spec get(binary(), pos_integer()) ->
+    {ok, binary()} | error().
 
 get(Key, Timeout) ->
-    get(Key, Timeout, []).
+    call({get, Key}, Timeout).
 
--spec get(binary(), pos_integer(), options()) -> {ok, binary()} | error().
-
-get(Key, Timeout, Options) ->
-    call({get, Key}, Timeout, Options).
-
--spec increment(binary()) -> {ok, integer()} | error().
+-spec increment(binary()) ->
+    {ok, integer()} | error().
 
 increment(Key) ->
     increment(Key, ?DEFAULT_INCREMENT).
 
--spec increment(binary(), integer()) -> {ok, integer()} | error().
+-spec increment(binary(), integer()) ->
+    {ok, integer()} | error().
 
 increment(Key, Amount) ->
     increment(Key, Amount, ?DEFAULT_INITIAL_VALUE).
 
--spec increment(binary(), integer(), integer()) -> {ok, integer()} | error().
+-spec increment(binary(), integer(), integer()) ->
+    {ok, integer()} | error().
 
 increment(Key, Amount, InitialValue) ->
     increment(Key, Amount, InitialValue, ?DEFAULT_TTL).
 
 -spec increment(binary(), integer(), integer(), non_neg_integer()) ->
     {ok, integer()} | error().
-increment(Key, Amount, InitialValue, TTL) ->
 
+increment(Key, Amount, InitialValue, TTL) ->
     increment(Key, Amount, InitialValue, TTL, ?DEFAULT_TIMEOUT).
 
 -spec increment(binary(), integer(), integer(), non_neg_integer(),
-    pos_integer()) -> {ok, integer()} | error().
+        pos_integer()) -> {ok, integer()} | error().
 
 increment(Key, Amount, InitialValue, TTL, Timeout) ->
-    increment(Key, Amount, InitialValue, TTL, Timeout, []).
+    call({increment, Key, Amount, InitialValue, TTL}, Timeout).
 
--spec increment(binary(), integer(), integer(), non_neg_integer(),
-    pos_integer(), options()) -> {ok, integer()} | error().
-
-increment(Key, Amount, InitialValue, TTL, Timeout, Options) ->
-    Msg = {increment, Key, Amount, InitialValue, TTL},
-    call(Msg, Timeout, Options).
-
--spec noop() -> ok | error().
+-spec noop() ->
+    ok | error().
 
 noop() ->
     noop(?DEFAULT_TIMEOUT).
 
--spec noop(pos_integer()) -> ok | error().
+-spec noop(pos_integer()) ->
+    ok | error().
 
 noop(Timeout) ->
-    noop(Timeout, []).
+    call(noop, Timeout).
 
--spec noop(pos_integer(), options()) -> ok | error().
+-spec quit() ->
+    ok | error().
 
-noop(Timeout, Options) ->
-    call(noop, Timeout, Options).
+quit() ->
+    quit(?DEFAULT_TIMEOUT).
 
--spec replace(binary(), binary()) -> ok | error().
+-spec quit(pos_integer()) ->
+    ok | error().
+
+quit(Timeout) ->
+    call(quit, Timeout).
+
+-spec receive_response(shackle:request_id(), non_neg_integer()) ->
+    {ok, term()} | {error, term()}.
+
+receive_response(RequestId, Timeout) ->
+    response(shackle:receive_response(RequestId, Timeout)).
+
+-spec replace(binary(), binary()) ->
+    ok | error().
 
 replace(Key, Value) ->
     replace(Key, Value, ?DEFAULT_TTL).
 
--spec replace(binary(), binary(), non_neg_integer()) -> ok | error().
+-spec replace(binary(), binary(), non_neg_integer()) ->
+    ok | error().
 
 replace(Key, Value, TTL) ->
     replace(Key, Value, TTL, ?DEFAULT_TIMEOUT).
@@ -231,20 +429,24 @@ replace(Key, Value, TTL) ->
     ok | error().
 
 replace(Key, Value, TTL, Timeout) ->
-    replace(Key, Value, TTL, Timeout, []).
+    call({replace, Key, Value, TTL}, Timeout).
 
--spec replace(binary(), binary(), non_neg_integer(), pos_integer(),
-    options()) -> ok | error().
+-spec response({ok, term()} | error()) ->
+    {ok, term()} | error().
 
-replace(Key, Value, TTL, Timeout, Options) ->
-    call({replace, Key, Value, TTL}, Timeout, Options).
+response({ok, Response}) ->
+    anchor_response:format(Response);
+response({error, Reason}) ->
+    {error, Reason}.
 
--spec set(binary(), binary()) -> ok | error().
+-spec set(binary(), binary()) ->
+    ok | error().
 
 set(Key, Value) ->
     set(Key, Value, ?DEFAULT_TTL).
 
--spec set(binary(), binary(), non_neg_integer()) -> ok | error().
+-spec set(binary(), binary(), non_neg_integer()) ->
+    ok | error().
 
 set(Key, Value, TTL) ->
     set(Key, Value, TTL, ?DEFAULT_TIMEOUT).
@@ -253,31 +455,23 @@ set(Key, Value, TTL) ->
     ok | error().
 
 set(Key, Value, TTL, Timeout) ->
-    set(Key, Value, TTL, Timeout, []).
+    call({set, Key, Value, TTL}, Timeout).
 
--spec set(binary(), binary(), non_neg_integer(), pos_integer(), options()) ->
-    ok | error().
-
-set(Key, Value, TTL, Timeout, Options) ->
-    call({set, Key, Value, TTL}, Timeout, Options).
-
--spec version() -> {ok, binary()} | error().
+-spec version() ->
+    {ok, binary()} | error().
 
 version() ->
     version(?DEFAULT_TIMEOUT).
 
--spec version(pos_integer()) -> {ok, binary()} | error().
+-spec version(pos_integer()) ->
+    {ok, binary()} | error().
 
 version(Timeout) ->
-    version(Timeout, []).
-
--spec version(pos_integer(), options()) -> {ok, binary()} | error().
-
-version(Timeout, Options) ->
-    call(version, Timeout, Options).
+    call(version, Timeout).
 
 %% private
-call(Request, _Timeout, [{async, Pid}]) ->
-    shackle:cast(?APP, Request, Pid);
-call(Request, Timeout, _Options) ->
-    shackle:call(?APP, Request, Timeout).
+call(Msg, Timeout) ->
+    response(shackle:call(?APP, Msg, Timeout)).
+
+cast(Msg, Pid) ->
+    shackle:cast(?APP, Msg, Pid).

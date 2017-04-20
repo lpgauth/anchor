@@ -9,6 +9,7 @@
 -define(DEFAULT_INCREMENT, 1).
 -define(DEFAULT_INITIAL_VALUE, 0).
 -define(DEFAULT_IP, "127.0.0.1").
+-define(DEFAULT_PID, self()).
 -define(DEFAULT_POOL_SIZE, 16).
 -define(DEFAULT_POOL_STRATEGY, random).
 -define(DEFAULT_PORT, 11211).
@@ -76,7 +77,6 @@
 }).
 
 -record(response, {
-    state         :: parsing_header | parsing_body | complete,
     op_code       :: non_neg_integer() | undefined,
     key_length    :: non_neg_integer() | undefined,
     extras_length :: non_neg_integer() | undefined,

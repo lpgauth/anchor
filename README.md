@@ -1,6 +1,6 @@
 # anchor
 
-High Performance Erlang Memcached Client
+High-Performance Erlang Memcached Client
 
 [![Build Status](https://travis-ci.org/lpgauth/anchor.svg?branch=master)](https://travis-ci.org/lpgauth/anchor)
 [![Coverage Status](https://coveralls.io/repos/github/lpgauth/anchor/badge.svg?branch=master)](https://coveralls.io/github/lpgauth/anchor?branch=master)
@@ -95,21 +95,26 @@ High Performance Erlang Memcached Client
 ## Examples
 
 ```erlang
-1> application:start(anchor).
-ok
+1> anchor_app:start().
+{ok, [shackle, anchor]}
+
 2> anchor:get(<<"foo">>).
 {error, key_not_found}
+
 3> anchor:set(<<"foo">>, <<"bar">>, 3600).
 ok
+
 4> anchor:get(<<"foo">>).
 {ok, <<"bar">>}
+
 5> anchor:delete(<<"foo">>).
 ok
-6> anchor:get(<<"foo">>, 1000, [{async, self()}]).
-{ok, #Ref<0.0.0.23623>}
-7> flush().
-Shell got {anchor, #Ref<0.0.0.23623>, {error, key_not_found}}
-ok
+
+6> {ok, Ref} = anchor:async_get(<<"foo">>).
+{ok, {anchor_6, #Ref<0.0.1.1363>}}
+
+7> anchor:receive_response(Ref, 1000).
+{error, key_not_found}
 ```
 
 ## Tests
@@ -126,7 +131,7 @@ make xref
 ```license
 The MIT License (MIT)
 
-Copyright (c) 2014-2016 Louis-Philippe Gauthier
+Copyright (c) 2014-2017 Louis-Philippe Gauthier
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

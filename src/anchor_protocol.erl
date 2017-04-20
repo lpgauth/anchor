@@ -6,8 +6,7 @@
 
 -export([
     encode/2,
-    decode/1,
-    decode/2
+    decode/1
 ]).
 
 %% public
@@ -85,33 +84,37 @@ encode(ReqId, version) ->
         opaque  = ReqId
     }).
 
--spec decode(binary()) -> {ok, binary(), response()}.
+-spec decode(binary()) ->
+    {ok, binary(), response()} | {error, not_enough_data}.
 
-decode(Data) ->
-    decode(Data, #response {
-        state = parsing_header
-    }).
+decode(<<Header:?HEADER_LENGTH/binary, Rest/binary>>) ->
+    <<?MAGIC_RESPONSE:8, OpCode:8, KeyLength:16, ExtrasLength:8,
+        DataType:8, Status:16, BodyLength:32, ReqId:32, CAS:64>> = Header,
 
--spec decode(binary(), response() | undefined) -> {ok, binary(), response()}.
+    case size(Rest) >= BodyLength of
+        true ->
+            <<Body:BodyLength/binary, Rest2/binary>> = Rest,
+            <<Extras:ExtrasLength/binary, Key:KeyLength/binary,
+                Value/binary>> = Body,
 
-decode(Data, undefined) ->
-    decode(Data, #response {
-        state = parsing_header
-    });
-decode(Data, #response {
-        state = parsing_header
-    } = Resp) when size(Data) >= ?HEADER_LENGTH ->
-
-    {ok, Rest, Resp2} = decode_header(Data, Resp),
-    decode(Rest, Resp2);
-decode(Data, #response {
-        state = parsing_body,
-        body_length = BodyLength
-    } = Resp) when size(Data) >= BodyLength ->
-
-    decode_body(Data, Resp);
-decode(Data, Resp) ->
-    {ok, Data, Resp}.
+            {ok, Rest2, #response {
+                op_code = OpCode,
+                key_length = KeyLength,
+                extras_length = ExtrasLength,
+                data_type = DataType,
+                status = Status,
+                body_length = BodyLength,
+                opaque = ReqId,
+                cas = CAS,
+                extras = Extras,
+                key = Key,
+                value = Value
+            }};
+        false ->
+            {error, not_enough_data}
+    end;
+decode(_Data) ->
+    {error, not_enough_data}.
 
 %% private
 encode_request(#request {
@@ -132,36 +135,3 @@ encode_request(#request {
 
     {ok, <<?MAGIC_REQUEST:8, OpCode:8, KeyLength:16, ExtrasLength:8, DataType:8,
         VBucket:16, BodyLength:32, Opaque:32, CAS:64, Body/binary>>}.
-
-decode_header(Data, Resp) ->
-    <<Header:?HEADER_LENGTH/binary, Rest/binary>> = Data,
-    <<?MAGIC_RESPONSE:8, OpCode:8, KeyLength:16, ExtrasLength:8,
-        DataType:8, Status:16, BodyLength:32, ReqId:32, CAS:64>> = Header,
-
-    {ok, Rest, Resp#response {
-        state = parsing_body,
-        op_code = OpCode,
-        key_length = KeyLength,
-        extras_length = ExtrasLength,
-        data_type = DataType,
-        status = Status,
-        body_length = BodyLength,
-        opaque = ReqId,
-        cas = CAS
-    }}.
-
-decode_body(Data, #response {
-        extras_length = ExtrasLength,
-        key_length = KeyLength,
-        body_length = BodyLength
-    } = Resp) ->
-
-    <<Body:BodyLength/binary, Rest/binary>> = Data,
-    <<Extras:ExtrasLength/binary, Key:KeyLength/binary, Value/binary>> = Body,
-
-    {ok, Rest, Resp#response {
-        state = complete,
-        extras = Extras,
-        key = Key,
-        value = Value
-    }}.

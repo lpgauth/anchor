@@ -56,7 +56,7 @@ response() = #response{state = parsing_header | parsing_body | complete, op_code
 
 
 <pre><code>
-state() = #state{buffer = binary(), requests = non_neg_integer(), response = <a href="#type-response">response()</a> | undefined}
+state() = #state{buffer = binary(), requests = non_neg_integer()}
 </code></pre>
 
 <a name="index"></a>

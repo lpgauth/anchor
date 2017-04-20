@@ -15,8 +15,7 @@
 
 -record(state, {
     buffer   = <<>>      :: binary(),
-    requests = 0         :: non_neg_integer(),
-    response = undefined :: response() | undefined
+    requests = 0         :: non_neg_integer()
 }).
 
 -type state() :: #state {}.
@@ -56,7 +55,11 @@ handle_data(Data, #state {
     } = State) ->
 
     Data2 = <<Buffer/binary, Data/binary>>,
-    decode_data(Data2, [], State).
+    {ok, Buffer2, Replies} = decode_data(Data2, []),
+
+    {ok, Replies, State#state {
+        buffer = Buffer2
+    }}.
 
 -spec terminate(state()) -> ok.
 
@@ -64,26 +67,15 @@ terminate(_State) ->
     ok.
 
 %% private
-decode_data(<<>>, Replies, State) ->
-    {ok, Replies, State};
-decode_data(Data, Replies, #state {
-        response = Response
-    } = State) ->
-
-    {ok, Rest, Response2} = anchor_protocol:decode(Data, Response),
-    case Response2#response.state of
-        complete ->
-            ReqId = Response2#response.opaque,
-            Response3 = anchor_response:format(Response2),
-            decode_data(Rest, [{ReqId, Response3} | Replies], State#state {
-                buffer = <<>>,
-                response = undefined
-            });
-        _ ->
-            {ok, Replies, State#state {
-                buffer = Rest,
-                response = Response2
-            }}
+decode_data(<<>>, Replies) ->
+    {ok, <<>>, Replies};
+decode_data(Data, Replies) ->
+    case anchor_protocol:decode(Data) of
+        {ok, Rest, Response2} ->
+            Reply = {Response2#response.opaque, {ok, Response2}},
+            decode_data(Rest, [Reply | Replies]);
+        {error, not_enough_data} ->
+            {ok, Data, Replies}
     end.
 
 request_id(N) ->
