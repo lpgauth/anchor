@@ -54,7 +54,7 @@ response() = #response{state = parsing_header | parsing_body | complete, op_code
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#decode-1">decode/1</a></td><td></td></tr><tr><td valign="top"><a href="#decode-2">decode/2</a></td><td></td></tr><tr><td valign="top"><a href="#encode-2">encode/2</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#decode-1">decode/1</a></td><td></td></tr><tr><td valign="top"><a href="#encode-2">encode/2</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
@@ -66,16 +66,7 @@ response() = #response{state = parsing_header | parsing_body | complete, op_code
 ### decode/1 ###
 
 <pre><code>
-decode(Data::binary()) -&gt; {ok, binary(), <a href="#type-response">response()</a>}
-</code></pre>
-<br />
-
-<a name="decode-2"></a>
-
-### decode/2 ###
-
-<pre><code>
-decode(Data::binary(), Response::<a href="#type-response">response()</a> | undefined) -&gt; {ok, binary(), <a href="#type-response">response()</a>}
+decode(Data::binary()) -&gt; {ok, binary(), <a href="#type-response">response()</a>} | {error, not_enough_data}
 </code></pre>
 <br />
 
