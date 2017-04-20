@@ -1,6 +1,6 @@
 # anchor
 
-High Performance Erlang Memcached Client
+High-Performance Erlang Memcached Client
 
 [![Build Status](https://travis-ci.org/lpgauth/anchor.svg?branch=master)](https://travis-ci.org/lpgauth/anchor)
 [![Coverage Status](https://coveralls.io/repos/github/lpgauth/anchor/badge.svg?branch=master)](https://coveralls.io/github/lpgauth/anchor?branch=master)
@@ -96,25 +96,25 @@ High Performance Erlang Memcached Client
 
 ```erlang
 1> anchor_app:start().
-{ok,[shackle,anchor]}
+{ok, [shackle, anchor]}
 
 2> anchor:get(<<"foo">>).
-{error,key_not_found}
+{error, key_not_found}
 
 3> anchor:set(<<"foo">>, <<"bar">>, 3600).
 ok
 
 4> anchor:get(<<"foo">>).
-{ok,<<"bar">>}
+{ok, <<"bar">>}
 
 5> anchor:delete(<<"foo">>).
 ok
 
 6> {ok, Ref} = anchor:async_get(<<"foo">>).
-{ok,{anchor_6,#Ref<0.0.1.1363>}}
+{ok, {anchor_6, #Ref<0.0.1.1363>}}
 
 7> anchor:receive_response(Ref, 1000).
-{error,key_not_found}
+{error, key_not_found}
 ```
 
 ## Tests
