@@ -1,12 +1,11 @@
 {application, anchor, [
+  {applications, [kernel, stdlib, shackle]},
   {description, "High-Performance Erlang Memcached Client"},
-  {vsn, "0.3.0"},
-  {registered, [anchor_server]},
-  {applications, [
-    kernel,
-    stdlib,
-    shackle
-  ]},
+  {env, []},
+  {licenses, ["MIT"]},
+  {links, [{"GitHub", "https://github.com/lpgauth/anchor"}]},
+  {maintainers, ["Louis-Philippe Gauthier"]},
   {mod, {anchor_app, []}},
-  {env, []}
+  {registered, []},
+  {vsn, "0.3.0"}
 ]}.
