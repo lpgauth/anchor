@@ -28,18 +28,6 @@ anchor_test_() ->
         fun version_subtest/0
     ]}.
 
-anchor_quit_test_() ->
-    {setup,
-        fun () -> setup([{pool_size, 1}]) end,
-        fun (_) -> cleanup() end,
-    [fun quit_subtest/0]}.
-
-anchor_async_quit_test_() ->
-    {setup,
-        fun () -> setup([{pool_size, 1}]) end,
-        fun (_) -> cleanup() end,
-    [fun async_quit_subtest/0]}.
-
 %% tests
 async_add_subtest() ->
     Key = random(),
@@ -77,11 +65,6 @@ async_increment_decrement_subtest() ->
 async_noop_subtest() ->
     {ok, Ref} = anchor:async_noop(),
     ok = anchor:receive_response(Ref).
-
-async_quit_subtest() ->
-    anchor:async_quit(),
-    {ok, Ref} = anchor:async_get(random()),
-    {error, _} = anchor:receive_response(Ref).
 
 async_replace_subtest() ->
     Key = random(),
@@ -132,10 +115,6 @@ increment_decrement_subtest() ->
 
 noop_subtest() ->
     ok = anchor:noop().
-
-quit_subtest() ->
-    anchor:quit(),
-    {error, _} = anchor:get(random()).
 
 replace_subtest() ->
     Key = random(),
