@@ -509,7 +509,7 @@ replace(Key, Value, TTL, Timeout) ->
     call({replace, Key, Value, TTL}, Timeout).
 
 -spec response({ok, term()} | error()) ->
-    {ok, term()} | error().
+    ok | {ok, term()} | error().
 
 response({ok, Response}) ->
     anchor_response:format(Response);
