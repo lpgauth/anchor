@@ -1,10 +1,14 @@
 {"1.1.0",
-[{<<"granderl">>,{pkg,<<"granderl">>,<<"0.1.5">>},1},
- {<<"metal">>,{pkg,<<"metal">>,<<"0.1.0">>},1},
- {<<"shackle">>,{pkg,<<"shackle">>,<<"0.5.1">>},0}]}.
+[{<<"foil">>,{pkg,<<"foil">>,<<"0.1.1">>},1},
+ {<<"granderl">>,{pkg,<<"granderl">>,<<"0.1.5">>},1},
+ {<<"metal">>,{pkg,<<"metal">>,<<"0.1.1">>},1},
+ {<<"shackle">>,
+  {git,"https://github.com/lpgauth/shackle.git",
+       {ref,"1cf730d86b918df5d390dcfce7f33f49de8e2084"}},
+  0}]}.
 [
 {pkg_hash,[
+ {<<"foil">>, <<"4D07B62C114636BBC3EEBD5CEE04B23A7AAB1262B0F68AA79005A6FBC3790472">>},
  {<<"granderl">>, <<"F20077A68BD80B8D8783BD15A052813C6483771DEC1A5B837D307CBE92F14122">>},
- {<<"metal">>, <<"168E0AB553E3B8144547E353085CEDAA43C8769E0B7E43C0146C99C2C33507AC">>},
- {<<"shackle">>, <<"D32906B49BDF030127558778F2E5CEE9D7F10C55DD40E25DA51381EADA719CBF">>}]}
+ {<<"metal">>, <<"5D3D1322DA7BCD34B94FED5486F577973685298883954F7A3E517EF5EF6953F5">>}]}
 ].

@@ -138,7 +138,7 @@ cleanup() ->
     anchor_app:stop().
 
 random() ->
-    crypto:rand_bytes(24).
+    crypto:strong_rand_bytes(24).
 
 setup() ->
     setup([]).
