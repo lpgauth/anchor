@@ -83,259 +83,259 @@
 
 %% public
 -spec async_add(binary(), binary()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_add(Key, Value) ->
     async_add(Key, Value, ?DEFAULT_TTL).
 
 -spec async_add(binary(), binary(), non_neg_integer()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_add(Key, Value, TTL) ->
     async_add(Key, Value, TTL, ?DEFAULT_PID).
 
 -spec async_add(binary(), binary(), non_neg_integer(), pid()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_add(Key, Value, TTL, Pid) ->
     async_add(Key, Value, TTL, Pid, ?DEFAULT_TIMEOUT).
 
 -spec async_add(binary(), binary(), non_neg_integer(), pid(), timeout()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_add(Key, Value, TTL, Pid, Timeout) ->
     cast({add, Key, Value, TTL}, Pid, Timeout).
 
 -spec async_decrement(binary()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_decrement(Key) ->
     async_decrement(Key, ?DEFAULT_INCREMENT).
 
 -spec async_decrement(binary(), integer()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_decrement(Key, Amount) ->
     async_decrement(Key, Amount, ?DEFAULT_INITIAL_VALUE).
 
 -spec async_decrement(binary(), integer(), integer()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_decrement(Key, Amount, InitialValue) ->
     async_decrement(Key, Amount, InitialValue, ?DEFAULT_TTL).
 
 -spec async_decrement(binary(), integer(), integer(), non_neg_integer()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_decrement(Key, Amount, InitialValue, TTL) ->
     async_decrement(Key, Amount, InitialValue, TTL, ?DEFAULT_PID).
 
 -spec async_decrement(binary(), integer(), integer(), non_neg_integer(),
-        pid()) -> {ok, reference()} | error().
+        pid()) -> {ok, shackle:request_id()} | error().
 
 async_decrement(Key, Amount, InitialValue, TTL, Pid) ->
     async_decrement(Key, Amount, InitialValue, TTL, Pid, ?DEFAULT_TIMEOUT).
 
 -spec async_decrement(binary(), integer(), integer(), non_neg_integer(),
-        pid(), timeout()) -> {ok, reference()} | error().
+        pid(), timeout()) -> {ok, shackle:request_id()} | error().
 
 async_decrement(Key, Amount, InitialValue, TTL, Pid, Timeout) ->
     cast({decrement, Key, Amount, InitialValue, TTL}, Pid, Timeout).
 
 -spec async_delete(binary()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_delete(Key) ->
     async_delete(Key, ?DEFAULT_PID).
 
 -spec async_delete(binary(), pid()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_delete(Key, Pid) ->
     async_delete(Key, Pid, ?DEFAULT_TIMEOUT).
 
 -spec async_delete(binary(), pid(), timeout()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_delete(Key, Pid, Timeout) ->
     cast({delete, Key}, Pid, Timeout).
 
 -spec async_flush() ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_flush() ->
     async_flush(?DEFAULT_TTL).
 
 -spec async_flush(non_neg_integer()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_flush(TTL) ->
     async_flush(TTL, ?DEFAULT_PID).
 
 -spec async_flush(non_neg_integer(), pid()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_flush(TTL, Pid) ->
     async_flush(TTL, Pid, ?DEFAULT_TIMEOUT).
 
 -spec async_flush(non_neg_integer(), pid(), timeout()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_flush(TTL, Pid, Timeout) ->
     cast({flush, TTL}, Pid, Timeout).
 
 -spec async_get(binary()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_get(Key) ->
     async_get(Key, ?DEFAULT_PID).
 
 -spec async_get(binary(), pid()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_get(Key, Pid) ->
     async_get(Key, Pid, ?DEFAULT_TIMEOUT).
 
 -spec async_get(binary(), pid(), timeout()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_get(Key, Pid, Timeout) ->
     cast({get, Key}, Pid, Timeout).
 
 -spec async_increment(binary()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_increment(Key) ->
     async_increment(Key, ?DEFAULT_INCREMENT).
 
 -spec async_increment(binary(), integer()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_increment(Key, Amount) ->
     async_increment(Key, Amount, ?DEFAULT_INITIAL_VALUE).
 
 -spec async_increment(binary(), integer(), integer()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_increment(Key, Amount, InitialValue) ->
     async_increment(Key, Amount, InitialValue, ?DEFAULT_TTL).
 
 -spec async_increment(binary(), integer(), integer(), non_neg_integer()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_increment(Key, Amount, InitialValue, TTL) ->
     async_increment(Key, Amount, InitialValue, TTL, ?DEFAULT_PID).
 
 -spec async_increment(binary(), integer(), integer(), non_neg_integer(),
-        pid()) -> {ok, reference()} | error().
+        pid()) -> {ok, shackle:request_id()} | error().
 
 async_increment(Key, Amount, InitialValue, TTL, Pid) ->
     async_increment(Key, Amount, InitialValue, TTL, Pid, ?DEFAULT_TIMEOUT).
 
 -spec async_increment(binary(), integer(), integer(), non_neg_integer(),
-        pid(), timeout()) -> {ok, reference()} | error().
+        pid(), timeout()) -> {ok, shackle:request_id()} | error().
 
 async_increment(Key, Amount, InitialValue, TTL, Pid, Timeout) ->
     cast({increment, Key, Amount, InitialValue, TTL}, Pid, Timeout).
 
 -spec async_noop() ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_noop() ->
     async_noop(?DEFAULT_PID).
 
 -spec async_noop(pid()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_noop(Pid) ->
     async_noop(Pid, ?DEFAULT_TIMEOUT).
 
 -spec async_noop(pid(), timeout()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_noop(Pid, Timeout) ->
     cast(noop, Pid, Timeout).
 
 -spec async_quit() ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_quit() ->
     async_quit(?DEFAULT_PID).
 
 -spec async_quit(pid()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_quit(Pid) ->
     async_quit(Pid, ?DEFAULT_TIMEOUT).
 
 -spec async_quit(pid(), timeout()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_quit(Pid, Timeout) ->
     cast(quit, Pid, Timeout).
 
 -spec async_replace(binary(), binary()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_replace(Key, Value) ->
     async_replace(Key, Value, ?DEFAULT_TTL).
 
 -spec async_replace(binary(), binary(), non_neg_integer()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_replace(Key, Value, TTL) ->
     async_replace(Key, Value, TTL, ?DEFAULT_PID).
 
 -spec async_replace(binary(), binary(), non_neg_integer(), pid()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_replace(Key, Value, TTL, Pid) ->
     async_replace(Key, Value, TTL, Pid, ?DEFAULT_TIMEOUT).
 
 -spec async_replace(binary(), binary(), non_neg_integer(), pid(),
-    timeout()) -> {ok, reference()} | error().
+    timeout()) -> {ok, shackle:request_id()} | error().
 
 async_replace(Key, Value, TTL, Pid, Timeout) ->
     cast({replace, Key, Value, TTL}, Pid, Timeout).
 
 -spec async_set(binary(), binary()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_set(Key, Value) ->
     async_set(Key, Value, ?DEFAULT_TTL).
 
 -spec async_set(binary(), binary(), non_neg_integer()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_set(Key, Value, TTL) ->
     async_set(Key, Value, TTL, ?DEFAULT_PID).
 
 -spec async_set(binary(), binary(), non_neg_integer(), pid()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_set(Key, Value, TTL, Pid) ->
     async_set(Key, Value, TTL, Pid, ?DEFAULT_TIMEOUT).
 
 -spec async_set(binary(), binary(), non_neg_integer(), pid(), timeout()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_set(Key, Value, TTL, Pid, Timeout) ->
     cast({set, Key, Value, TTL}, Pid, Timeout).
 
 -spec async_version() ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_version() ->
     async_version(?DEFAULT_PID).
 
 -spec async_version(pid()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_version(Pid) ->
     async_version(Pid, ?DEFAULT_TIMEOUT).
 
 -spec async_version(pid(), timeout()) ->
-    {ok, reference()} | error().
+    {ok, shackle:request_id()} | error().
 
 async_version(Pid, Timeout) ->
     cast(version, Pid, Timeout).
