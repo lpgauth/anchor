@@ -6,6 +6,7 @@
     async_add/3,
     async_add/4,
     async_add/5,
+    async_add/6,
     async_decrement/1,
     async_decrement/2,
     async_decrement/3,
@@ -105,6 +106,12 @@ async_add(Key, Value, TTL, Pid) ->
 
 async_add(Key, Value, TTL, Pid, Timeout) ->
     cast({add, Key, Value, TTL}, Pid, Timeout).
+
+-spec async_add(pool_name(), binary(), binary(), non_neg_integer(), pid(), timeout()) ->
+    {ok, shackle:request_id()} | error().
+
+async_add(PoolName, Key, Value, TTL, Pid, Timeout) ->
+    cast(PoolName, {add, Key, Value, TTL}, Pid, Timeout).
 
 -spec async_decrement(binary()) ->
     {ok, shackle:request_id()} | error().
@@ -551,4 +558,7 @@ call(Msg, Timeout) ->
     response(shackle:call(?APP, Msg, Timeout)).
 
 cast(Msg, Pid, Timeout) ->
-    shackle:cast(?APP, Msg, Pid, Timeout).
+    cast(?APP, Msg, Pid, Timeout).
+
+cast(PoolName, Msg, Pid, Timeout) ->
+    shackle:cast(PoolName, Msg, Pid, Timeout).
