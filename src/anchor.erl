@@ -105,7 +105,7 @@ async_add(Key, Value, TTL, Pid) ->
     {ok, shackle:request_id()} | error().
 
 async_add(Key, Value, TTL, Pid, Timeout) ->
-    cast({add, Key, Value, TTL}, Pid, Timeout).
+    async_add(?APP, Key, Value, TTL, Pid, Timeout).
 
 -spec async_add(pool_name(), binary(), binary(), non_neg_integer(), pid(), timeout()) ->
     {ok, shackle:request_id()} | error().
