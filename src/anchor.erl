@@ -6,79 +6,101 @@
     async_add/3,
     async_add/4,
     async_add/5,
+    async_add/6,
     async_decrement/1,
     async_decrement/2,
     async_decrement/3,
     async_decrement/4,
     async_decrement/5,
     async_decrement/6,
+    async_decrement/7,
     async_delete/1,
     async_delete/2,
     async_delete/3,
+    async_delete/4,
     async_flush/0,
     async_flush/1,
     async_flush/2,
     async_flush/3,
+    async_flush/4,
     async_get/1,
     async_get/2,
     async_get/3,
+    async_get/4,
     async_increment/1,
     async_increment/2,
     async_increment/3,
     async_increment/4,
     async_increment/5,
     async_increment/6,
+    async_increment/7,
     async_noop/0,
     async_noop/1,
     async_noop/2,
+    async_noop/3,
     async_quit/0,
     async_quit/1,
     async_quit/2,
+    async_quit/3,
     async_replace/2,
     async_replace/3,
     async_replace/4,
     async_replace/5,
+    async_replace/6,
     async_set/2,
     async_set/3,
     async_set/4,
     async_set/5,
+    async_set/6,
     async_version/0,
     async_version/1,
     async_version/2,
+    async_version/3,
     add/2,
     add/3,
     add/4,
+    add/5,
     decrement/1,
     decrement/2,
     decrement/3,
     decrement/4,
     decrement/5,
+    decrement/6,
     delete/1,
     delete/2,
+    delete/3,
     flush/0,
     flush/1,
     flush/2,
+    flush/3,
     get/1,
     get/2,
+    get/3,
     increment/1,
     increment/2,
     increment/3,
     increment/4,
     increment/5,
+    increment/6,
     noop/0,
     noop/1,
+    noop/2,
     quit/0,
     quit/1,
+    quit/2,
     receive_response/1,
     replace/2,
     replace/3,
     replace/4,
+    replace/5,
     response/1,
     set/2,
     set/3,
     set/4,
+    set/5,
     version/0,
-    version/1
+    version/1,
+    version/2
 ]).
 
 %% public
@@ -104,7 +126,14 @@ async_add(Key, Value, TTL, Pid) ->
     {ok, shackle:request_id()} | error().
 
 async_add(Key, Value, TTL, Pid, Timeout) ->
-    cast({add, Key, Value, TTL}, Pid, Timeout).
+    async_add(?APP, Key, Value, TTL, Pid, Timeout).
+
+-spec async_add(pool_name(), binary(), binary(), non_neg_integer(), pid(),
+                timeout()) ->
+    {ok, shackle:request_id()} | error().
+
+async_add(PoolName, Key, Value, TTL, Pid, Timeout) ->
+    cast(PoolName, {add, Key, Value, TTL}, Pid, Timeout).
 
 -spec async_decrement(binary()) ->
     {ok, shackle:request_id()} | error().
@@ -140,7 +169,10 @@ async_decrement(Key, Amount, InitialValue, TTL, Pid) ->
         pid(), timeout()) -> {ok, shackle:request_id()} | error().
 
 async_decrement(Key, Amount, InitialValue, TTL, Pid, Timeout) ->
-    cast({decrement, Key, Amount, InitialValue, TTL}, Pid, Timeout).
+    async_decrement(?APP, Key, Amount, InitialValue, TTL, Pid, Timeout).
+
+async_decrement(PoolName, Key, Amount, InitialValue, TTL, Pid, Timeout) ->
+    cast(PoolName, {decrement, Key, Amount, InitialValue, TTL}, Pid, Timeout).
 
 -spec async_delete(binary()) ->
     {ok, shackle:request_id()} | error().
@@ -158,7 +190,10 @@ async_delete(Key, Pid) ->
     {ok, shackle:request_id()} | error().
 
 async_delete(Key, Pid, Timeout) ->
-    cast({delete, Key}, Pid, Timeout).
+    async_delete(?APP, Key, Pid, Timeout).
+
+async_delete(PoolName, Key, Pid, Timeout) ->
+    cast(PoolName, {delete, Key}, Pid, Timeout).
 
 -spec async_flush() ->
     {ok, shackle:request_id()} | error().
@@ -182,7 +217,13 @@ async_flush(TTL, Pid) ->
     {ok, shackle:request_id()} | error().
 
 async_flush(TTL, Pid, Timeout) ->
-    cast({flush, TTL}, Pid, Timeout).
+    async_flush(?APP, TTL, Pid, Timeout).
+
+-spec async_flush(pool_name(), non_neg_integer(), pid(), timeout()) ->
+    {ok, shackle:request_id()} | error().
+
+async_flush(PoolName, TTL, Pid, Timeout) ->
+    cast(PoolName, {flush, TTL}, Pid, Timeout).
 
 -spec async_get(binary()) ->
     {ok, shackle:request_id()} | error().
@@ -200,7 +241,13 @@ async_get(Key, Pid) ->
     {ok, shackle:request_id()} | error().
 
 async_get(Key, Pid, Timeout) ->
-    cast({get, Key}, Pid, Timeout).
+    async_get(?APP, Key, Pid, Timeout).
+
+-spec async_get(pool_name(), binary(), pid(), timeout()) ->
+    {ok, shackle:request_id()} | error().
+
+async_get(PoolName, Key, Pid, Timeout) ->
+    cast(PoolName, {get, Key}, Pid, Timeout).
 
 -spec async_increment(binary()) ->
     {ok, shackle:request_id()} | error().
@@ -236,7 +283,14 @@ async_increment(Key, Amount, InitialValue, TTL, Pid) ->
         pid(), timeout()) -> {ok, shackle:request_id()} | error().
 
 async_increment(Key, Amount, InitialValue, TTL, Pid, Timeout) ->
-    cast({increment, Key, Amount, InitialValue, TTL}, Pid, Timeout).
+    async_increment(?APP, Key, Amount, InitialValue, TTL, Pid, Timeout).
+
+-spec async_increment(pool_name(), binary(), integer(), integer(),
+                      non_neg_integer(), pid(),
+                      timeout()) -> {ok, shackle:request_id()} | error().
+
+async_increment(PoolName, Key, Amount, InitialValue, TTL, Pid, Timeout) ->
+    cast(PoolName, {increment, Key, Amount, InitialValue, TTL}, Pid, Timeout).
 
 -spec async_noop() ->
     {ok, shackle:request_id()} | error().
@@ -254,7 +308,13 @@ async_noop(Pid) ->
     {ok, shackle:request_id()} | error().
 
 async_noop(Pid, Timeout) ->
-    cast(noop, Pid, Timeout).
+    async_noop(?APP, Pid, Timeout).
+
+-spec async_noop(pool_name(), pid(), timeout()) ->
+    {ok, shackle:request_id()} | error().
+
+async_noop(PoolName, Pid, Timeout) ->
+    cast(PoolName, noop, Pid, Timeout).
 
 -spec async_quit() ->
     {ok, shackle:request_id()} | error().
@@ -272,7 +332,13 @@ async_quit(Pid) ->
     {ok, shackle:request_id()} | error().
 
 async_quit(Pid, Timeout) ->
-    cast(quit, Pid, Timeout).
+    async_quit(?APP, Pid, Timeout).
+
+-spec async_quit(pool_name(), pid(), timeout()) ->
+    {ok, shackle:request_id()} | error().
+
+async_quit(PoolName, Pid, Timeout) ->
+    cast(PoolName, quit, Pid, Timeout).
 
 -spec async_replace(binary(), binary()) ->
     {ok, shackle:request_id()} | error().
@@ -296,7 +362,13 @@ async_replace(Key, Value, TTL, Pid) ->
     timeout()) -> {ok, shackle:request_id()} | error().
 
 async_replace(Key, Value, TTL, Pid, Timeout) ->
-    cast({replace, Key, Value, TTL}, Pid, Timeout).
+    async_replace(?APP, Key, Value, TTL, Pid, Timeout).
+
+-spec async_replace(pool_name(), binary(), binary(), non_neg_integer(), pid(),
+    timeout()) -> {ok, shackle:request_id()} | error().
+
+async_replace(PoolName, Key, Value, TTL, Pid, Timeout) ->
+    cast(PoolName, {replace, Key, Value, TTL}, Pid, Timeout).
 
 -spec async_set(binary(), binary()) ->
     {ok, shackle:request_id()} | error().
@@ -320,7 +392,14 @@ async_set(Key, Value, TTL, Pid) ->
     {ok, shackle:request_id()} | error().
 
 async_set(Key, Value, TTL, Pid, Timeout) ->
-    cast({set, Key, Value, TTL}, Pid, Timeout).
+    async_set(?APP, Key, Value, TTL, Pid, Timeout).
+
+-spec async_set(pool_name(), binary(), binary(), non_neg_integer(), pid(),
+                timeout()) ->
+    {ok, shackle:request_id()} | error().
+
+async_set(PoolName, Key, Value, TTL, Pid, Timeout) ->
+    cast(PoolName, {set, Key, Value, TTL}, Pid, Timeout).
 
 -spec async_version() ->
     {ok, shackle:request_id()} | error().
@@ -338,7 +417,13 @@ async_version(Pid) ->
     {ok, shackle:request_id()} | error().
 
 async_version(Pid, Timeout) ->
-    cast(version, Pid, Timeout).
+    async_version(?APP, Pid, Timeout).
+
+-spec async_version(pool_name(), pid(), timeout()) ->
+    {ok, shackle:request_id()} | error().
+
+async_version(PoolName, Pid, Timeout) ->
+    cast(PoolName, version, Pid, Timeout).
 
 -spec add(binary(), binary()) ->
     ok | error().
@@ -356,7 +441,13 @@ add(Key, Value, TTL) ->
     ok | error().
 
 add(Key, Value, TTL, Timeout) ->
-    call({add, Key, Value, TTL}, Timeout).
+    add(?APP, Key, Value, TTL, Timeout).
+
+-spec add(pool_name(), binary(), binary(), non_neg_integer(), pos_integer()) ->
+    ok | error().
+
+add(PoolName, Key, Value, TTL, Timeout) ->
+    call(PoolName, {add, Key, Value, TTL}, Timeout).
 
 -spec decrement(binary()) ->
     {ok, integer()} | error().
@@ -386,7 +477,13 @@ decrement(Key, Amount, InitialValue, TTL) ->
         pos_integer()) -> {ok, integer()} | error().
 
 decrement(Key, Amount, InitialValue, TTL, Timeout) ->
-    call({decrement, Key, Amount, InitialValue, TTL}, Timeout).
+    decrement(?APP, Key, Amount, InitialValue, TTL, Timeout).
+
+-spec decrement(pool_name(), binary(), integer(), integer(), non_neg_integer(),
+        pos_integer()) -> {ok, integer()} | error().
+
+decrement(PoolName, Key, Amount, InitialValue, TTL, Timeout) ->
+    call(PoolName, {decrement, Key, Amount, InitialValue, TTL}, Timeout).
 
 -spec delete(binary()) ->
     ok | error().
@@ -398,7 +495,13 @@ delete(Key) ->
     ok | error().
 
 delete(Key, Timeout) ->
-    call({delete, Key}, Timeout).
+    delete(?APP, Key, Timeout).
+
+-spec delete(pool_name(), binary(), pos_integer()) ->
+    ok | error().
+
+delete(PoolName, Key, Timeout) ->
+    call(PoolName, {delete, Key}, Timeout).
 
 -spec flush() ->
     ok | error().
@@ -416,7 +519,13 @@ flush(TTL) ->
     ok | error().
 
 flush(TTL, Timeout) ->
-    call({flush, TTL}, Timeout).
+    flush(?APP, TTL, Timeout).
+
+-spec flush(pool_name(), non_neg_integer(), pos_integer()) ->
+    ok | error().
+
+flush(PoolName, TTL, Timeout) ->
+    call(PoolName, {flush, TTL}, Timeout).
 
 -spec get(binary()) ->
     {ok, binary()} | error().
@@ -428,7 +537,13 @@ get(Key) ->
     {ok, binary()} | error().
 
 get(Key, Timeout) ->
-    call({get, Key}, Timeout).
+    get(?APP, Key, Timeout).
+
+-spec get(pool_name(), binary(), pos_integer()) ->
+    {ok, binary()} | error().
+
+get(PoolName, Key, Timeout) ->
+    call(PoolName, {get, Key}, Timeout).
 
 -spec increment(binary()) ->
     {ok, integer()} | error().
@@ -458,7 +573,13 @@ increment(Key, Amount, InitialValue, TTL) ->
         pos_integer()) -> {ok, integer()} | error().
 
 increment(Key, Amount, InitialValue, TTL, Timeout) ->
-    call({increment, Key, Amount, InitialValue, TTL}, Timeout).
+    increment(?APP, Key, Amount, InitialValue, TTL, Timeout).
+
+-spec increment(pool_name(), binary(), integer(), integer(), non_neg_integer(),
+        pos_integer()) -> {ok, integer()} | error().
+
+increment(PoolName, Key, Amount, InitialValue, TTL, Timeout) ->
+    call(PoolName, {increment, Key, Amount, InitialValue, TTL}, Timeout).
 
 -spec noop() ->
     ok | error().
@@ -470,7 +591,13 @@ noop() ->
     ok | error().
 
 noop(Timeout) ->
-    call(noop, Timeout).
+    noop(?APP, Timeout).
+
+-spec noop(pool_name(), pos_integer()) ->
+    ok | error().
+
+noop(PoolName, Timeout) ->
+    call(PoolName, noop, Timeout).
 
 -spec quit() ->
     ok | error().
@@ -482,7 +609,13 @@ quit() ->
     ok | error().
 
 quit(Timeout) ->
-    call(quit, Timeout).
+    quit(?APP, Timeout).
+
+-spec quit(pool_name(), pos_integer()) ->
+    ok | error().
+
+quit(PoolName, Timeout) ->
+    call(PoolName, quit, Timeout).
 
 -spec receive_response(shackle:request_id()) ->
     {ok, term()} | {error, term()}.
@@ -506,7 +639,13 @@ replace(Key, Value, TTL) ->
     ok | error().
 
 replace(Key, Value, TTL, Timeout) ->
-    call({replace, Key, Value, TTL}, Timeout).
+    replace(?APP, Key, Value, TTL, Timeout).
+
+-spec replace(pool_name(), binary(), binary(), non_neg_integer(),
+              pos_integer()) -> ok | error().
+
+replace(PoolName, Key, Value, TTL, Timeout) ->
+    call(PoolName, {replace, Key, Value, TTL}, Timeout).
 
 -spec response({ok, term()} | error()) ->
     ok | {ok, term()} | error().
@@ -532,7 +671,13 @@ set(Key, Value, TTL) ->
     ok | error().
 
 set(Key, Value, TTL, Timeout) ->
-    call({set, Key, Value, TTL}, Timeout).
+    set(?APP, Key, Value, TTL, Timeout).
+
+-spec set(pool_name(), binary(), binary(), non_neg_integer(), pos_integer()) ->
+    ok | error().
+
+set(PoolName, Key, Value, TTL, Timeout) ->
+    call(PoolName, {set, Key, Value, TTL}, Timeout).
 
 -spec version() ->
     {ok, binary()} | error().
@@ -544,11 +689,17 @@ version() ->
     {ok, binary()} | error().
 
 version(Timeout) ->
-    call(version, Timeout).
+    version(?APP, Timeout).
+
+-spec version(pool_name(), pos_integer()) ->
+    {ok, binary()} | error().
+
+version(PoolName, Timeout) ->
+    call(PoolName, version, Timeout).
 
 %% private
-call(Msg, Timeout) ->
-    response(shackle:call(?APP, Msg, Timeout)).
+call(PoolName, Msg, Timeout) ->
+    response(shackle:call(PoolName, Msg, Timeout)).
 
-cast(Msg, Pid, Timeout) ->
-    shackle:cast(?APP, Msg, Pid, Timeout).
+cast(PoolName, Msg, Pid, Timeout) ->
+    shackle:cast(PoolName, Msg, Pid, Timeout).

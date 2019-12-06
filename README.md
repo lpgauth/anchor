@@ -92,6 +92,27 @@ High-Performance Erlang Memcached Client
   </tr>
 </table>
 
+Example:
+
+```erlang
+1> application:get_all_env(anchor).
+[{port, "4242"}]
+```
+
+Anchor will by default set up a shackle pool named `anchor` with the
+above variables. You can define your own pools by specifying a `pools`
+environment variable:
+
+```erlang
+1> application:get_all_env(anchor).
+[{pools, [some_pool,
+           [{port, "4242"}]],
+         [some_other_pool,
+           [{pool_strategy, round_robin}]]}]
+```
+
+In that case, the default pool `anchor` won't be created.
+
 ## Examples
 
 ```erlang

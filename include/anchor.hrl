@@ -1,6 +1,7 @@
 %% macros
 -define(APP, anchor).
 -define(CLIENT, anchor_client).
+-define(GET_ENV(Key), ?GET_ENV(Key, undefined)).
 -define(GET_ENV(Key, Default), application:get_env(?APP, Key, Default)).
 -define(MAX_32_BIT_INT, 4294967296).
 
@@ -94,6 +95,7 @@
 -type error () :: {error, atom()}.
 -type option() :: {async, pid()}.
 -type options() :: [option()].
+-type pool_name() :: atom().
 -type response() :: #response {}.
 
 -export_type([
