@@ -485,7 +485,7 @@ quit(Timeout) ->
     call(quit, Timeout).
 
 -spec receive_response(shackle:request_id()) ->
-    {ok, term()} | {error, term()}.
+    ok | {ok, term()} | {error, term()}.
 
 receive_response(RequestId) ->
     response(shackle:receive_response(RequestId)).
