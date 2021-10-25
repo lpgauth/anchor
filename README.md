@@ -5,7 +5,7 @@ High-Performance Erlang Memcached Client
 #### Requirements
 
 * Memcached
-* Erlang 16.0 +
+* Erlang 19.0 +
 
 #### Features
 
