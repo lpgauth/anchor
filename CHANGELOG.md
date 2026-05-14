@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.3.8
+
+### Changed
+
+- `error/0` is now `{error, error_reason()}` where `error_reason/0`
+  is a documented sum type — was `{error, atom()}`, which gave
+  dialyzer nothing to check at call sites. The sum covers the 15
+  memcached protocol status atoms (`key_not_found`, `key_exists`,
+  `item_not_stored`, ...) plus the four shackle-level atoms that
+  propagate through anchor (`no_server`, `pool_not_started`,
+  `shackle_not_started`, `timeout`).
+
+  No behavioural change: the values returned are identical. Dialyzer
+  now flags `{error, typo}` at call sites that don't match the sum.
+
+- `error_reason/0` exported alongside `error/0`.
+
 ## 0.3.7
 
 ### Added

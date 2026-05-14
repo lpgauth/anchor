@@ -91,13 +91,22 @@
 }).
 
 %% types
--type error () :: {error, atom()}.
+-type error_reason() ::
+    %% memcached protocol status atoms (anchor_response:status/1)
+    auth_continue | auth_error | busy | incr_non_numeric |
+    internal_error | invalid_args | item_not_stored | key_exists |
+    key_not_found | not_supported | out_of_memory | temp_failure |
+    unknown_command | value_too_large | vbucket_error |
+    %% shackle / pool errors that propagate through anchor
+    no_server | pool_not_started | shackle_not_started | timeout.
+-type error() :: {error, error_reason()}.
 -type option() :: {async, pid()}.
 -type options() :: [option()].
 -type response() :: #response {}.
 
 -export_type([
     error/0,
+    error_reason/0,
     options/0,
     response/0
 ]).
