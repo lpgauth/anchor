@@ -2,12 +2,12 @@
 
 High-Performance Erlang Memcached Client
 
-[![Build Status](https://travis-ci.org/lpgauth/anchor.svg?branch=master)](https://travis-ci.org/lpgauth/anchor)
-[![Coverage Status](https://coveralls.io/repos/github/lpgauth/anchor/badge.svg?branch=master)](https://coveralls.io/github/lpgauth/anchor?branch=master)
+![Build Status](https://github.com/lpgauth/anchor/workflows/Erlang%20CI/badge.svg)
+
 #### Requirements
 
 * Memcached
-* Erlang 16.0 +
+* Erlang/OTP 25+
 
 #### Features
 
@@ -18,7 +18,8 @@ High-Performance Erlang Memcached Client
 * Request pipelining
 
 ## API
-<a href="http://github.com/lpgauth/anchor/blob/master/doc/anchor.md#index" class="module">Function Index</a>
+
+[Function reference on hexdocs](https://hexdocs.pm/anchor/)
 
 #### Environment variables
 
@@ -120,10 +121,7 @@ ok
 ## Tests
 
 ```makefile
-make dialyzer
-make elvis
-make eunit
-make xref
+make test
 ```
 
 ## License
@@ -131,7 +129,7 @@ make xref
 ```license
 The MIT License (MIT)
 
-Copyright (c) 2014-2017 Louis-Philippe Gauthier
+Copyright (c) 2014-2026 Louis-Philippe Gauthier
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

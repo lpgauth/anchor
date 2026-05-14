@@ -1,4 +1,0 @@
-%% encoding: UTF-8
-{application,anchor}.
-{modules,[anchor,anchor_app,anchor_client,anchor_protocol,anchor_response,
-          anchor_sup]}.
