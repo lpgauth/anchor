@@ -118,6 +118,15 @@ ok
 {error, key_not_found}
 ```
 
+## Errors
+
+All `anchor:*` calls return `ok | {ok, term()} | {error, error_reason()}` where `error_reason/0` (exported, added in 0.3.8) enumerates:
+
+- **Memcached protocol statuses** — `auth_continue`, `auth_error`, `busy`, `incr_non_numeric`, `internal_error`, `invalid_args`, `item_not_stored`, `key_exists`, `key_not_found`, `not_supported`, `out_of_memory`, `temp_failure`, `unknown_command`, `value_too_large`, `vbucket_error`.
+- **Shackle errors** that propagate through anchor — `no_server`, `pool_not_started`, `shackle_not_started`, `timeout`.
+
+The closed sum lets dialyzer catch typos in `case` patterns at call sites.
+
 ## Telemetry
 
 anchor emits one telemetry event at the request boundary. Attach handlers via `telemetry:attach/4`:
