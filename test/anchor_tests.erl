@@ -147,7 +147,12 @@ setup(KeyVals) ->
     error_logger:tty(false),
     application:load(?APP),
     set_env(KeyVals),
-    anchor_app:start().
+    {ok, _} = anchor_app:start(),
+    %% shackle pools connect asynchronously; on CI the first request
+    %% can race ahead of the initial TCP establish and return
+    %% {error, no_server}. Give the pool a moment to be ready.
+    timer:sleep(200),
+    ok.
 
 set_env([]) ->
     ok;
