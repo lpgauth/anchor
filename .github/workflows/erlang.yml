@@ -12,6 +12,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v5
+    - name: Install and start memcached
+      run: |
+        apt-get update
+        apt-get install -y memcached
+        memcached -d -m 64 -p 11211 -u root
     - name: Compile
       run: make compile
     - name: Run xref
