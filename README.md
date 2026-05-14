@@ -68,15 +68,15 @@ High-Performance Erlang Memcached Client
   </tr>
   <tr>
     <td>reconnect_time_max</td>
-    <td>boolean()</td>
-    <td>true</td>
-    <td>reconnect maximum time</td>
+    <td>pos_integer() | infinity</td>
+    <td>120000</td>
+    <td>upper bound on the reconnect backoff (ms)</td>
   </tr>
   <tr>
     <td>reconnect_time_min</td>
-    <td>boolean()</td>
-    <td>true</td>
-    <td>reconnect minimum time</td>
+    <td>pos_integer()</td>
+    <td>1000</td>
+    <td>lower bound on the reconnect backoff (ms)</td>
   </tr>
   <tr>
     <td>socket_options</td>
