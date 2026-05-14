@@ -548,7 +548,16 @@ version(Timeout) ->
 
 %% private
 call(Msg, Timeout) ->
+    telemetry:execute([anchor, request, sent],
+                      #{count => 1},
+                      #{operation => operation(Msg), async => false}),
     response(shackle:call(?APP, Msg, Timeout)).
 
 cast(Msg, Pid, Timeout) ->
+    telemetry:execute([anchor, request, sent],
+                      #{count => 1},
+                      #{operation => operation(Msg), async => true}),
     shackle:cast(?APP, Msg, Pid, Timeout).
+
+operation(Msg) when is_atom(Msg) -> Msg;
+operation(Msg) when is_tuple(Msg) -> element(1, Msg).

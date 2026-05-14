@@ -118,6 +118,18 @@ ok
 {error, key_not_found}
 ```
 
+## Telemetry
+
+anchor emits one telemetry event at the request boundary. Attach handlers via `telemetry:attach/4`:
+
+| Event | Measurements | Metadata |
+|---|---|---|
+| `[anchor, request, sent]` | `count => 1` | `operation, async` |
+
+Fires from the two internal dispatch helpers (`call/2` and `cast/3`), so all 77 exported public functions are covered without per-arity instrumentation. The `operation` metadata is the memcached op (`get`, `set`, `add`, `replace`, `delete`, `flush`, `noop`, `quit`, `version`, `increment`, `decrement`).
+
+Per-request shackle lifecycle (queue / send / receive) remains observable via shackle's own telemetry — anchor's event surfaces the memcached-level intent without duplicating that work.
+
 ## Tests
 
 ```makefile

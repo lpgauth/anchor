@@ -25,6 +25,7 @@ anchor_test_() ->
         fun noop_subtest/0,
         fun replace_subtest/0,
         fun set_get_subtest/0,
+        fun telemetry_sent_subtest/0,
         fun version_subtest/0
     ]}.
 
@@ -129,6 +130,44 @@ set_get_subtest() ->
     Value = random(),
     ok = anchor:set(Key, Value),
     {ok, Value} = anchor:get(Key).
+
+telemetry_sent_subtest() ->
+    Self = self(),
+    HandlerId = <<"anchor-test-sent">>,
+    ok = telemetry:attach(HandlerId, [anchor, request, sent],
+        fun (Event, Measurements, Metadata, _) ->
+            Self ! {telemetry, Event, Measurements, Metadata}
+        end, undefined),
+    try
+        Key = random(),
+        Value = random(),
+        ok = anchor:set(Key, Value),
+        receive
+            {telemetry, [anchor, request, sent],
+             #{count := 1},
+             #{operation := set, async := false}} -> ok
+        after 1000 ->
+            erlang:error(timeout_waiting_for_sync_event)
+        end,
+        ok = anchor:noop(),
+        receive
+            {telemetry, [anchor, request, sent],
+             #{count := 1},
+             #{operation := noop, async := false}} -> ok
+        after 1000 ->
+            erlang:error(timeout_waiting_for_atom_op_event)
+        end,
+        {ok, _} = anchor:async_version(),
+        receive
+            {telemetry, [anchor, request, sent],
+             #{count := 1},
+             #{operation := version, async := true}} -> ok
+        after 1000 ->
+            erlang:error(timeout_waiting_for_async_event)
+        end
+    after
+        telemetry:detach(HandlerId)
+    end.
 
 version_subtest() ->
     {ok, _} = anchor:version().
