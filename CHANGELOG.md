@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.10
+
+### Changed
+
+- Upgrade shackle to 0.7.3 (pulls in foil 0.1.6 and knot 0.1.2
+  transitively).
+- Remove fprofx profile tooling.
+
 ## 0.3.9
 
 ### Fixed
