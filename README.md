@@ -13,7 +13,7 @@ High-Performance Erlang Memcached Client
 
 * Backpressure via backlog (OOM protection)
 * Binary protocol
-* Fast pool implementation (random | round_robin)
+* Fast pool implementation (power_of_two | random | round_robin)
 * Performance optimized
 * Request pipelining
 
@@ -50,7 +50,7 @@ High-Performance Erlang Memcached Client
   </tr>
   <tr>
     <td>pool_strategy</td>
-    <td>random | round_robin</td>
+    <td>power_of_two | random | round_robin</td>
     <td>random</td>
     <td>connection selection strategy</td>
   </tr>
